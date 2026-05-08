@@ -151,7 +151,7 @@ The app is not a general AI chat product. AI is used only to generate learning m
 - Work should proceed in vertical slices: one behavior test, minimal implementation, then the next behavior.
 - The first TDD tracer bullet is the auth flow.
 - The auth tracer should cover registration with a valid invite code, registration rejection with an invalid invite code, generic failure for duplicate email, successful login, and generic login failure.
-- Vitest is the default test runner for domain logic, validation, and server-side behavior.
+- The test runner should be chosen during app scaffold setup; do not use Vite-based test tooling unless explicitly reintroduced.
 - React Testing Library should be used only where component behavior matters.
 - Playwright is optional and should be limited to a small number of smoke tests after core flows exist.
 - Strong candidates for focused tests are auth validation, invite-code registration, AI response schema parsing, AI daily-limit behavior, flashcard creation/edit/delete rules, due queue behavior, and FSRS review scheduling.

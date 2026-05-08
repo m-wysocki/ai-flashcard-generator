@@ -161,7 +161,7 @@ Features:
 # 🎨 UI Stack
 
 ```txt
-Tailwind CSS
+SCSS Modules
 Radix UI
 ```
 
@@ -171,6 +171,22 @@ Guidelines:
 * accessible components
 * responsive layout
 * avoid overdesign
+* use PascalCase class names in component-level SCSS modules
+* structure component styles around a parent class with nested `&Child` selectors
+
+Example:
+
+```scss
+.Flashcard {
+  &Header {
+    display: flex;
+  }
+
+  &Content {
+    padding: 1rem;
+  }
+}
+```
 
 ---
 
