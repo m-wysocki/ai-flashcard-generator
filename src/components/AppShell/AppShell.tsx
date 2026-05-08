@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
+import Link from "next/link";
 import { LearningPreview } from "@/components/LearningPreview/LearningPreview";
 import { Button } from "@/components/Button/Button";
 import styles from "./AppShell.module.scss";
@@ -23,6 +24,11 @@ type AppShellProps = {
   }>;
   headerAction?: ReactNode;
   hideNavigation?: boolean;
+  reviewStats?: {
+    dueToday: number;
+    totalCards: number;
+    reviewedToday: number;
+  };
   updateFlashcardAction?: (formData: FormData) => void | Promise<void>;
   userEmail?: string | null;
 };
@@ -34,6 +40,7 @@ export function AppShell({
   flashcards = [],
   headerAction,
   hideNavigation = false,
+  reviewStats,
   updateFlashcardAction,
   userEmail,
 }: AppShellProps) {
@@ -117,6 +124,7 @@ export function AppShell({
             learningCopy={copy.learning}
             onGoToDictionary={() => setSection("dictionary")}
             createFlashcardAction={createFlashcardAction}
+            reviewStats={reviewStats}
             updateFlashcardAction={updateFlashcardAction}
             deleteFlashcardAction={deleteFlashcardAction}
           />
@@ -165,6 +173,7 @@ function LearningView({
   labels,
   learningCopy,
   onGoToDictionary,
+  reviewStats,
   updateFlashcardAction,
 }: {
   createFlashcardAction?: (formData: FormData) => void | Promise<void>;
@@ -188,8 +197,13 @@ function LearningView({
     delete: string;
     cancel: string;
     update: string;
+    startReview: string;
+    statsDue: string;
+    statsTotal: string;
+    statsReviewed: string;
   };
   onGoToDictionary: () => void;
+  reviewStats?: { dueToday: number; totalCards: number; reviewedToday: number };
   updateFlashcardAction?: (formData: FormData) => void | Promise<void>;
 }) {
   const [activeTab, setActiveTab] = useState<LearningTab>("due");
@@ -242,6 +256,14 @@ function LearningView({
         ) : null}
 
         {activeTab === "due" ? (
+          <div className={styles.AppShellStats}>
+            <p>{learningCopy.statsDue}: {reviewStats?.dueToday ?? dueCards.length}</p>
+            <p>{learningCopy.statsTotal}: {reviewStats?.totalCards ?? flashcards.length}</p>
+            <p>{learningCopy.statsReviewed}: {reviewStats?.reviewedToday ?? 0}</p>
+          </div>
+        ) : null}
+
+        {activeTab === "due" ? (
           dueCards.length === 0 ? (
             <div className={styles.AppShellEmpty}>
               <p>{learningCopy.dueEmptyDescription}</p>
@@ -255,14 +277,21 @@ function LearningView({
               </div>
             </div>
           ) : (
-            <FlashcardsList
-              flashcards={dueCards}
-              editingId={editingId}
-              setEditingId={setEditingId}
-              updateAction={updateFlashcardAction}
-              deleteAction={deleteFlashcardAction}
-              copy={learningCopy}
-            />
+            <>
+              <div className={styles.AppShellReviewCta}>
+                <Button asChild variant="primary">
+                  <Link href="/app/review">{learningCopy.startReview}</Link>
+                </Button>
+              </div>
+              <FlashcardsList
+                flashcards={dueCards}
+                editingId={editingId}
+                setEditingId={setEditingId}
+                updateAction={updateFlashcardAction}
+                deleteAction={deleteFlashcardAction}
+                copy={learningCopy}
+              />
+            </>
           )
         ) : null}
 
@@ -438,6 +467,10 @@ const appShellCopy = {
       delete: "Usuń",
       cancel: "Anuluj",
       update: "Zapisz zmiany",
+      startReview: "Start powtórki",
+      statsDue: "Do powtórki dzisiaj",
+      statsTotal: "Wszystkie fiszki",
+      statsReviewed: "Powtórzone dzisiaj",
     },
   },
   en: {
@@ -469,6 +502,10 @@ const appShellCopy = {
       delete: "Delete",
       cancel: "Cancel",
       update: "Save changes",
+      startReview: "Start review",
+      statsDue: "Due today",
+      statsTotal: "Total cards",
+      statsReviewed: "Reviewed today",
     },
   },
 } satisfies Record<
@@ -488,6 +525,10 @@ const appShellCopy = {
       formFrontLabel: string;
       formNotesLabel: string;
       goToDictionary: string;
+      startReview: string;
+      statsDue: string;
+      statsTotal: string;
+      statsReviewed: string;
       saveCard: string;
       saving: string;
       deleting: string;

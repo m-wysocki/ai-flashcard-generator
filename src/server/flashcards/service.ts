@@ -7,6 +7,14 @@ export type FlashcardRecord = {
   back: string;
   notes: string | null;
   dueAt: Date;
+  stability?: number | null;
+  difficulty?: number | null;
+  elapsedDays?: number;
+  scheduledDays?: number;
+  reps?: number;
+  lapses?: number;
+  state?: "NEW" | "LEARNING" | "REVIEW" | "RELEARNING";
+  lastReviewAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -41,6 +49,19 @@ export type FlashcardsRepository = {
     front: string;
     back: string;
     notes: string | null;
+  }): Promise<FlashcardRecord | null>;
+  updateScheduleByUser(input: {
+    userId: string;
+    flashcardId: string;
+    dueAt: Date;
+    stability: number;
+    difficulty: number;
+    elapsedDays: number;
+    scheduledDays: number;
+    reps: number;
+    lapses: number;
+    state: "NEW" | "LEARNING" | "REVIEW" | "RELEARNING";
+    lastReviewAt: Date;
   }): Promise<FlashcardRecord | null>;
   deleteByUser(input: { userId: string; flashcardId: string }): Promise<boolean>;
 };

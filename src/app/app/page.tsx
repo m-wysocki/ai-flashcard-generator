@@ -10,18 +10,20 @@ import {
 } from "@/server/flashcards/actions";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
 import { listUserDueFlashcards, listUserFlashcards } from "@/server/flashcards/service";
+import { getReviewStats } from "@/server/review/service";
 
 export default async function AppPage() {
   const session = await auth();
   const user = session?.user?.email
     ? await prismaUserCredentialsRepository.findByEmail(session.user.email)
     : null;
-  const flashcards = user
-    ? await listUserFlashcards(user.id, { flashcards: prismaFlashcardsRepository })
-    : [];
-  const dueFlashcards = user
-    ? await listUserDueFlashcards({ userId: user.id }, { flashcards: prismaFlashcardsRepository })
-    : [];
+  const [flashcards, dueFlashcards, reviewStats] = user
+    ? await Promise.all([
+        listUserFlashcards(user.id, { flashcards: prismaFlashcardsRepository }),
+        listUserDueFlashcards({ userId: user.id }, { flashcards: prismaFlashcardsRepository }),
+        getReviewStats(user.id, { flashcards: prismaFlashcardsRepository }),
+      ])
+    : [[], [], undefined];
 
   return (
     <AppShell
@@ -33,6 +35,7 @@ export default async function AppPage() {
         notes: flashcard.notes,
       }))}
       dueFlashcardIds={dueFlashcards.map((flashcard) => flashcard.id)}
+      reviewStats={reviewStats}
       createFlashcardAction={createManualFlashcardAction}
       updateFlashcardAction={updateManualFlashcardAction}
       deleteFlashcardAction={deleteManualFlashcardAction}

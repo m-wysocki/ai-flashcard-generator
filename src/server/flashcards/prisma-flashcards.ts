@@ -53,6 +53,34 @@ export const prismaFlashcardsRepository: FlashcardsRepository = {
     });
   },
 
+  async updateScheduleByUser(input) {
+    const updated = await prisma.flashcard.updateMany({
+      where: {
+        id: input.flashcardId,
+        userId: input.userId,
+      },
+      data: {
+        dueAt: input.dueAt,
+        stability: input.stability,
+        difficulty: input.difficulty,
+        elapsedDays: input.elapsedDays,
+        scheduledDays: input.scheduledDays,
+        reps: input.reps,
+        lapses: input.lapses,
+        state: input.state,
+        lastReviewAt: input.lastReviewAt,
+      },
+    });
+
+    if (updated.count === 0) {
+      return null;
+    }
+
+    return prisma.flashcard.findUnique({
+      where: { id: input.flashcardId },
+    });
+  },
+
   async deleteByUser(input) {
     const deleted = await prisma.flashcard.deleteMany({
       where: {
