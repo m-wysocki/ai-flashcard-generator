@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import type { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
@@ -13,6 +13,10 @@ type LearningTab = "due" | "all" | "add";
 type UiLanguage = "pl" | "en";
 
 type AppShellProps = {
+  generateLearningMaterialAction?: (
+    state: { ok: true; material: { translations: string[]; meanings: string[]; examples: Array<{ english: string; polish: string }>; notes: string | null } } | { ok: false; error: string } | null,
+    formData: FormData,
+  ) => Promise<{ ok: true; material: { translations: string[]; meanings: string[]; examples: Array<{ english: string; polish: string }>; notes: string | null } } | { ok: false; error: string } | null>;
   createFlashcardAction?: (formData: FormData) => void | Promise<void>;
   deleteFlashcardAction?: (formData: FormData) => void | Promise<void>;
   dueFlashcardIds?: string[];
@@ -34,6 +38,7 @@ type AppShellProps = {
 };
 
 export function AppShell({
+  generateLearningMaterialAction,
   createFlashcardAction,
   deleteFlashcardAction,
   dueFlashcardIds = [],
@@ -115,7 +120,7 @@ export function AppShell({
       </header>
       <section className={styles.AppShellContent}>
         {section === "dictionary" ? (
-          <DictionaryView />
+          <DictionaryView generateLearningMaterialAction={generateLearningMaterialAction} />
         ) : (
           <LearningView
             dueFlashcardIds={dueFlashcardIds}
@@ -152,16 +157,60 @@ export function AppShell({
   );
 }
 
-function DictionaryView() {
+function DictionaryView({
+  generateLearningMaterialAction,
+}: {
+  generateLearningMaterialAction?: AppShellProps["generateLearningMaterialAction"];
+}) {
+  const [inputLanguage, setInputLanguage] = useState<"POLISH" | "ENGLISH">("POLISH");
+  const [state, formAction, pending] = useActionState(generateLearningMaterialAction ?? (async () => null), null);
+
+  const outputText = state?.ok
+    ? inputLanguage === "POLISH"
+      ? state.material.translations.join("\n")
+      : state.material.meanings.join("\n")
+    : "Wygenerowany wynik pojawi się tutaj.";
+
   return (
-    <LearningPreview
-      aria-label="Generator workspace"
-      inputLabel="Polish thought"
-      modeLabel="Draft"
-      inputText="Nie wiem, jak naturalnie powiedzieć to po angielsku."
-      outputLabel="Natural English"
-      outputText="I’m not sure how to say this naturally in English."
-    />
+    <div>
+      <form className={styles.AppShellForm} action={formAction}>
+        <div className={styles.AppShellTabs} role="tablist" aria-label="Input language">
+          <button type="button" role="tab" aria-selected={inputLanguage === "POLISH"} onClick={() => setInputLanguage("POLISH")}>
+            Polish input
+          </button>
+          <button type="button" role="tab" aria-selected={inputLanguage === "ENGLISH"} onClick={() => setInputLanguage("ENGLISH")}>
+            English input
+          </button>
+        </div>
+        <input type="hidden" name="inputLanguage" value={inputLanguage} />
+        <label>
+          <span>Text</span>
+          <textarea name="text" required rows={4} />
+        </label>
+        <Button type="submit" variant="primary" disabled={pending}>
+          {pending ? "Generating..." : "Generate"}
+        </Button>
+      </form>
+      {state && !state.ok ? <p>{state.error}</p> : null}
+      <LearningPreview
+        aria-label="Generator workspace"
+        inputLabel={inputLanguage === "POLISH" ? "Polish input" : "English input"}
+        modeLabel={pending ? "Generating" : "Ready"}
+        inputText={pending ? "..." : "Wpisz tekst i kliknij Generate."}
+        outputLabel={inputLanguage === "POLISH" ? "Natural English" : "Polish meaning"}
+        outputText={outputText}
+      />
+      {state?.ok ? (
+        <LearningPreview
+          aria-label="Usage examples"
+          inputLabel="Examples"
+          modeLabel="AI"
+          inputText={state.material.examples.map((example) => `${example.english}\n${example.polish}`).join("\n\n")}
+          outputLabel="Notes"
+          outputText={state.material.notes ?? "Brak dodatkowych notatek."}
+        />
+      ) : null}
+    </div>
   );
 }
 

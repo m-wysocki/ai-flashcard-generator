@@ -14,6 +14,7 @@ describe("getAppEnv", () => {
     expect(config.openai).toEqual({
       generationEnabled: false,
       model: "gpt-4.1-mini",
+      apiKey: null,
     });
     expect(config.auth).toEqual({
       loginEnabled: true,
@@ -41,6 +42,7 @@ describe("getAppEnv", () => {
     expect(config.openai).toEqual({
       generationEnabled: false,
       model: "gpt-4.1-mini",
+      apiKey: null,
     });
     expect(config.auth).toEqual({
       loginEnabled: true,
@@ -62,6 +64,7 @@ describe("getAppEnv", () => {
     expect(config.openai).toEqual({
       generationEnabled: true,
       model: "gpt-4.1",
+      apiKey: "sk-test",
     });
     expect(config.auth).toEqual({
       loginEnabled: true,

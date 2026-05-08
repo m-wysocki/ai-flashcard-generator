@@ -28,6 +28,7 @@ export function getAppEnv(env: Record<string, string | undefined> = process.env)
     openai: {
       generationEnabled: Boolean(parsedEnv.OPENAI_API_KEY),
       model: parsedEnv.OPENAI_MODEL,
+      apiKey: parsedEnv.OPENAI_API_KEY ?? null,
     },
     auth: {
       loginEnabled: true,

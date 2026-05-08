@@ -8,6 +8,7 @@ import {
   deleteManualFlashcardAction,
   updateManualFlashcardAction,
 } from "@/server/flashcards/actions";
+import { generateLearningMaterialAction } from "@/server/ai/actions";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
 import { listUserDueFlashcards, listUserFlashcards } from "@/server/flashcards/service";
 import { getReviewStats } from "@/server/review/service";
@@ -28,6 +29,7 @@ export default async function AppPage() {
   return (
     <AppShell
       userEmail={session?.user?.email}
+      generateLearningMaterialAction={generateLearningMaterialAction}
       flashcards={flashcards.map((flashcard) => ({
         id: flashcard.id,
         front: flashcard.front,
