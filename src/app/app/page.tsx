@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+import { Button } from "@/components/Button/Button";
+import { LearningPreview } from "@/components/LearningPreview/LearningPreview";
 import { logoutAction } from "@/server/auth/actions";
 import styles from "./app.module.scss";
 
@@ -13,21 +15,19 @@ export default async function AppPage() {
           <h1 className={styles.AppHomeTitle}>Generator</h1>
         </div>
         <form action={logoutAction}>
-          <button className={styles.AppHomeButton} type="submit">
+          <Button type="submit" variant="primary">
             Logout
-          </button>
+          </Button>
         </form>
       </header>
-      <section className={styles.AppHomePanel} aria-label="Generator workspace">
-        <div className={styles.AppHomeField}>
-          <span>Polish thought</span>
-          <p>Nie wiem, jak naturalnie powiedzieć to po angielsku.</p>
-        </div>
-        <div className={styles.AppHomeResult}>
-          <span>Natural English</span>
-          <strong>I’m not sure how to say this naturally in English.</strong>
-        </div>
-      </section>
+      <LearningPreview
+        aria-label="Generator workspace"
+        inputLabel="Polish thought"
+        modeLabel="Draft"
+        inputText="Nie wiem, jak naturalnie powiedzieć to po angielsku."
+        outputLabel="Natural English"
+        outputText="I’m not sure how to say this naturally in English."
+      />
     </main>
   );
 }

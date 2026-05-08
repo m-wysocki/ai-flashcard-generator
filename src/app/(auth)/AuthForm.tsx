@@ -1,6 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
+import { Button } from "@/components/Button/Button";
+import { TextField } from "@/components/TextField/TextField";
 import type { AuthActionState } from "@/server/auth/actions";
 import styles from "./auth.module.scss";
 
@@ -17,37 +19,22 @@ export function AuthForm({ action, submitLabel, includeInviteCode = false }: Aut
 
   return (
     <form className={styles.AuthPageForm} action={formAction}>
-      <label className={styles.AuthPageField}>
-        Email
-        <input
-          className={styles.AuthPageInput}
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-        />
-      </label>
-      <label className={styles.AuthPageField}>
-        Password
-        <input
-          className={styles.AuthPageInput}
-          name="password"
-          type="password"
-          autoComplete={includeInviteCode ? "new-password" : "current-password"}
-          minLength={8}
-          required
-        />
-      </label>
+      <TextField label="Email" name="email" type="email" autoComplete="email" required />
+      <TextField
+        label="Password"
+        name="password"
+        type="password"
+        autoComplete={includeInviteCode ? "new-password" : "current-password"}
+        minLength={8}
+        required
+      />
       {includeInviteCode ? (
-        <label className={styles.AuthPageField}>
-          Invite code
-          <input className={styles.AuthPageInput} name="inviteCode" type="text" required />
-        </label>
+        <TextField label="Invite code" name="inviteCode" type="text" required />
       ) : null}
       {state.error ? <p className={styles.AuthPageError}>{state.error}</p> : null}
-      <button className={styles.AuthPageButton} type="submit" disabled={isPending}>
+      <Button type="submit" variant="primary" disabled={isPending}>
         {isPending ? "Please wait" : submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }

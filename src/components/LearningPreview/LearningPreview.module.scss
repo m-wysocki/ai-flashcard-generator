@@ -1,0 +1,87 @@
+.LearningPreview {
+  border-color: rgba(17, 19, 15, 0.08);
+
+  &Header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--color-border);
+    padding: 8px 8px 14px;
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  &Block {
+    margin-top: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 18px;
+    background: var(--color-surface);
+
+    p {
+      margin: 10px 0 0;
+      color: var(--color-secondary);
+      line-height: 1.5;
+    }
+
+    &Muted {
+      margin-top: 14px;
+      border: 0;
+      border-radius: 18px;
+      background: var(--color-surface-soft);
+
+      p {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+    }
+
+    &Result {
+      p {
+        font-family: var(--font-display), Georgia, serif;
+        font-size: 1.24rem;
+        font-weight: 600;
+        line-height: 1.28;
+      }
+    }
+  }
+
+  &Label {
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  &Flashcard {
+    margin-top: 10px;
+    border-radius: 18px;
+    padding: 16px;
+    background: var(--color-accent-soft);
+    color: var(--color-secondary);
+
+    span {
+      display: block;
+      color: var(--color-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: var(--color-muted);
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .LearningPreview {
+    border-radius: 22px;
+  }
+}

@@ -101,6 +101,7 @@ This repo uses a single-context domain docs layout. See `docs/agents/domain.md`.
 - Support Polish and English UI language demos; store language preference locally in the browser.
 - Use Wispr Flow (`https://wisprflow.ai/`) as the visual inspiration for typography and overall styling: modern SaaS polish, generous readable sans-serif type, soft neutral backgrounds, restrained high-contrast CTAs, subtle rounded interface surfaces, and light product-like UI framing. Do not copy Wispr Flow branding, assets, logo, or exact layouts.
 - Prefer clean, accessible, responsive UI over decorative complexity.
+- Extract reusable UI into small focused components under `src/components`. Break pages into the smallest components that still have a clear purpose, such as buttons, badges, panels, form fields, auth panels, preview cards, headers, and repeated content blocks. Pages should compose these components instead of owning detailed UI primitives directly.
 - Use SCSS Modules for component styling.
 - Name component-level classes in PascalCase.
 - Prefer a parent class with nested child selectors using the `&Child` convention.

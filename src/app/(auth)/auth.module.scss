@@ -4,96 +4,15 @@
   place-items: center;
   padding: 32px 16px;
   background: var(--color-background);
-
-  &Panel {
-    width: min(100%, 420px);
-    border: 1px solid var(--color-border);
-    border-radius: 26px;
-    padding: 24px;
-    background: var(--color-surface-raised);
-    box-shadow: var(--shadow-soft);
-  }
-
-  &Back {
-    display: inline-flex;
-    margin-bottom: 28px;
-    color: var(--color-muted);
-    font-size: 0.9rem;
-    font-weight: 800;
-  }
-
-  &Title {
-    margin: 0;
-    font-family: var(--font-display), Georgia, serif;
-    font-size: 2.4rem;
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: 0;
-  }
-
-  &Text {
-    margin: 12px 0 0;
-    color: var(--color-muted);
-    line-height: 1.55;
-  }
-
   &Form {
     margin-top: 28px;
     display: grid;
     gap: 16px;
   }
 
-  &Field {
-    display: grid;
-    gap: 8px;
-    color: var(--color-secondary);
-    font-weight: 700;
-  }
-
-  &Input {
-    min-height: 48px;
-    border: 1px solid var(--color-border);
-    border-radius: 14px;
-    padding: 0 14px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font: inherit;
-
-    &:focus {
-      border-color: var(--color-primary);
-      outline: 3px solid rgba(200, 255, 122, 0.55);
-    }
-  }
-
   &Error {
     margin: 0;
     color: #b42318;
     font-weight: 700;
-  }
-
-  &Button {
-    min-height: 48px;
-    border: 1px solid var(--color-primary);
-    border-radius: 999px;
-    background: var(--color-primary);
-    color: #ffffff;
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:disabled {
-      cursor: wait;
-      opacity: 0.72;
-    }
-  }
-
-  &Switch {
-    margin: 18px 0 0;
-    color: var(--color-muted);
-
-    a {
-      color: var(--color-secondary);
-      font-weight: 700;
-    }
   }
 }

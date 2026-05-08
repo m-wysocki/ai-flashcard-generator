@@ -132,6 +132,7 @@ The app is not a general AI chat product. AI is used only to generate learning m
 - The UI is mobile-first, especially flashcards and review.
 - Desktop support matters most for the generator.
 - The visual style should be inspired by Wispr Flow (`https://wisprflow.ai/`): modern SaaS polish, generous readable sans-serif typography, soft neutral backgrounds, restrained high-contrast calls to action, subtle rounded interface surfaces, and light product-like UI framing. This is a direction for feel and typography, not permission to copy Wispr Flow branding, assets, logo, or exact layouts.
+- Reusable UI should be decomposed into small focused components under `src/components`, including primitives such as buttons, badges, panels, form fields, auth panels, preview cards, headers, and repeated content blocks where they have a clear purpose.
 - The authenticated app has a bottom navigation with Generator and Fiszki.
 - The default authenticated route is the generator dashboard.
 - The Fiszki section uses tabs for Do powtorki, Wszystkie, and Dodaj.
