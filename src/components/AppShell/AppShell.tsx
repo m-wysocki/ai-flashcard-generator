@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import { useFormStatus } from "react-dom";
 import { LearningPreview } from "@/components/LearningPreview/LearningPreview";
+import { Button } from "@/components/Button/Button";
 import styles from "./AppShell.module.scss";
 
 type AppSection = "dictionary" | "learning";
@@ -10,12 +12,31 @@ type LearningTab = "due" | "all" | "add";
 type UiLanguage = "pl" | "en";
 
 type AppShellProps = {
+  createFlashcardAction?: (formData: FormData) => void | Promise<void>;
+  deleteFlashcardAction?: (formData: FormData) => void | Promise<void>;
+  dueFlashcardIds?: string[];
+  flashcards?: Array<{
+    id: string;
+    front: string;
+    back: string;
+    notes: string | null;
+  }>;
   headerAction?: ReactNode;
   hideNavigation?: boolean;
+  updateFlashcardAction?: (formData: FormData) => void | Promise<void>;
   userEmail?: string | null;
 };
 
-export function AppShell({ headerAction, hideNavigation = false, userEmail }: AppShellProps) {
+export function AppShell({
+  createFlashcardAction,
+  deleteFlashcardAction,
+  dueFlashcardIds = [],
+  flashcards = [],
+  headerAction,
+  hideNavigation = false,
+  updateFlashcardAction,
+  userEmail,
+}: AppShellProps) {
   const [section, setSection] = useState<AppSection>("dictionary");
   const [language, setLanguage] = useState<UiLanguage>(() => getInitialLanguage());
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
@@ -89,7 +110,16 @@ export function AppShell({ headerAction, hideNavigation = false, userEmail }: Ap
         {section === "dictionary" ? (
           <DictionaryView />
         ) : (
-          <LearningView labels={copy.learningTabs} placeholders={copy.learningPlaceholders} />
+          <LearningView
+            dueFlashcardIds={dueFlashcardIds}
+            flashcards={flashcards}
+            labels={copy.learningTabs}
+            learningCopy={copy.learning}
+            onGoToDictionary={() => setSection("dictionary")}
+            createFlashcardAction={createFlashcardAction}
+            updateFlashcardAction={updateFlashcardAction}
+            deleteFlashcardAction={deleteFlashcardAction}
+          />
         )}
       </section>
       {hideNavigation ? null : (
@@ -128,13 +158,48 @@ function DictionaryView() {
 }
 
 function LearningView({
+  createFlashcardAction,
+  deleteFlashcardAction,
+  dueFlashcardIds,
+  flashcards,
   labels,
-  placeholders,
+  learningCopy,
+  onGoToDictionary,
+  updateFlashcardAction,
 }: {
+  createFlashcardAction?: (formData: FormData) => void | Promise<void>;
+  deleteFlashcardAction?: (formData: FormData) => void | Promise<void>;
+  dueFlashcardIds: string[];
+  flashcards: Array<{ id: string; front: string; back: string; notes: string | null }>;
   labels: Record<LearningTab, string>;
-  placeholders: Record<LearningTab, string>;
+  learningCopy: {
+    allEmptyCta: string;
+    allEmptyDescription: string;
+    dueEmptyCta: string;
+    dueEmptyDescription: string;
+    formBackLabel: string;
+    formFrontLabel: string;
+    formNotesLabel: string;
+    saveCard: string;
+    saving: string;
+    deleting: string;
+    goToDictionary: string;
+    edit: string;
+    delete: string;
+    cancel: string;
+    update: string;
+  };
+  onGoToDictionary: () => void;
+  updateFlashcardAction?: (formData: FormData) => void | Promise<void>;
 }) {
   const [activeTab, setActiveTab] = useState<LearningTab>("due");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const dueIds = new Set(dueFlashcardIds);
+  const dueCards = flashcards.filter((flashcard) => dueIds.has(flashcard.id));
+
+  function openAddTab() {
+    setActiveTab("add");
+  }
 
   return (
     <div className={styles.AppShellLearning}>
@@ -151,8 +216,187 @@ function LearningView({
           </button>
         ))}
       </div>
-      <p className={styles.AppShellEmpty}>{placeholders[activeTab]}</p>
+      <div className={styles.AppShellPanel}>
+        {activeTab === "add" ? (
+          <form
+            className={styles.AppShellForm}
+            action={createFlashcardAction}
+            onSubmit={() => setActiveTab("all")}
+          >
+            <label>
+              <span>{learningCopy.formFrontLabel}</span>
+              <input name="front" required />
+            </label>
+            <label>
+              <span>{learningCopy.formBackLabel}</span>
+              <input name="back" required />
+            </label>
+            <label>
+              <span>{learningCopy.formNotesLabel}</span>
+              <textarea name="notes" rows={4} />
+            </label>
+            <FormSubmitButton pendingLabel={learningCopy.saving} variant="primary">
+              {learningCopy.saveCard}
+            </FormSubmitButton>
+          </form>
+        ) : null}
+
+        {activeTab === "due" ? (
+          dueCards.length === 0 ? (
+            <div className={styles.AppShellEmpty}>
+              <p>{learningCopy.dueEmptyDescription}</p>
+              <div className={styles.AppShellEmptyActions}>
+                <Button type="button" onClick={onGoToDictionary}>
+                  {learningCopy.goToDictionary}
+                </Button>
+                <Button type="button" variant="primary" onClick={openAddTab}>
+                  {learningCopy.dueEmptyCta}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <FlashcardsList
+              flashcards={dueCards}
+              editingId={editingId}
+              setEditingId={setEditingId}
+              updateAction={updateFlashcardAction}
+              deleteAction={deleteFlashcardAction}
+              copy={learningCopy}
+            />
+          )
+        ) : null}
+
+        {activeTab === "all" ? (
+          flashcards.length === 0 ? (
+            <div className={styles.AppShellEmpty}>
+              <p>{learningCopy.allEmptyDescription}</p>
+              <div className={styles.AppShellEmptyActions}>
+                <Button type="button" onClick={onGoToDictionary}>
+                  {learningCopy.goToDictionary}
+                </Button>
+                <Button type="button" variant="primary" onClick={openAddTab}>
+                  {learningCopy.allEmptyCta}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <FlashcardsList
+              flashcards={flashcards}
+              editingId={editingId}
+              setEditingId={setEditingId}
+              updateAction={updateFlashcardAction}
+              deleteAction={deleteFlashcardAction}
+              copy={learningCopy}
+            />
+          )
+        ) : null}
+      </div>
     </div>
+  );
+}
+
+function FlashcardsList({
+  copy,
+  deleteAction,
+  editingId,
+  flashcards,
+  setEditingId,
+  updateAction,
+}: {
+  copy: {
+    cancel: string;
+    deleting: string;
+    delete: string;
+    edit: string;
+    saving: string;
+    update: string;
+  };
+  deleteAction?: (formData: FormData) => void | Promise<void>;
+  editingId: string | null;
+  flashcards: Array<{ id: string; front: string; back: string; notes: string | null }>;
+  setEditingId: (value: string | null) => void;
+  updateAction?: (formData: FormData) => void | Promise<void>;
+}) {
+  return (
+    <ul className={styles.AppShellCards}>
+      {flashcards.map((flashcard) => {
+        const isEditing = editingId === flashcard.id;
+
+        return (
+          <li key={flashcard.id} className={styles.AppShellCard}>
+            {isEditing ? (
+              <form
+                className={styles.AppShellForm}
+                action={updateAction}
+                onSubmit={() => setEditingId(null)}
+              >
+                <input type="hidden" name="flashcardId" value={flashcard.id} />
+                <label>
+                  <span>Front</span>
+                  <input name="front" defaultValue={flashcard.front} required />
+                </label>
+                <label>
+                  <span>Back</span>
+                  <input name="back" defaultValue={flashcard.back} required />
+                </label>
+                <label>
+                  <span>Notes</span>
+                  <textarea name="notes" defaultValue={flashcard.notes ?? ""} rows={3} />
+                </label>
+                <div className={styles.AppShellCardActions}>
+                  <FormSubmitButton pendingLabel={copy.saving} variant="primary">
+                    {copy.update}
+                  </FormSubmitButton>
+                  <Button type="button" onClick={() => setEditingId(null)}>
+                    {copy.cancel}
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <p className={styles.AppShellCardFront}>{flashcard.front}</p>
+                <p className={styles.AppShellCardBack}>{flashcard.back}</p>
+                {flashcard.notes ? <p className={styles.AppShellCardNotes}>{flashcard.notes}</p> : null}
+                <div className={styles.AppShellCardActions}>
+                  <Button type="button" onClick={() => setEditingId(flashcard.id)}>
+                    {copy.edit}
+                  </Button>
+                  <form action={deleteAction}>
+                    <input type="hidden" name="flashcardId" value={flashcard.id} />
+                    <FormSubmitButton pendingLabel={copy.deleting}>{copy.delete}</FormSubmitButton>
+                  </form>
+                </div>
+              </>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function FormSubmitButton({
+  children,
+  pendingLabel,
+  variant = "secondary",
+}: {
+  children: ReactNode;
+  pendingLabel: string;
+  variant?: "primary" | "secondary";
+}) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" variant={variant} disabled={pending}>
+      {pending ? (
+        <span className={styles.AppShellSubmitPending}>
+          <span className={styles.AppShellSpinner} aria-hidden="true" />
+          {pendingLabel}
+        </span>
+      ) : (
+        children
+      )}
+    </Button>
   );
 }
 
@@ -178,10 +422,22 @@ const appShellCopy = {
       all: "Wszystkie",
       add: "Dodaj",
     },
-    learningPlaceholders: {
-      due: "Nie masz jeszcze fiszek do powtórki.",
-      all: "Tu pojawią się wszystkie zapisane fiszki.",
-      add: "Dodawanie ręcznej fiszki pojawi się tutaj.",
+    learning: {
+      allEmptyCta: "Dodaj ręcznie",
+      allEmptyDescription: "Nie masz jeszcze żadnych fiszek.",
+      dueEmptyCta: "Dodaj fiszkę",
+      dueEmptyDescription: "Nie masz jeszcze fiszek do powtórki.",
+      formBackLabel: "Back (EN)",
+      formFrontLabel: "Front (PL)",
+      formNotesLabel: "Notatki (opcjonalnie)",
+      saveCard: "Zapisz fiszkę",
+      saving: "Zapisywanie...",
+      deleting: "Usuwanie...",
+      goToDictionary: "Przejdź do Słownika",
+      edit: "Edytuj",
+      delete: "Usuń",
+      cancel: "Anuluj",
+      update: "Zapisz zmiany",
     },
   },
   en: {
@@ -197,10 +453,22 @@ const appShellCopy = {
       all: "All",
       add: "Add",
     },
-    learningPlaceholders: {
-      due: "You do not have due flashcards yet.",
-      all: "All saved flashcards will appear here.",
-      add: "Manual flashcard creation will appear here.",
+    learning: {
+      allEmptyCta: "Add manually",
+      allEmptyDescription: "You do not have any flashcards yet.",
+      dueEmptyCta: "Add flashcard",
+      dueEmptyDescription: "You do not have due flashcards yet.",
+      formBackLabel: "Back (EN)",
+      formFrontLabel: "Front (PL)",
+      formNotesLabel: "Notes (optional)",
+      saveCard: "Save flashcard",
+      saving: "Saving...",
+      deleting: "Deleting...",
+      goToDictionary: "Go to Dictionary",
+      edit: "Edit",
+      delete: "Delete",
+      cancel: "Cancel",
+      update: "Save changes",
     },
   },
 } satisfies Record<
@@ -208,9 +476,25 @@ const appShellCopy = {
   {
     accountLabel: string;
     languageLabel: string;
+    learning: {
+      allEmptyCta: string;
+      allEmptyDescription: string;
+      cancel: string;
+      delete: string;
+      dueEmptyCta: string;
+      dueEmptyDescription: string;
+      edit: string;
+      formBackLabel: string;
+      formFrontLabel: string;
+      formNotesLabel: string;
+      goToDictionary: string;
+      saveCard: string;
+      saving: string;
+      deleting: string;
+      update: string;
+    };
     navigationLabel: string;
     sections: Record<AppSection, string>;
-    learningPlaceholders: Record<LearningTab, string>;
     learningTabs: Record<LearningTab, string>;
   }
 >;

@@ -235,9 +235,110 @@
     }
   }
 
+  &Panel {
+    margin-top: 14px;
+  }
+
+  &Form {
+    display: grid;
+    gap: 12px;
+
+    label {
+      display: grid;
+      gap: 6px;
+    }
+
+    span {
+      color: var(--color-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: var(--color-surface);
+      color: var(--color-secondary);
+      font: inherit;
+      font-size: 0.95rem;
+    }
+  }
+
+  &Cards {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  &Card {
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 12px;
+    background: var(--color-surface);
+    display: grid;
+    gap: 8px;
+  }
+
+  &CardFront {
+    margin: 0;
+    color: var(--color-secondary);
+    font-weight: 700;
+  }
+
+  &CardBack,
+  &CardNotes {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.45;
+  }
+
+  &CardActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &SubmitPending {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &Spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 999px;
+    animation: AppShellSpin 0.8s linear infinite;
+  }
+
   &Empty {
-    margin: 18px 4px 4px;
+    margin: 0;
     color: var(--color-muted);
     line-height: 1.5;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &EmptyActions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+@keyframes AppShellSpin {
+  to {
+    transform: rotate(360deg);
   }
 }
