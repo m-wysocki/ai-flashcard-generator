@@ -69,6 +69,31 @@ function createFlashcardsRepository(initialCards: FlashcardRecord[] = []): Flash
       cards.delete(input.flashcardId);
       return true;
     },
+
+    async updateScheduleByUser(input) {
+      const card = cards.get(input.flashcardId);
+
+      if (!card || card.userId !== input.userId) {
+        return null;
+      }
+
+      const updated: FlashcardRecord = {
+        ...card,
+        dueAt: input.dueAt,
+        stability: input.stability,
+        difficulty: input.difficulty,
+        elapsedDays: input.elapsedDays,
+        scheduledDays: input.scheduledDays,
+        reps: input.reps,
+        lapses: input.lapses,
+        state: input.state,
+        lastReviewAt: input.lastReviewAt,
+        updatedAt: new Date("2026-05-09T12:00:00.000Z"),
+      };
+
+      cards.set(updated.id, updated);
+      return updated;
+    },
   };
 }
 
