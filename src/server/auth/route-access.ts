@@ -3,6 +3,11 @@ export function getProtectedRouteRedirect(input: {
   isAuthenticated: boolean;
 }) {
   const isAppRoute = input.pathname === "/app" || input.pathname.startsWith("/app/");
+  const isHomeRoute = input.pathname === "/";
+
+  if (isHomeRoute && input.isAuthenticated) {
+    return "/app";
+  }
 
   if (isAppRoute && !input.isAuthenticated) {
     return "/login";

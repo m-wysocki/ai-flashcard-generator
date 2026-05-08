@@ -16,5 +16,5 @@ export default auth((request) => {
 });
 
 export const config = {
-  matcher: ["/app/:path*"],
+  matcher: ["/", "/app/:path*"],
 };

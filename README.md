@@ -49,7 +49,7 @@ npx auth secret
 
 ### `DATABASE_URL_UNPOOLED`
 
-Required for Prisma migrations when using Neon.
+Used by Prisma CLI and migrations when using Neon. If this is not set, Prisma falls back to `DATABASE_URL`.
 
 For Neon, use the direct connection string here. The host usually does not contain `-pooler`.
 
@@ -97,7 +97,7 @@ npm run build
 npm run db:generate
 ```
 
-To validate the Prisma schema, `DATABASE_URL` must be present:
+To validate the Prisma schema with the same connection setup used by migrations, provide `DATABASE_URL_UNPOOLED`:
 
 ```bash
 DATABASE_URL="postgresql://user:password@localhost:5432/ai_flashcard_generator" DATABASE_URL_UNPOOLED="postgresql://user:password@localhost:5432/ai_flashcard_generator" npm run db:validate

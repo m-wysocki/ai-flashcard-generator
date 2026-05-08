@@ -14,4 +14,9 @@ describe("protected route access", () => {
     expect(getProtectedRouteRedirect({ pathname: "/app", isAuthenticated: true })).toBeNull();
     expect(getProtectedRouteRedirect({ pathname: "/login", isAuthenticated: false })).toBeNull();
   });
+
+  it("redirects authenticated users from the public home page to the app", () => {
+    expect(getProtectedRouteRedirect({ pathname: "/", isAuthenticated: true })).toBe("/app");
+    expect(getProtectedRouteRedirect({ pathname: "/", isAuthenticated: false })).toBeNull();
+  });
 });
