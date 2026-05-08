@@ -3,40 +3,96 @@
   display: grid;
   align-content: start;
   gap: 24px;
-  padding: 32px 16px 88px;
+  padding: 28px 16px 88px;
   background: var(--color-background);
 
   &Header {
-    width: min(100%, 760px);
+    width: min(100%, 820px);
     margin: 0 auto;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
   }
 
+  &Kicker {
+    margin: 0 0 8px;
+    color: var(--color-muted);
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+
   &Title {
     margin: 0;
-    font-size: 1.6rem;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: clamp(2.2rem, 8vw, 4.2rem);
+    font-weight: 500;
+    line-height: 0.96;
     letter-spacing: 0;
   }
 
-  &Text {
-    width: min(100%, 760px);
+  &Panel {
+    width: min(100%, 820px);
     margin: 0 auto;
-    color: var(--color-muted);
-    line-height: 1.55;
+    border: 1px solid var(--color-border);
+    border-radius: 26px;
+    padding: 14px;
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-soft);
+  }
+
+  &Field {
+    border-radius: 20px;
+    padding: 18px;
+    background: var(--color-surface-soft);
+
+    span {
+      color: var(--color-muted);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    p {
+      margin: 12px 0 0;
+      color: var(--color-secondary);
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+  }
+
+  &Result {
+    margin-top: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 18px;
+    background: var(--color-surface);
+
+    span {
+      color: var(--color-muted);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    strong {
+      display: block;
+      margin-top: 10px;
+      font-family: var(--font-display), Georgia, serif;
+      font-size: clamp(1.3rem, 5vw, 2.1rem);
+      font-weight: 600;
+      line-height: 1.12;
+    }
   }
 
   &Button {
     min-height: 40px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 0 14px;
-    background: var(--color-surface);
-    color: var(--color-secondary);
+    border: 1px solid var(--color-primary);
+    border-radius: 999px;
+    padding: 0 16px;
+    background: var(--color-primary);
+    color: #ffffff;
     font: inherit;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
   }
 }

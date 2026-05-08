@@ -8,17 +8,26 @@ export default async function AppPage() {
   return (
     <main className={styles.AppHome}>
       <header className={styles.AppHomeHeader}>
-        <h1 className={styles.AppHomeTitle}>Generator</h1>
+        <div>
+          <p className={styles.AppHomeKicker}>Signed in as {session?.user?.email}</p>
+          <h1 className={styles.AppHomeTitle}>Generator</h1>
+        </div>
         <form action={logoutAction}>
           <button className={styles.AppHomeButton} type="submit">
             Logout
           </button>
         </form>
       </header>
-      <p className={styles.AppHomeText}>
-        Signed in as {session?.user?.email}. The authenticated generator shell is ready for the
-        next MVP slice.
-      </p>
+      <section className={styles.AppHomePanel} aria-label="Generator workspace">
+        <div className={styles.AppHomeField}>
+          <span>Polish thought</span>
+          <p>Nie wiem, jak naturalnie powiedzieć to po angielsku.</p>
+        </div>
+        <div className={styles.AppHomeResult}>
+          <span>Natural English</span>
+          <strong>I’m not sure how to say this naturally in English.</strong>
+        </div>
+      </section>
     </main>
   );
 }

@@ -34,6 +34,24 @@ export default function HomePage() {
             </Slot>
           </div>
         </div>
+        <aside className={styles.LandingPreview} aria-label="Learning material preview">
+          <div className={styles.LandingPreviewHeader}>
+            <span>Generator</span>
+            <span>Polish input</span>
+          </div>
+          <div className={styles.LandingPrompt}>
+            Nie jestem pewien, czy dobrze to rozumiem.
+          </div>
+          <div className={styles.LandingResult}>
+            <span className={styles.LandingResultLabel}>Natural English</span>
+            <p>I’m not sure I’m understanding this correctly.</p>
+          </div>
+          <div className={styles.LandingResultMuted}>
+            <span>Flashcard preview</span>
+            <strong>Nie jestem pewien...</strong>
+            <p>I’m not sure...</p>
+          </div>
+        </aside>
       </section>
 
       <footer className={styles.LandingFooter}>

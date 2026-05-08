@@ -2,14 +2,12 @@
   min-height: 100svh;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  background:
-    linear-gradient(135deg, rgba(23, 107, 91, 0.12), transparent 36%),
-    var(--color-background);
+  background: var(--color-background);
 
   &Header {
     width: min(1120px, calc(100% - 32px));
     margin: 0 auto;
-    padding: 24px 0;
+    padding: 22px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -17,8 +15,8 @@
   }
 
   &Brand {
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 800;
     letter-spacing: 0;
   }
 
@@ -32,8 +30,10 @@
     width: min(1120px, calc(100% - 32px));
     margin: 0 auto;
     display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+    gap: clamp(32px, 7vw, 88px);
     align-items: center;
-    padding: 48px 0 72px;
+    padding: 40px 0 64px;
   }
 
   &Content {
@@ -41,16 +41,24 @@
   }
 
   &Kicker {
-    margin: 0 0 16px;
-    color: var(--color-primary);
-    font-size: 0.92rem;
-    font-weight: 700;
+    width: fit-content;
+    margin: 0 0 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 7px 12px;
+    background: var(--color-surface-raised);
+    color: var(--color-secondary);
+    font-size: 0.82rem;
+    font-weight: 800;
   }
 
   &Title {
     margin: 0;
-    font-size: clamp(2.5rem, 8vw, 5.6rem);
-    line-height: 0.96;
+    max-width: 760px;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: clamp(3rem, 8vw, 5.9rem);
+    font-weight: 500;
+    line-height: 0.94;
     letter-spacing: 0;
   }
 
@@ -59,7 +67,7 @@
     margin: 24px 0 0;
     color: var(--color-muted);
     font-size: clamp(1.05rem, 2vw, 1.25rem);
-    line-height: 1.65;
+    line-height: 1.6;
   }
 
   &Actions {
@@ -75,15 +83,21 @@
     align-items: center;
     justify-content: center;
     border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 0 18px;
+    border-radius: 999px;
+    padding: 0 20px;
     background: var(--color-surface);
     color: var(--color-secondary);
-    font-weight: 700;
-    box-shadow: var(--shadow-soft);
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-tight);
+    transition:
+      border-color 160ms ease,
+      background 160ms ease,
+      transform 160ms ease;
 
     &:hover {
       border-color: var(--color-primary);
+      transform: translateY(-1px);
     }
 
     &Primary {
@@ -94,6 +108,83 @@
       &:hover {
         background: var(--color-primary-hover);
       }
+    }
+  }
+
+  &Preview {
+    border: 1px solid rgba(17, 19, 15, 0.08);
+    border-radius: 26px;
+    padding: 14px;
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-soft);
+  }
+
+  &PreviewHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--color-border);
+    padding: 8px 8px 14px;
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  &Prompt {
+    margin-top: 14px;
+    border-radius: 18px;
+    padding: 18px;
+    background: var(--color-surface-soft);
+    color: var(--color-secondary);
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  &Result {
+    margin-top: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 18px;
+    background: var(--color-surface);
+
+    p {
+      margin: 10px 0 0;
+      font-family: var(--font-display), Georgia, serif;
+      font-size: 1.24rem;
+      font-weight: 600;
+      line-height: 1.28;
+    }
+  }
+
+  &ResultLabel {
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  &ResultMuted {
+    margin-top: 10px;
+    border-radius: 18px;
+    padding: 16px;
+    background: var(--color-accent-soft);
+    color: var(--color-secondary);
+
+    span {
+      display: block;
+      color: var(--color-muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: var(--color-muted);
     }
   }
 
@@ -114,6 +205,7 @@
     }
 
     &Main {
+      grid-template-columns: 1fr;
       padding-top: 32px;
     }
 
@@ -124,6 +216,22 @@
 
     &Button {
       flex: 1 1 140px;
+    }
+
+    &Preview {
+      border-radius: 22px;
+    }
+  }
+}
+
+@media (max-width: 920px) {
+  .Landing {
+    &Main {
+      grid-template-columns: 1fr;
+    }
+
+    &Preview {
+      max-width: 520px;
     }
   }
 }

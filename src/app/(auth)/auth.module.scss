@@ -7,18 +7,27 @@
 
   &Panel {
     width: min(100%, 420px);
+    border: 1px solid var(--color-border);
+    border-radius: 26px;
+    padding: 24px;
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-soft);
   }
 
   &Back {
     display: inline-flex;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     color: var(--color-muted);
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 800;
   }
 
   &Title {
     margin: 0;
-    font-size: 2rem;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 2.4rem;
+    font-weight: 500;
+    line-height: 1;
     letter-spacing: 0;
   }
 
@@ -44,11 +53,16 @@
   &Input {
     min-height: 48px;
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: 14px;
     padding: 0 14px;
     background: var(--color-surface);
-    color: var(--color-foreground);
+    color: var(--color-text);
     font: inherit;
+
+    &:focus {
+      border-color: var(--color-primary);
+      outline: 3px solid rgba(200, 255, 122, 0.55);
+    }
   }
 
   &Error {
@@ -60,12 +74,17 @@
   &Button {
     min-height: 48px;
     border: 1px solid var(--color-primary);
-    border-radius: 8px;
+    border-radius: 999px;
     background: var(--color-primary);
     color: #ffffff;
     font: inherit;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.72;
+    }
   }
 
   &Switch {
