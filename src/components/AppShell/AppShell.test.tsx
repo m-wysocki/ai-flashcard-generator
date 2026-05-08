@@ -46,12 +46,13 @@ describe("AppShell", () => {
       "aria-selected",
       "true",
     );
-    expect(screen.getByText("Tu pojawią się wszystkie zapisane fiszki.")).toBeInTheDocument();
+    expect(screen.getByText("Nie masz jeszcze żadnych fiszek.")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "Dodaj" }));
 
     expect(screen.getByRole("tab", { name: "Dodaj" })).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByText("Dodawanie ręcznej fiszki pojawi się tutaj.")).toBeInTheDocument();
+    expect(screen.getByText("Front (PL)")).toBeInTheDocument();
+    expect(screen.getByText("Back (EN)")).toBeInTheDocument();
   });
 
   it("can hide bottom navigation for review mode", () => {
