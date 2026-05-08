@@ -131,6 +131,7 @@ The app is not a general AI chat product. AI is used only to generate learning m
 - Playback uses Web Speech API in MVP and is triggered manually by a speaker button.
 - The UI is mobile-first, especially flashcards and review.
 - Desktop support matters most for the generator.
+- The visual style should be inspired by Wispr Flow (`https://wisprflow.ai/`): modern SaaS polish, generous readable sans-serif typography, soft neutral backgrounds, restrained high-contrast calls to action, subtle rounded interface surfaces, and light product-like UI framing. This is a direction for feel and typography, not permission to copy Wispr Flow branding, assets, logo, or exact layouts.
 - The authenticated app has a bottom navigation with Generator and Fiszki.
 - The default authenticated route is the generator dashboard.
 - The Fiszki section uses tabs for Do powtorki, Wszystkie, and Dodaj.

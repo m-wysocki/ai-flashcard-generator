@@ -99,6 +99,7 @@ This repo uses a single-context domain docs layout. See `docs/agents/domain.md`.
 - Include an actionable empty state when no cards are due.
 - Keep the public root page minimal and honest about restricted access.
 - Support Polish and English UI language demos; store language preference locally in the browser.
+- Use Wispr Flow (`https://wisprflow.ai/`) as the visual inspiration for typography and overall styling: modern SaaS polish, generous readable sans-serif type, soft neutral backgrounds, restrained high-contrast CTAs, subtle rounded interface surfaces, and light product-like UI framing. Do not copy Wispr Flow branding, assets, logo, or exact layouts.
 - Prefer clean, accessible, responsive UI over decorative complexity.
 - Use SCSS Modules for component styling.
 - Name component-level classes in PascalCase.
