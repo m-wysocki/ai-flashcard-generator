@@ -1,7 +1,15 @@
 node_modules/
 .next/
+.codex/
+.idea/
+.scratch/
+.swc/
+.svc/
 dist/
 coverage/
 tsconfig.tsbuildinfo
 .env
 .env.local
+idea.md
+skills-lock.json
+*skill.log.json
