@@ -85,4 +85,57 @@ describe("AppShell", () => {
     expect(screen.getByText("learner@example.com")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Logout" })).toBeInTheDocument();
   });
+
+  it("lets user edit one generated example and save it as a flashcard", async () => {
+    const createdCards: Array<{ front: string; back: string; notes: string }> = [];
+
+    render(
+      <AppShell
+        userEmail="learner@example.com"
+        generateLearningMaterialAction={async () => ({
+          ok: true,
+          material: {
+            translations: ["I need to figure this out."],
+            meanings: [],
+            examples: [
+              { english: "I need to figure this out today.", polish: "Muszę to dziś rozgryźć." },
+              { english: "She figured out the answer quickly.", polish: "Szybko rozgryzła odpowiedź." },
+            ],
+            notes: "Often used for solving problems.",
+          },
+        })}
+        createFlashcardAction={async (formData) => {
+          createdCards.push({
+            front: String(formData.get("front") ?? ""),
+            back: String(formData.get("back") ?? ""),
+            notes: String(formData.get("notes") ?? ""),
+          });
+        }}
+      />,
+    );
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Text" }), { target: { value: "rozgryźć" } });
+    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+
+    const chooseButtons = await screen.findAllByRole("button", { name: "Użyj jako fiszki" });
+    fireEvent.click(chooseButtons[0]);
+
+    const frontInput = screen.getByRole("textbox", { name: "Front (PL)" });
+    const backInput = screen.getByRole("textbox", { name: "Back (EN)" });
+    const notesInput = screen.getByRole("textbox", { name: "Notatki (opcjonalnie)" });
+
+    fireEvent.change(frontInput, { target: { value: "Rozgryźć to dziś." } });
+    fireEvent.change(backInput, { target: { value: "I need to figure this out today." } });
+    fireEvent.change(notesInput, { target: { value: "Useful for problem solving." } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Zapisz wygenerowaną fiszkę" }));
+
+    expect(createdCards).toEqual([
+      {
+        front: "Rozgryźć to dziś.",
+        back: "I need to figure this out today.",
+        notes: "Useful for problem solving.",
+      },
+    ]);
+  });
 });

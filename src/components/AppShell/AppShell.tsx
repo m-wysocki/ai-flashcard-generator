@@ -120,7 +120,11 @@ export function AppShell({
       </header>
       <section className={styles.AppShellContent}>
         {section === "dictionary" ? (
-          <DictionaryView generateLearningMaterialAction={generateLearningMaterialAction} />
+          <DictionaryView
+            generateLearningMaterialAction={generateLearningMaterialAction}
+            createFlashcardAction={createFlashcardAction}
+            learningCopy={copy.learning}
+          />
         ) : (
           <LearningView
             dueFlashcardIds={dueFlashcardIds}
@@ -159,11 +163,25 @@ export function AppShell({
 
 function DictionaryView({
   generateLearningMaterialAction,
+  createFlashcardAction,
+  learningCopy,
 }: {
   generateLearningMaterialAction?: AppShellProps["generateLearningMaterialAction"];
+  createFlashcardAction?: AppShellProps["createFlashcardAction"];
+  learningCopy: {
+    formBackLabel: string;
+    formFrontLabel: string;
+    formNotesLabel: string;
+    saving: string;
+    saveGeneratedCard: string;
+    chooseAsFlashcard: string;
+  };
 }) {
   const [inputLanguage, setInputLanguage] = useState<"POLISH" | "ENGLISH">("POLISH");
+  const [selectedExampleIndex, setSelectedExampleIndex] = useState<number | null>(null);
   const [state, formAction, pending] = useActionState(generateLearningMaterialAction ?? (async () => null), null);
+
+  const selectedExample = state?.ok && selectedExampleIndex !== null ? state.material.examples[selectedExampleIndex] : null;
 
   const outputText = state?.ok
     ? inputLanguage === "POLISH"
@@ -201,14 +219,48 @@ function DictionaryView({
         outputText={outputText}
       />
       {state?.ok ? (
-        <LearningPreview
-          aria-label="Usage examples"
-          inputLabel="Examples"
-          modeLabel="AI"
-          inputText={state.material.examples.map((example) => `${example.english}\n${example.polish}`).join("\n\n")}
-          outputLabel="Notes"
-          outputText={state.material.notes ?? "Brak dodatkowych notatek."}
-        />
+        <>
+          <LearningPreview
+            aria-label="Usage examples"
+            inputLabel="Examples"
+            modeLabel="AI"
+            inputText={state.material.examples.map((example) => `${example.english}\n${example.polish}`).join("\n\n")}
+            outputLabel="Notes"
+            outputText={state.material.notes ?? "Brak dodatkowych notatek."}
+          />
+          <ul className={styles.AppShellCards}>
+            {state.material.examples.map((example, index) => (
+              <li key={`${example.english}-${index}`} className={styles.AppShellCard}>
+                <p className={styles.AppShellCardBack}>{example.polish}</p>
+                <p className={styles.AppShellCardFront}>{example.english}</p>
+                <div className={styles.AppShellCardActions}>
+                  <Button type="button" variant="primary" onClick={() => setSelectedExampleIndex(index)}>
+                    {learningCopy.chooseAsFlashcard}
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {selectedExample ? (
+            <form className={styles.AppShellForm} action={createFlashcardAction}>
+              <label>
+                <span>{learningCopy.formFrontLabel}</span>
+                <input name="front" defaultValue={selectedExample.polish} required />
+              </label>
+              <label>
+                <span>{learningCopy.formBackLabel}</span>
+                <input name="back" defaultValue={selectedExample.english} required />
+              </label>
+              <label>
+                <span>{learningCopy.formNotesLabel}</span>
+                <textarea name="notes" defaultValue={state.material.notes ?? ""} rows={4} />
+              </label>
+              <FormSubmitButton pendingLabel={learningCopy.saving} variant="primary">
+                {learningCopy.saveGeneratedCard}
+              </FormSubmitButton>
+            </form>
+          ) : null}
+        </>
       ) : null}
     </div>
   );
@@ -509,8 +561,10 @@ const appShellCopy = {
       formFrontLabel: "Front (PL)",
       formNotesLabel: "Notatki (opcjonalnie)",
       saveCard: "Zapisz fiszkę",
+      saveGeneratedCard: "Zapisz wygenerowaną fiszkę",
       saving: "Zapisywanie...",
       deleting: "Usuwanie...",
+      chooseAsFlashcard: "Użyj jako fiszki",
       goToDictionary: "Przejdź do Słownika",
       edit: "Edytuj",
       delete: "Usuń",
@@ -544,8 +598,10 @@ const appShellCopy = {
       formFrontLabel: "Front (PL)",
       formNotesLabel: "Notes (optional)",
       saveCard: "Save flashcard",
+      saveGeneratedCard: "Save generated flashcard",
       saving: "Saving...",
       deleting: "Deleting...",
+      chooseAsFlashcard: "Use as flashcard",
       goToDictionary: "Go to Dictionary",
       edit: "Edit",
       delete: "Delete",
@@ -579,8 +635,10 @@ const appShellCopy = {
       statsTotal: string;
       statsReviewed: string;
       saveCard: string;
+      saveGeneratedCard: string;
       saving: string;
       deleting: string;
+      chooseAsFlashcard: string;
       update: string;
     };
     navigationLabel: string;
