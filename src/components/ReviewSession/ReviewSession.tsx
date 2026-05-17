@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/Button/Button";
 import type { ReviewGrade } from "@/server/review/service";
-import styles from "./ReviewSession.module.scss";
 
 type ReviewCard = {
   id: string;
@@ -23,12 +22,13 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
   const [reviewedNow, setReviewedNow] = useState(0);
+  const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const current = queue[0];
 
   if (!current) {
     return (
-      <main className={styles.ReviewSession}>
-        <p className={styles.ReviewSessionDone}>To wszystko na teraz.</p>
+      <main className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4">
+        <p className="m-0 text-lg text-[var(--color-text)]">To wszystko na teraz.</p>
         <Button asChild variant="primary">
           <Link href="/app">Wróć do Fiszek</Link>
         </Button>
@@ -37,30 +37,42 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
   }
 
   return (
-    <main className={styles.ReviewSession}>
-      <header className={styles.ReviewSessionHeader}>
-        <p>Do powtórki dzisiaj: {stats.dueToday}</p>
-        <p>Wszystkie fiszki: {stats.totalCards}</p>
-        <p>Powtórzone dzisiaj: {stats.reviewedToday + reviewedNow}</p>
+    <main className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4">
+      <header className="grid grid-cols-3 gap-2">
+        <p className="m-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)]">
+          Do powtórki dzisiaj: {stats.dueToday}
+        </p>
+        <p className="m-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)]">
+          Wszystkie fiszki: {stats.totalCards}
+        </p>
+        <p className="m-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)]">
+          Powtórzone dzisiaj: {stats.reviewedToday + reviewedNow}
+        </p>
       </header>
-      <p className={styles.ReviewSessionCounter}>{reviewedNow + 1} / {Math.max(initialCards.length, reviewedNow + 1)}</p>
-      <p className={styles.ReviewSessionFront}>{current.front}</p>
+      <p className="m-0 text-sm text-[var(--color-muted)]">
+        {reviewedNow + 1} / {Math.max(initialCards.length, reviewedNow + 1)}
+      </p>
+      <p className="m-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xl text-[var(--color-text)]">
+        {current.front}
+      </p>
       {revealed ? (
         <>
-          <p className={styles.ReviewSessionBack}>{current.back}</p>
-          {current.notes ? <p className={styles.ReviewSessionNotes}>{current.notes}</p> : null}
-          <div className={styles.ReviewSessionSpeaker}>
-            <Button type="button" onClick={() => speakEnglish(current.back)}>
+          <p className="m-0 text-[var(--color-text)]">{current.back}</p>
+          {current.notes ? <p className="m-0 text-[var(--color-muted)]">{current.notes}</p> : null}
+          <div className="grid gap-2">
+            <Button type="button" onClick={() => speakEnglish(current.back)} disabled={grading !== null}>
               🔊
             </Button>
           </div>
-          <div className={styles.ReviewSessionGrades}>
+          <div className="grid grid-cols-2 gap-2">
             {(["again", "hard", "good", "easy"] as const).map((grade) => (
               <Button
                 key={grade}
                 type="button"
                 variant={grade === "good" ? "primary" : "secondary"}
+                disabled={grading !== null}
                 onClick={async () => {
+                  setGrading(grade);
                   const result = await gradeAction({ flashcardId: current.id, grade });
                   const nextQueue = queue.slice(1);
                   if (result.ok && result.shouldRequeue) {
@@ -69,15 +81,24 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
                   setQueue(nextQueue);
                   setReviewedNow((value) => value + 1);
                   setRevealed(false);
+                  setGrading(null);
                 }}
               >
-                {grade === "again" ? "Again" : grade === "hard" ? "Hard" : grade === "good" ? "Good" : "Easy"}
+                {grading === grade
+                  ? "Zapisywanie..."
+                  : grade === "again"
+                    ? "Again"
+                    : grade === "hard"
+                      ? "Hard"
+                      : grade === "good"
+                        ? "Good"
+                        : "Easy"}
               </Button>
             ))}
           </div>
         </>
       ) : (
-        <Button type="button" variant="primary" onClick={() => setRevealed(true)}>
+        <Button type="button" variant="primary" onClick={() => setRevealed(true)} disabled={grading !== null}>
           Pokaż odpowiedź
         </Button>
       )}

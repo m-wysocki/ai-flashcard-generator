@@ -41,7 +41,7 @@ This repo uses a single-context domain docs layout. See `docs/agents/domain.md`.
 - Validation: Zod for form payloads, API/server action payloads, auth input, and AI structured output.
 - AI provider: OpenAI API, called only from server-side code.
 - Review scheduling: FSRS for spaced repetition state and next-review scheduling.
-- UI: SCSS Modules and Radix UI, mobile-first.
+- UI: Tailwind CSS, reusable UI primitives, and Radix UI, mobile-first.
 - Deployment target: Vercel with Neon.
 
 ## Domain Rules
@@ -99,25 +99,12 @@ This repo uses a single-context domain docs layout. See `docs/agents/domain.md`.
 - Include an actionable empty state when no cards are due.
 - Keep the public root page minimal and honest about restricted access.
 - Support Polish and English UI language demos; store language preference locally in the browser.
-- Use Wispr Flow (`https://wisprflow.ai/`) as the visual inspiration for typography and overall styling: modern SaaS polish, generous readable sans-serif type, soft neutral backgrounds, restrained high-contrast CTAs, subtle rounded interface surfaces, and light product-like UI framing. Do not copy Wispr Flow branding, assets, logo, or exact layouts.
+- `DESIGN.md` is the source of truth for visual decisions: colors, typography, spacing, radius, shadows, component appearance, and visual tone.
+- If `DESIGN.md` conflicts with PRD scope, MVP behavior, or domain rules, pause and ask before implementation.
 - Prefer clean, accessible, responsive UI over decorative complexity.
-- Extract reusable UI into small focused components under `src/components`. Break pages into the smallest components that still have a clear purpose, such as buttons, badges, panels, form fields, auth panels, preview cards, headers, and repeated content blocks. Pages should compose these components instead of owning detailed UI primitives directly.
-- Use SCSS Modules for component styling.
-- Name component-level classes in PascalCase.
-- Prefer a parent class with nested child selectors using the `&Child` convention.
-- Example:
-
-```scss
-.Flashcard {
-  &Header {
-    display: flex;
-  }
-
-  &Content {
-    padding: 1rem;
-  }
-}
-```
+- Extract reusable UI into small focused components under `src/components`.
+- Prefer reusable UI primitives under `src/components/ui/*` where practical.
+- Pages should compose domain components and primitives instead of owning detailed UI primitives directly.
 
 ## Engineering Rules
 

@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #fff8f4;
+  --color-surface: #fff8f4;
+  --color-surface-soft: #fbf2eb;
+  --color-surface-raised: #ffffff;
+  --color-text: #2e4f29;
+  --color-muted: #45483b;
+  --color-border: #c5c8b6;
+  --color-primary: #90a955;
+  --color-primary-hover: #7f9848;
+  --color-secondary: #2e4f29;
+  --color-tertiary: #675c55;
+  --color-accent: #d2ed91;
+  --color-accent-soft: #edf7d3;
+}
+
+:root {
+  color-scheme: light;
+  --font-display: var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family:
+    var(--font-sans), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  color: var(--color-secondary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(140%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}

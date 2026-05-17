@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { EB_Garamond, Figtree } from "next/font/google";
-import "./globals.scss";
+import { Manrope } from "next/font/google";
+import "./globals.css";
 
-const figtree = Figtree({
+const manrope = Manrope({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
-  display: "swap",
-});
-
-const ebGaramond = EB_Garamond({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-display",
   display: "swap",
 });
 
@@ -25,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pl" className={`${figtree.variable} ${ebGaramond.variable}`}>
+    <html lang="pl" className={manrope.variable}>
       <body>{children}</body>
     </html>
   );

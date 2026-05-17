@@ -27,4 +27,33 @@ describe("ReviewSession", () => {
     await waitFor(() => expect(gradeAction).toHaveBeenCalledTimes(2));
     await screen.findByText("To wszystko na teraz.");
   });
+
+  it("shows pending feedback and blocks grade buttons during grading", async () => {
+    let resolveGrade: ((value: { ok: boolean; shouldRequeue?: boolean }) => void) | undefined;
+    const gradeAction = jest.fn().mockImplementation(
+      () =>
+        new Promise<{ ok: boolean; shouldRequeue?: boolean }>((resolve) => {
+          resolveGrade = resolve;
+        }),
+    );
+
+    render(
+      <ReviewSession
+        initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+        stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+        gradeAction={gradeAction}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+    fireEvent.click(screen.getByRole("button", { name: "Good" }));
+
+    expect(screen.getByRole("button", { name: "Zapisywanie..." })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Again" })).toBeDisabled();
+
+    if (resolveGrade) {
+      resolveGrade({ ok: true, shouldRequeue: false });
+    }
+    await screen.findByText("To wszystko na teraz.");
+  });
 });

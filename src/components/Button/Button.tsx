@@ -5,7 +5,7 @@ import styles from "./Button.module.scss";
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   asChild?: boolean;
   children: ReactNode;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "inverted" | "outlined";
 };
 
 export function Button({

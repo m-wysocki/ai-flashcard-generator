@@ -1,15 +1,29 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "./prisma-flashcards";
 import { createManualFlashcard, deleteManualFlashcard, updateManualFlashcard } from "./service";
 
-export async function createManualFlashcardAction(formData: FormData) {
+export type FlashcardActionState = { ok: true } | { ok: false; error: string };
+
+const defaultFlashcardActionError = "Nie udało się zapisać fiszki.";
+
+export async function createManualFlashcardAction(
+  stateOrFormData: FlashcardActionState | FormData | null,
+  maybeFormData?: FormData,
+): Promise<FlashcardActionState> {
+  const formData = stateOrFormData instanceof FormData ? stateOrFormData : maybeFormData;
+
+  if (!formData) {
+    return { ok: false, error: defaultFlashcardActionError };
+  }
+
   const userId = await getAuthenticatedUserId();
 
-  await createManualFlashcard(
+  const result = await createManualFlashcard(
     {
       userId,
       front: formData.get("front"),
@@ -19,13 +33,18 @@ export async function createManualFlashcardAction(formData: FormData) {
     { flashcards: prismaFlashcardsRepository },
   );
 
-  revalidatePath("/app");
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/app/flashcards");
+  redirect("/app/flashcards?tab=all");
 }
 
-export async function updateManualFlashcardAction(formData: FormData) {
+export async function updateManualFlashcardAction(formData: FormData): Promise<FlashcardActionState> {
   const userId = await getAuthenticatedUserId();
 
-  await updateManualFlashcard(
+  const result = await updateManualFlashcard(
     {
       userId,
       flashcardId: formData.get("flashcardId"),
@@ -36,13 +55,18 @@ export async function updateManualFlashcardAction(formData: FormData) {
     { flashcards: prismaFlashcardsRepository },
   );
 
-  revalidatePath("/app");
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/app/flashcards");
+  return { ok: true };
 }
 
-export async function deleteManualFlashcardAction(formData: FormData) {
+export async function deleteManualFlashcardAction(formData: FormData): Promise<FlashcardActionState> {
   const userId = await getAuthenticatedUserId();
 
-  await deleteManualFlashcard(
+  const result = await deleteManualFlashcard(
     {
       userId,
       flashcardId: formData.get("flashcardId"),
@@ -50,7 +74,12 @@ export async function deleteManualFlashcardAction(formData: FormData) {
     { flashcards: prismaFlashcardsRepository },
   );
 
-  revalidatePath("/app");
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/app/flashcards");
+  return { ok: true };
 }
 
 async function getAuthenticatedUserId() {
@@ -58,13 +87,13 @@ async function getAuthenticatedUserId() {
   const email = session?.user?.email;
 
   if (!email) {
-    throw new Error("Brak zalogowanego użytkownika.");
+    return Promise.reject(new Error(defaultFlashcardActionError));
   }
 
   const user = await prismaUserCredentialsRepository.findByEmail(email);
 
   if (!user) {
-    throw new Error("Brak zalogowanego użytkownika.");
+    return Promise.reject(new Error(defaultFlashcardActionError));
   }
 
   return user.id;
