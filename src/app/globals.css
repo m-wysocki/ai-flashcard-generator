@@ -1,19 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #fff8f4;
-  --color-surface: #fff8f4;
-  --color-surface-soft: #fbf2eb;
+  --color-background: #fef9ea;
+  --color-surface: #f3efe0;
+  --color-surface-soft: #f8f4e5;
   --color-surface-raised: #ffffff;
-  --color-text: #2e4f29;
-  --color-muted: #45483b;
-  --color-border: #c5c8b6;
-  --color-primary: #90a955;
-  --color-primary-hover: #7f9848;
-  --color-secondary: #2e4f29;
-  --color-tertiary: #675c55;
-  --color-accent: #d2ed91;
-  --color-accent-soft: #edf7d3;
+  --color-text: #1a1a1a;
+  --color-muted: #58423d;
+  --color-border: #1a1a1a;
+  --color-primary: #ff7a5c;
+  --color-primary-hover: #ff6d4e;
+  --color-secondary: #ffd966;
+  --color-tertiary: #a3a1a1;
+  --color-accent: #ffe088;
+  --color-accent-soft: #ffefba;
+  --color-danger: #ba1a1a;
+  --border-strong: 2px;
+  --shadow-offset: 4px 4px 0 #1a1a1a;
+  --shadow-offset-pressed: 2px 2px 0 #1a1a1a;
+  --shadow-offset-modal: 8px 8px 0 #1a1a1a;
 }
 
 :root {
@@ -47,7 +52,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 a {

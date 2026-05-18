@@ -16,7 +16,7 @@ export const StatList = ({ items, className, ...props }: StatListProps) => {
       {items.map((item) => (
         <div
           key={item.label}
-          className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3"
+          className="rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-offset)]"
         >
           <dt className="text-xs text-[var(--color-muted)]">{item.label}</dt>
           <dd className="text-base font-semibold">{item.value}</dd>
@@ -25,4 +25,3 @@ export const StatList = ({ items, className, ...props }: StatListProps) => {
     </dl>
   );
 };
-

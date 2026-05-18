@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { ReviewSession } from "./ReviewSession";
+import { FlashcardsReviewSession } from "./FlashcardsReviewSession";
 
-describe("ReviewSession", () => {
+describe("FlashcardsReviewSession", () => {
   it("reveals answer and requeues card on Again", async () => {
     const gradeAction = jest
       .fn()
@@ -9,7 +9,7 @@ describe("ReviewSession", () => {
       .mockResolvedValueOnce({ ok: true, shouldRequeue: false });
 
     render(
-      <ReviewSession
+      <FlashcardsReviewSession
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
@@ -38,7 +38,7 @@ describe("ReviewSession", () => {
     );
 
     render(
-      <ReviewSession
+      <FlashcardsReviewSession
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
@@ -61,7 +61,7 @@ describe("ReviewSession", () => {
     const gradeAction = jest.fn().mockResolvedValue({ ok: false });
 
     render(
-      <ReviewSession
+      <FlashcardsReviewSession
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}

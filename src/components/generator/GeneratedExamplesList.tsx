@@ -52,7 +52,7 @@ export function GeneratedExamplesList({
           return (
             <li
               key={`${example.english}-select-${index}`}
-              className="grid gap-2 rounded-lg border border-[var(--color-border)] p-3"
+              className="grid gap-2 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] p-3"
             >
               <p>{example.polish}</p>
               <p className="font-semibold">{example.english}</p>

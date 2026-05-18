@@ -12,13 +12,17 @@ type ReviewCard = {
   notes: string | null;
 };
 
-type ReviewSessionProps = {
+type FlashcardsReviewSessionProps = {
   initialCards: ReviewCard[];
   stats: { dueToday: number; totalCards: number; reviewedToday: number };
   gradeAction: (input: { flashcardId: string; grade: ReviewGrade }) => Promise<{ ok: boolean; shouldRequeue?: boolean }>;
 };
 
-export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessionProps) {
+export function FlashcardsReviewSession({
+  initialCards,
+  stats,
+  gradeAction,
+}: FlashcardsReviewSessionProps) {
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
   const [reviewedNow, setReviewedNow] = useState(0);
@@ -40,20 +44,20 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
   return (
     <main className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4">
       <header className="grid grid-cols-3 gap-2">
-        <p className="m-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)]">
+        <p className="m-0 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)] shadow-[var(--shadow-offset)]">
           Do powtórki dzisiaj: {stats.dueToday}
         </p>
-        <p className="m-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)]">
+        <p className="m-0 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)] shadow-[var(--shadow-offset)]">
           Wszystkie fiszki: {stats.totalCards}
         </p>
-        <p className="m-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)]">
+        <p className="m-0 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)] shadow-[var(--shadow-offset)]">
           Powtórzone dzisiaj: {stats.reviewedToday + reviewedNow}
         </p>
       </header>
       <p className="m-0 text-sm text-[var(--color-muted)]">
         {reviewedNow + 1} / {Math.max(initialCards.length, reviewedNow + 1)}
       </p>
-      <p className="m-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xl text-[var(--color-text)]">
+      <p className="m-0 rounded-xl border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xl text-[var(--color-text)] shadow-[var(--shadow-offset)]">
         {current.front}
       </p>
       {revealed ? (
@@ -103,7 +107,7 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
               </Button>
             ))}
           </div>
-          {error ? <p className="m-0 text-sm text-red-700">{error}</p> : null}
+          {error ? <p className="m-0 text-sm text-[var(--color-danger)]">{error}</p> : null}
         </>
       ) : (
         <Button type="button" variant="primary" onClick={() => setRevealed(true)} disabled={grading !== null}>

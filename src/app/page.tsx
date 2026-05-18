@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Panel } from "@/components/ui/Panel";
 
 export default function HomePage() {
@@ -45,17 +44,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Panel>
-        <Card className="grid gap-3 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-            How it works
-          </p>
-          <ul className="grid gap-2 text-sm text-[var(--color-text)]">
-            <li>1. Add a Polish thought or an English phrase.</li>
-            <li>2. Get structured examples and meanings.</li>
-            <li>3. Save one polished flashcard and review it later.</li>
-          </ul>
-        </Card>
+      <Panel className="grid gap-3 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+          How it works
+        </p>
+        <ul className="grid gap-2 text-sm text-[var(--color-text)]">
+          <li>1. Add a Polish thought or an English phrase.</li>
+          <li>2. Get structured examples and meanings.</li>
+          <li>3. Save one polished flashcard and review it later.</li>
+        </ul>
       </Panel>
 
       <footer className="mt-auto text-xs text-[var(--color-muted)]">

@@ -10,7 +10,7 @@ export const TabsList = ({
 }: ComponentPropsWithoutRef<typeof TabsPrimitive.List>) => (
   <TabsPrimitive.List
     className={cn(
-      "inline-flex h-10 items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-1",
+      "inline-flex h-10 items-center rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface-soft)] p-1",
       className,
     )}
     {...props}
@@ -36,4 +36,3 @@ export const TabsContent = ({
 }: ComponentPropsWithoutRef<typeof TabsPrimitive.Content>) => (
   <TabsPrimitive.Content className={cn("mt-4", className)} {...props} />
 );
-

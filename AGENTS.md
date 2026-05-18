@@ -42,6 +42,7 @@ Use these agent instructions, `idea.md`, and the current codebase as domain cont
 - AI provider: OpenAI API, called only from server-side code.
 - Review scheduling: FSRS for spaced repetition state and next-review scheduling.
 - UI: Tailwind CSS, reusable UI primitives, and Radix UI, mobile-first.
+- Icons: use `lucide-react` as the default icon library whenever icon buttons or UI icons are requested.
 - Deployment target: Vercel with Neon.
 
 ## Domain Rules

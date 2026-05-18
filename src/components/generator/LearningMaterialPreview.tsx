@@ -19,7 +19,7 @@ export function LearningMaterialPreview({
         <span>{inputLabel}</span>
         <span>{modeLabel}</span>
       </div>
-      <div className="grid gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-3">
+      <div className="grid gap-1 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface-soft)] p-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
           {outputLabel}
         </p>

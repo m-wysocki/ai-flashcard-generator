@@ -19,7 +19,10 @@ export function BottomNav() {
   return (
     <>
       <ProgressBar isVisible={isPending} />
-      <nav aria-label="Główna nawigacja" className="fixed inset-x-0 bottom-0 border-t border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+      <nav
+        aria-label="Główna nawigacja"
+        className="fixed inset-x-0 bottom-0 border-t-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2"
+      >
         <ul className="mx-auto grid w-full max-w-md grid-cols-2 gap-2">
           {links.map((link) => {
             const isActive = pathname === link.href;
@@ -31,10 +34,10 @@ export function BottomNav() {
                   onClick={() => setPendingHref(link.href)}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "block rounded-lg px-3 py-2 text-center text-sm font-medium",
+                    "block rounded-lg border-[var(--border-strong)] px-3 py-2 text-center text-sm font-bold shadow-[var(--shadow-offset)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-[var(--shadow-offset-pressed)]",
                     isActive
-                      ? "bg-[var(--color-primary)] text-white"
-                      : "text-[var(--color-muted)] hover:bg-[var(--color-surface-soft)]",
+                      ? "border-[var(--color-border)] bg-[var(--color-primary)] text-[var(--color-text)]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-surface-soft)]",
                   )}
                 >
                   {link.label}

@@ -17,7 +17,7 @@ export const DropdownMenuContent = ({
     <DropdownMenuPrimitive.Content
       sideOffset={sideOffset}
       className={cn(
-        "z-50 min-w-40 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1.5 shadow-sm",
+        "z-50 min-w-40 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-1.5 shadow-[var(--shadow-offset)]",
         className,
       )}
       {...props}
@@ -37,4 +37,3 @@ export const DropdownMenuItem = ({
     {...props}
   />
 );
-

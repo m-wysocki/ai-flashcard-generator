@@ -1,98 +1,98 @@
 ---
-name: Moss & Forest Botanical
+name: Drawn Playful System
 colors:
-  surface: '#fff8f4'
-  surface-dim: '#e1d9d2'
-  surface-bright: '#fff8f4'
+  surface: '#fef9ea'
+  surface-dim: '#dedacc'
+  surface-bright: '#fef9ea'
   surface-container-lowest: '#ffffff'
-  surface-container-low: '#fbf2eb'
-  surface-container: '#f5ece5'
-  surface-container-high: '#efe7e0'
-  surface-container-highest: '#eae1da'
-  on-surface: '#1f1b17'
-  on-surface-variant: '#45483b'
-  inverse-surface: '#34302b'
-  inverse-on-surface: '#f8efe8'
-  outline: '#757969'
-  outline-variant: '#c5c8b6'
-  surface-tint: '#506619'
-  primary: '#506619'
+  surface-container-low: '#f8f4e5'
+  surface-container: '#f2eedf'
+  surface-container-high: '#ece8d9'
+  surface-container-highest: '#e6e3d4'
+  on-surface: '#1d1c13'
+  on-surface-variant: '#58423d'
+  inverse-surface: '#323127'
+  inverse-on-surface: '#f5f1e2'
+  outline: '#8b716b'
+  outline-variant: '#dfc0b9'
+  surface-tint: '#a73921'
+  primary: '#a73921'
   on-primary: '#ffffff'
-  primary-container: '#90a955'
-  on-primary-container: '#2c3c00'
-  inverse-primary: '#b6d178'
-  secondary: '#45673e'
+  primary-container: '#ff7a5c'
+  on-primary-container: '#711300'
+  inverse-primary: '#ffb4a3'
+  secondary: '#735c00'
   on-secondary: '#ffffff'
-  secondary-container: '#c3ebb7'
-  on-secondary-container: '#496b42'
-  tertiary: '#675c55'
+  secondary-container: '#fcd664'
+  on-secondary-container: '#745c00'
+  tertiary: '#5f5e5e'
   on-tertiary: '#ffffff'
-  tertiary-container: '#ab9d95'
-  on-tertiary-container: '#3e352f'
+  tertiary-container: '#a3a1a1'
+  on-tertiary-container: '#383838'
   error: '#ba1a1a'
   on-error: '#ffffff'
   error-container: '#ffdad6'
   on-error-container: '#93000a'
-  primary-fixed: '#d2ed91'
-  primary-fixed-dim: '#b6d178'
-  on-primary-fixed: '#151f00'
-  on-primary-fixed-variant: '#394d00'
-  secondary-fixed: '#c6edba'
-  secondary-fixed-dim: '#aad19f'
-  on-secondary-fixed: '#022103'
-  on-secondary-fixed-variant: '#2d4e29'
-  tertiary-fixed: '#efdfd6'
-  tertiary-fixed-dim: '#d3c4bb'
-  on-tertiary-fixed: '#221a15'
-  on-tertiary-fixed-variant: '#4f453e'
-  background: '#fff8f4'
-  on-background: '#1f1b17'
-  surface-variant: '#eae1da'
+  primary-fixed: '#ffdad2'
+  primary-fixed-dim: '#ffb4a3'
+  on-primary-fixed: '#3d0600'
+  on-primary-fixed-variant: '#86220c'
+  secondary-fixed: '#ffe088'
+  secondary-fixed-dim: '#e7c353'
+  on-secondary-fixed: '#241a00'
+  on-secondary-fixed-variant: '#574500'
+  tertiary-fixed: '#e4e2e1'
+  tertiary-fixed-dim: '#c8c6c6'
+  on-tertiary-fixed: '#1b1c1c'
+  on-tertiary-fixed-variant: '#474747'
+  background: '#fef9ea'
+  on-background: '#1d1c13'
+  surface-variant: '#e6e3d4'
 typography:
   headline-xl:
-    fontFamily: Manrope
-    fontSize: 48px
-    fontWeight: '800'
-    lineHeight: 56px
+    fontFamily: Quicksand
+    fontSize: 40px
+    fontWeight: '700'
+    lineHeight: 48px
     letterSpacing: -0.02em
   headline-lg:
-    fontFamily: Manrope
+    fontFamily: Quicksand
     fontSize: 32px
     fontWeight: '700'
-    lineHeight: 40px
+    lineHeight: 38px
     letterSpacing: -0.01em
-  headline-lg-mobile:
-    fontFamily: Manrope
-    fontSize: 28px
-    fontWeight: '700'
-    lineHeight: 36px
   headline-md:
-    fontFamily: Manrope
+    fontFamily: Quicksand
     fontSize: 24px
-    fontWeight: '600'
-    lineHeight: 32px
+    fontWeight: '700'
+    lineHeight: 30px
   body-lg:
-    fontFamily: Manrope
+    fontFamily: Quicksand
     fontSize: 18px
-    fontWeight: '400'
-    lineHeight: 28px
+    fontWeight: '500'
+    lineHeight: 26px
   body-md:
-    fontFamily: Manrope
+    fontFamily: Quicksand
     fontSize: 16px
-    fontWeight: '400'
+    fontWeight: '500'
     lineHeight: 24px
-  label-md:
-    fontFamily: Manrope
+  label-lg:
+    fontFamily: Quicksand
     fontSize: 14px
-    fontWeight: '600'
+    fontWeight: '700'
     lineHeight: 20px
-    letterSpacing: 0.02em
+    letterSpacing: 0.04em
   label-sm:
-    fontFamily: Manrope
+    fontFamily: Quicksand
     fontSize: 12px
     fontWeight: '700'
     lineHeight: 16px
-    letterSpacing: 0.05em
+    letterSpacing: 0.02em
+  headline-lg-mobile:
+    fontFamily: Quicksand
+    fontSize: 28px
+    fontWeight: '700'
+    lineHeight: 34px
 rounded:
   sm: 0.25rem
   DEFAULT: 0.5rem
@@ -101,61 +101,93 @@ rounded:
   xl: 1.5rem
   full: 9999px
 spacing:
-  unit: 8px
-  container-max: 1200px
-  gutter: 24px
-  margin-mobile: 16px
+  unit: 4px
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 32px
+  gutter: 16px
+  margin-mobile: 20px
   margin-desktop: 40px
 ---
 
 ## Brand & Style
-The design system is rooted in the "Moss & Forest Botanical" aesthetic, prioritizing a calm, organic, and professional atmosphere for a premium language learning experience. It leverages a modern-minimalist approach with subtle tactile influences, evoking the quiet focus of a nature-inspired study space.
 
-The target audience seeks a sophisticated, distraction-free environment. The UI should feel grounded and rhythmic, using generous whitespace (beige) and deep botanical tones to guide the user through their educational journey without the friction of loud, digital-first interfaces.
+This design system embraces a "Neo-Brutalist Comic" aesthetic. It is designed to feel tactile, hand-drawn, and approachable, moving away from the clinical precision of standard SaaS interfaces. The personality is friendly, optimistic, and high-energy, making it ideal for travel, lifestyle, or consumer-facing mobile applications.
+
+The visual style is characterized by "hard-line" illustrations. It uses thick, consistent strokes to define boundaries and flat, offset shadows to create depth without using gradients or blurs. The goal is to evoke the nostalgic feeling of a high-quality physical comic book or a modern indie video game.
+
+**Key Stylistic Pillars:**
+- **Illustrative Borders:** Everything has a defined 2px black outline to create a "drawn" feel.
+- **Flat Depth:** Depth is achieved through rigid X/Y offsets rather than soft shadows.
+- **Warmth:** A paper-like background ensures the high-contrast ink lines feel comfortable rather than harsh.
 
 ## Colors
-This design system utilizes a natural, high-contrast palette to ensure legibility and brand character.
 
-- **Primary (#90A955):** Moss Green. Used for primary actions, progress indicators, and active states. It represents growth and momentum.
-- **Secondary (#2E4F29):** Forest Green. Reserved for high-contrast elements, headers, and structural borders. It provides the "ink" for the system.
-- **Surface (#EDDDD4):** Warm Beige. The primary background color for all screens. It reduces eye strain compared to pure white.
-- **Text:** Primarily Forest Green (#2E4F29) for headings and body to maintain the botanical theme. A muted dark neutral is used for secondary metadata.
+The palette is built around high-contrast "Ink" and warm "Paper" tones, accented by muted but vibrant pastels.
+
+- **Primary (#FF7A5C):** A soft coral used for the most important calls to action. It should always be paired with a thick black border.
+- **Secondary (#FFD966):** A sunny yellow used for supportive actions and highlights.
+- **Neutral/Surface (#F3EFE0):** A warm beige that acts as the primary container color, mimicking the look of recycled paper or cardstock.
+- **Ink (#1A1A1A):** The essential color for all borders, shadows, and primary text. Never use pure black (#000000) to keep the "hand-drawn" look slightly softer.
 
 ## Typography
-Manrope is chosen for its geometric clarity and modern humanist terminals, which bridge the gap between technical precision and organic friendliness. 
 
-Headings should use tighter letter-spacing and heavier weights to feel impactful against the light beige surfaces. Body text maintains a generous line height to enhance readability during long learning sessions. All typography defaults to Forest Green (#2E4F29) to ensure a premium, integrated look.
+This design system uses **Quicksand** for all levels to maintain a consistent, rounded, and friendly voice. 
+
+- **Weight Usage:** Headlines should strictly use the Bold (700) weight to stand up against the thick 2px borders of the UI. Body text uses Medium (500) for better legibility against the off-white background.
+- **Casing:** Labels and small UI hints should often use `uppercase` to lean into the comic-book aesthetic.
+- **Color:** Most text should be in the "Ink" color. For the Primary/Secondary buttons, text remains "Ink" to ensure maximum contrast and readability against the pastel backgrounds.
 
 ## Layout & Spacing
-The layout follows a **fluid grid** model with a 12-column structure for desktop and a 4-column structure for mobile. 
 
-The spacing rhythm is based on an 8px baseline. Vertical rhythm is critical; use larger gaps (64px+) between major content sections to maintain the "calm" brand pillar. Content should be centered with maximum widths to prevent line lengths from becoming unreadable on ultra-wide displays.
+The layout follows a **Fluid Grid** model with generous margins to allow the "drawn" elements room to breathe. 
+
+- **Rhythm:** An 8px base grid is used for all internal component spacing.
+- **Margins:** On mobile, use a 20px side margin. On desktop, content is contained within a max-width of 1200px.
+- **Gutters:** Standard gutter between cards and columns is 16px.
+- **Padding:** Components should have "loose" internal padding (minimum 16px) to maintain the playful, un-cramped feel.
 
 ## Elevation & Depth
-In alignment with the botanical theme, depth is communicated through **Tonal Layers** and **Low-Contrast Outlines** rather than heavy shadows.
 
-- **Level 0 (Base):** Warm Beige (#EDDDD4) surface.
-- **Level 1 (Cards/Containers):** A slightly lighter tint of the surface color or a pure white surface with a 1px border in Forest Green (#2E4F29) at 15% opacity.
-- **Level 2 (Interactive):** When hovered or active, elements use a soft, diffuse shadow tinted with Moss Green to suggest a natural "lift" from the page.
+This design system rejects blurred shadows in favor of **Hard-Offset Shadows**. Depth is used to indicate interactivity.
+
+- **The Shadow Style:** Shadows are solid #1A1A1A with 100% opacity.
+- **Resting State:** Elements like cards and primary buttons have a 4px offset to the bottom and 4px to the right.
+- **Active/Hover State:** When pressed, the offset decreases to 1px or 2px, and the element "moves" toward the shadow, creating a tactile "click" sensation.
+- **Layering:** Background elements have no shadow. Interactive elements have the standard 4px shadow. Floating elements (modals) have an 8px shadow.
 
 ## Shapes
-The shape language is "Rounded," utilizing a 0.5rem (8px) base radius. This creates a friendly but disciplined appearance. Buttons and input fields should feel substantial and soft to the touch, avoiding the clinical feel of sharp corners or the overly casual look of full pill shapes.
+
+The shape language is "Soft-Geometric." While the outlines are harsh and black, the corners are always rounded to maintain the friendly brand voice.
+
+- **Corners:** Use a standard 0.5rem (8px) radius for most containers. 
+- **Large Elements:** Featured cards or banners can use up to 1rem (16px) for a more "pillowy" look.
+- **Borders:** Every shape must have a solid 2px border in the "Ink" color. 
+- **Irregularity:** To enhance the hand-drawn feel, secondary decorative elements may use slightly asymmetrical border radii (e.g., 8px top-left, 12px bottom-right).
 
 ## Components
 
 ### Buttons
-- **Primary:** Moss Green (#90A955) background with White or Beige text. Bold weight.
-- **Secondary:** Transparent background with a 2px Forest Green (#2E4F29) border.
-- **Ghost:** Forest Green text with no background, used for less critical actions like "Cancel" or "Skip."
+- **Primary:** Coral background, 2px ink border, 4px black offset shadow. Pill-shaped.
+- **Secondary:** Yellow background, 2px ink border, 4px black offset shadow. Pill-shaped.
+- **Text:** Bold Quicksand, centered.
+- **Interaction:** On press, the button translates +2px X and +2px Y, and the shadow size shrinks.
 
-### Cards
-Cards use a white background to pop against the beige surface. They feature a 1px stroke in a muted Forest Green. Padding should be generous (min 24px) to emphasize the premium feel.
+### Cards & Containers
+- **Main Surface:** Beige (#F3EFE0) background with 2px black border.
+- **Shadow:** 4px offset black shadow.
+- **Header:** Use Headline-MD for titles within cards.
 
 ### Input Fields
-Inputs use the beige surface as the fill, with a Forest Green bottom border that expands to a full stroke on focus. Labels use the `label-md` style in Forest Green.
-
-### Chips & Tags
-Small, rounded indicators using a light Moss Green tint (20% opacity) with dark Forest Green text. Used for language levels (e.g., "A1", "B2") or category filtering.
+- **Style:** White background, 2px black border, 8px rounded corners.
+- **Focus:** Border weight remains 2px but the shadow offset increases to 4px to show "lift."
 
 ### Progress Bars
-Track is a 10% opacity Forest Green; the indicator is solid Moss Green. The ends should be rounded to match the system's shape language.
+- **Container:** White background, 2px black border, 12px height, fully rounded.
+- **Indicator:** Primary Coral fill, no border on the inner fill.
+
+### Chips/Tags
+- **Style:** Small, fully rounded (pill) containers with 1px or 2px borders.
+- **Color:** Transparent with black border or Secondary Yellow for "Active" states.

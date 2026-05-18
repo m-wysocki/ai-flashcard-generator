@@ -17,7 +17,7 @@ export const EmptyState = ({
   return (
     <div
       className={cn(
-        "grid gap-2 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center",
+        "grid gap-2 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center shadow-[var(--shadow-offset)]",
         className,
       )}
       {...props}
@@ -28,4 +28,3 @@ export const EmptyState = ({
     </div>
   );
 };
-

@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { ReviewSession } from "@/components/ReviewSession/ReviewSession";
+import { FlashcardsReviewSession } from "@/components/flashcards/FlashcardsReviewSession";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
 import { listUserDueFlashcards } from "@/server/flashcards/service";
@@ -20,7 +20,7 @@ export default async function ReviewPage() {
   ]);
 
   return (
-    <ReviewSession
+    <FlashcardsReviewSession
       initialCards={dueFlashcards.map((card) => ({
         id: card.id,
         front: card.front,

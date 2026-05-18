@@ -31,7 +31,10 @@ export function AuthForm({ action, submitLabel, includeInviteCode = false }: Aut
         <Field label="Invite code" name="inviteCode" type="text" required />
       ) : null}
       {state.error ? (
-        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p
+          role="alert"
+          className="rounded-lg border-[var(--border-strong)] border-[var(--color-danger)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-danger)]"
+        >
           {state.error}
         </p>
       ) : null}

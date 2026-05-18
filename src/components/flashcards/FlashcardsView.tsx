@@ -5,6 +5,9 @@ import { useActionState, useMemo, useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/AlertDialog";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/Dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Field } from "@/components/ui/Field";
+import { StatList } from "@/components/ui/StatList";
+import { TextareaField } from "@/components/ui/TextareaField";
 import { Button } from "@/components/ui/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
@@ -40,12 +43,14 @@ export function FlashcardsView(props: FlashcardsViewProps) {
 
   return (
     <div className="grid gap-4">
-      <div className="grid grid-cols-3 gap-2">
-        <p>Do powtórki dzisiaj: {props.reviewStats?.dueToday ?? dueCards.length}</p>
-        <p>Wszystkie fiszki: {props.reviewStats?.totalCards ?? props.flashcards.length}</p>
-        <p>Powtórzone dzisiaj: {props.reviewStats?.reviewedToday ?? 0}</p>
-      </div>
-      <nav aria-label="Karty fiszek" className="inline-flex gap-2">
+      <StatList
+        items={[
+          { label: "Do powtórki dzisiaj", value: props.reviewStats?.dueToday ?? dueCards.length },
+          { label: "Wszystkie fiszki", value: props.reviewStats?.totalCards ?? props.flashcards.length },
+          { label: "Powtórzone dzisiaj", value: props.reviewStats?.reviewedToday ?? 0 },
+        ]}
+      />
+      <nav aria-label="Karty fiszek" className="inline-flex flex-wrap gap-2">
         <TabLink tab="due" activeTab={props.activeTab} label="Do powtórki" />
         <TabLink tab="all" activeTab={props.activeTab} label="Wszystkie" />
         <TabLink tab="add" activeTab={props.activeTab} label="Dodaj" />
@@ -53,19 +58,12 @@ export function FlashcardsView(props: FlashcardsViewProps) {
 
       {props.activeTab === "add" ? (
         <form className="grid gap-3" action={createFormAction}>
-          <label className="grid gap-1 text-sm">
-            <span>Front (PL)</span>
-            <input name="front" required className="rounded-lg border border-[var(--color-border)] px-3 py-2" />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span>Back (EN)</span>
-            <input name="back" required className="rounded-lg border border-[var(--color-border)] px-3 py-2" />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span>Notatki (opcjonalnie)</span>
-            <textarea name="notes" rows={4} className="rounded-lg border border-[var(--color-border)] p-3" />
-          </label>
-          {createState && !createState.ok ? <p className="text-sm text-red-700">{createState.error}</p> : null}
+          <Field name="front" label="Front (PL)" required />
+          <Field name="back" label="Back (EN)" required />
+          <TextareaField name="notes" label="Notatki (opcjonalnie)" rows={4} />
+          {createState && !createState.ok ? (
+            <p className="text-sm text-[var(--color-danger)]">{createState.error}</p>
+          ) : null}
           <SubmitButton variant="primary" pending={createPending} pendingLabel="Zapisywanie...">
             Zapisz fiszkę
           </SubmitButton>
@@ -110,7 +108,11 @@ function TabLink({
     <Link
       href={`/app/flashcards?tab=${tab}`}
       aria-current={activeTab === tab ? "page" : undefined}
-      className={activeTab === tab ? "font-semibold underline" : ""}
+      className={
+        activeTab === tab
+          ? "inline-flex h-10 items-center rounded-full border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-primary)] px-4 text-sm font-bold text-[var(--color-text)] shadow-[var(--shadow-offset)]"
+          : "inline-flex h-10 items-center rounded-full border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-sm font-bold text-[var(--color-muted)] shadow-[var(--shadow-offset)]"
+      }
     >
       {label}
     </Link>
@@ -135,7 +137,10 @@ function FlashcardsList({
   return (
     <ul className="grid gap-3">
       {flashcards.map((flashcard) => (
-        <li key={flashcard.id} className="rounded-lg border border-[var(--color-border)] p-3">
+        <li
+          key={flashcard.id}
+          className="rounded-lg border-[var(--border-strong)] border-[var(--color-border)] p-3 shadow-[var(--shadow-offset)]"
+        >
           <p className="font-semibold">{flashcard.front}</p>
           <p>{flashcard.back}</p>
           {flashcard.notes ? <p className="text-sm text-[var(--color-muted)]">{flashcard.notes}</p> : null}
@@ -177,10 +182,10 @@ function EditFlashcardDialog({
           }}
         >
           <input type="hidden" name="flashcardId" value={flashcard.id} />
-          <input name="front" defaultValue={flashcard.front} required className="rounded border px-2 py-1" />
-          <input name="back" defaultValue={flashcard.back} required className="rounded border px-2 py-1" />
-          <textarea name="notes" defaultValue={flashcard.notes ?? ""} rows={3} className="rounded border px-2 py-1" />
-          {state && !state.ok ? <p className="text-sm text-red-700">{state.error}</p> : null}
+          <Field name="front" label="Front (PL)" defaultValue={flashcard.front} required />
+          <Field name="back" label="Back (EN)" defaultValue={flashcard.back} required />
+          <TextareaField name="notes" label="Notatki (opcjonalnie)" defaultValue={flashcard.notes ?? ""} rows={3} />
+          {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
           <SubmitButton pending={pending} pendingLabel="Zapisywanie..." variant="primary">
             Zapisz zmiany
           </SubmitButton>
@@ -211,7 +216,7 @@ function DeleteFlashcardDialog({
       <AlertDialogContent>
         <AlertDialogTitle>Usunąć fiszkę?</AlertDialogTitle>
         <AlertDialogDescription>Tej operacji nie można cofnąć.</AlertDialogDescription>
-        {state && !state.ok ? <p className="text-sm text-red-700">{state.error}</p> : null}
+        {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
         <div className="mt-3 flex justify-end gap-2">
           <AlertDialogCancel asChild>
             <Button type="button">Anuluj</Button>
