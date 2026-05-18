@@ -119,6 +119,7 @@ Use these agent instructions, `idea.md`, and the current codebase as domain cont
 - Avoid heavy tests for styling, private helpers, Prisma schema shape, or simple presentational components.
 - Prefer simple, maintainable, type-safe code over broad abstractions.
 - Avoid premature optimization, unnecessary libraries, and enterprise patterns.
+- Keep lines readable in-editor: target max 100 characters per line. For long className/style strings, split into multiline arrays or concatenated segments instead of single-line overflow.
 
 ## Useful Commands
 

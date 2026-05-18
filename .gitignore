@@ -13,3 +13,6 @@ tsconfig.tsbuildinfo
 idea.md
 skills-lock.json
 *skill.log.json
+
+*storybook.log
+storybook-static
