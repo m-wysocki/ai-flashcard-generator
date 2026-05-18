@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { ArrowRight } from "lucide-react";
 import { expect } from "storybook/test";
 import { Button } from "./Button";
 
@@ -29,18 +30,10 @@ export const Secondary: Story = {
   },
 };
 
-export const Inverted: Story = {
-  args: {
-    children: "Kontynuuj",
-    variant: "inverted",
-    size: "md",
-  },
-};
-
-export const Outlined: Story = {
+export const Tertiary: Story = {
   args: {
     children: "Szczegóły",
-    variant: "outlined",
+    variant: "tertiary",
     size: "md",
   },
 };
@@ -75,6 +68,36 @@ export const Disabled: Story = {
     variant: "secondary",
     size: "md",
     disabled: true,
+  },
+};
+
+export const WithIconStart: Story = {
+  args: {
+    children: "Dalej",
+    variant: "primary",
+    size: "md",
+    icon: <ArrowRight size={16} />,
+    iconPosition: "start",
+  },
+};
+
+export const WithIconEnd: Story = {
+  args: {
+    children: "Dalej",
+    variant: "primary",
+    size: "md",
+    icon: <ArrowRight size={16} />,
+    iconPosition: "end",
+  },
+};
+
+export const IconOnly: Story = {
+  args: {
+    "aria-label": "Dalej",
+    variant: "primary",
+    size: "md",
+    icon: <ArrowRight size={16} />,
+    iconOnly: true,
   },
 };
 

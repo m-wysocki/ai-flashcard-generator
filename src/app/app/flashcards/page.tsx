@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { AppFrame } from "@/components/app-shell/AppFrame";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button/Button";
 import { FlashcardsView } from "@/components/flashcards/FlashcardsView";
 import { logoutAction } from "@/server/auth/actions";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";

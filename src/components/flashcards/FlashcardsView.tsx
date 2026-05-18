@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Field } from "@/components/ui/Field";
 import { StatList } from "@/components/ui/StatList";
 import { TextareaField } from "@/components/ui/TextareaField";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
 
@@ -105,17 +105,14 @@ function TabLink({
   label: string;
 }) {
   return (
-    <Link
-      href={`/app/flashcards?tab=${tab}`}
-      aria-current={activeTab === tab ? "page" : undefined}
-      className={
-        activeTab === tab
-          ? "inline-flex h-10 items-center rounded-full border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-primary)] px-4 text-sm font-bold text-[var(--color-text)] shadow-[var(--shadow-offset)]"
-          : "inline-flex h-10 items-center rounded-full border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-sm font-bold text-[var(--color-muted)] shadow-[var(--shadow-offset)]"
-      }
+    <Button
+      asChild
+      variant={activeTab === tab ? "primary" : "tertiary"}
     >
-      {label}
-    </Link>
+      <Link href={`/app/flashcards?tab=${tab}`} aria-current={activeTab === tab ? "page" : undefined}>
+        {label}
+      </Link>
+    </Button>
   );
 }
 

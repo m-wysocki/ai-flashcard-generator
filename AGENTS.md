@@ -105,6 +105,9 @@ Use these agent instructions, `idea.md`, and the current codebase as domain cont
 - Prefer clean, accessible, responsive UI over decorative complexity.
 - Extract reusable UI into small focused components under `src/components`.
 - Prefer reusable UI primitives under `src/components/ui/*` where practical.
+- If a UI primitive or component has more than one file (for example component + story +
+  test), place it in its own folder named exactly like the component in PascalCase
+  (for example `src/components/ui/Button/*`).
 - Pages should compose domain components and primitives instead of owning detailed UI primitives directly.
 
 ## Engineering Rules
@@ -120,6 +123,8 @@ Use these agent instructions, `idea.md`, and the current codebase as domain cont
 - Prefer simple, maintainable, type-safe code over broad abstractions.
 - Avoid premature optimization, unnecessary libraries, and enterprise patterns.
 - Keep lines readable in-editor: target max 100 characters per line. For long className/style strings, split into multiline arrays or concatenated segments instead of single-line overflow.
+- After implementing all requested changes from a prompt, run a final code review using the
+  `vercel-react-best-practices` skill before finishing.
 
 ## Useful Commands
 

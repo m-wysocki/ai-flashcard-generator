@@ -3,6 +3,7 @@ import { Quicksand } from "next/font/google";
 import "./globals.css";
 
 const quicksand = Quicksand({
+  weight: ["400", "600", "700"],
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
   display: "swap",

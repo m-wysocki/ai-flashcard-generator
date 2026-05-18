@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { AppFrame } from "@/components/app-shell/AppFrame";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button/Button";
 import { GeneratorView } from "@/components/generator/GeneratorView";
 import { generateLearningMaterialAction } from "@/server/ai/actions";
 import { logoutAction } from "@/server/auth/actions";

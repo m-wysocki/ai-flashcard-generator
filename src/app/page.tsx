@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button/Button";
 import { Panel } from "@/components/ui/Panel";
 
 export default function HomePage() {

@@ -2,7 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 import type { ComponentProps } from "react";
-import { Button } from "./Button";
+import { Button } from "./Button/Button";
 import { Spinner } from "./Spinner";
 
 type SubmitButtonProps = Omit<ComponentProps<typeof Button>, "type"> & {

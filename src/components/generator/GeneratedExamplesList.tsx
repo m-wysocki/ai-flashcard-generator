@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Panel } from "@/components/ui/Panel";
 import type { Material } from "./types";
@@ -58,7 +58,7 @@ export function GeneratedExamplesList({
               <p className="font-semibold">{example.english}</p>
               <Button
                 type="button"
-                variant={isSelected ? "inverted" : "primary"}
+                variant={isSelected ? "secondary" : "primary"}
                 onClick={() => onSelect(index)}
               >
                 {selectLabel}

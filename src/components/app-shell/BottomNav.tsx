@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/Button/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { cn } from "@/lib/cn";
 
 const links = [
   { href: "/app", label: "Generator" },
@@ -29,19 +29,18 @@ export function BottomNav() {
 
             return (
               <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={() => setPendingHref(link.href)}
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "block rounded-lg border-[var(--border-strong)] px-3 py-2 text-center text-sm font-bold shadow-[var(--shadow-offset)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-[var(--shadow-offset-pressed)]",
-                    isActive
-                      ? "border-[var(--color-border)] bg-[var(--color-primary)] text-[var(--color-text)]"
-                      : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-surface-soft)]",
-                  )}
+                <Button
+                  asChild
+                  variant={isActive ? "primary" : "tertiary"}
                 >
-                  {link.label}
-                </Link>
+                  <Link
+                    href={link.href}
+                    onClick={() => setPendingHref(link.href)}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                </Button>
               </li>
             );
           })}
