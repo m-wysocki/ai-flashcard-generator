@@ -46,7 +46,7 @@ export function GeneratorView({
     : copy.placeholderPrompt;
 
   return (
-    <div className="grid gap-4">
+    <div data-ui="GeneratorView" className="grid gap-4">
       <GeneratorLanguageToggle language={language} onChange={setLanguage} />
       <GeneratorForm
         action={formAction}

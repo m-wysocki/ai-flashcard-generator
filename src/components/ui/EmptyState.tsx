@@ -16,6 +16,7 @@ export const EmptyState = ({
 }: EmptyStateProps) => {
   return (
     <div
+      data-ui="EmptyState"
       className={cn(
         "grid gap-2 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center shadow-[var(--shadow-offset)]",
         className,

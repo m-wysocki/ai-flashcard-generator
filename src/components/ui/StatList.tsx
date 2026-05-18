@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
+import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 
 type StatItem = {
   label: string;
@@ -12,15 +13,16 @@ type StatListProps = HTMLAttributes<HTMLDListElement> & {
 
 export const StatList = ({ items, className, ...props }: StatListProps) => {
   return (
-    <dl className={cn("grid grid-cols-3 gap-2", className)} {...props}>
+    <dl data-ui="StatList" className={cn("grid grid-cols-3 gap-2", className)} {...props}>
       {items.map((item) => (
-        <div
+        <ShadowFrame
+          as="article"
           key={item.label}
-          className="rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-offset)]"
+          className="p-3"
         >
           <dt className="text-xs text-[var(--color-muted)]">{item.label}</dt>
           <dd className="text-base font-semibold">{item.value}</dd>
-        </div>
+        </ShadowFrame>
       ))}
     </dl>
   );

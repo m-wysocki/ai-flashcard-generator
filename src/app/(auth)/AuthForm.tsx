@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Field } from "@/components/ui/Field";
+import { Field } from "@/components/ui/Field/Field";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import type { AuthActionState } from "@/server/auth/actions";
 
@@ -17,7 +17,7 @@ export function AuthForm({ action, submitLabel, includeInviteCode = false }: Aut
   const [state, formAction, isPending] = useActionState(action, initialState);
 
   return (
-    <form className="grid gap-3" action={formAction}>
+    <form data-ui="AuthForm" className="grid gap-3" action={formAction}>
       <Field label="Email" name="email" type="email" autoComplete="email" required />
       <Field
         label="Password"

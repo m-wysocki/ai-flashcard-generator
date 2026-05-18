@@ -62,6 +62,7 @@ export const Button = ({
 
   return (
     <Component
+      data-ui="Button"
       className={cn(
         buttonVariants({ variant, size }),
         iconOnly ? cn("gap-0 p-0", iconOnlySizeClass) : null,

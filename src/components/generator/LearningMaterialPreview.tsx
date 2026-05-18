@@ -14,7 +14,7 @@ export function LearningMaterialPreview({
   outputText,
 }: LearningMaterialPreviewProps) {
   return (
-    <Panel className="grid gap-3">
+    <Panel data-ui="LearningMaterialPreview" className="grid gap-3">
       <div className="flex items-center justify-between text-xs text-[var(--color-muted)]">
         <span>{inputLabel}</span>
         <span>{modeLabel}</span>

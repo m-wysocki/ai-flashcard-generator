@@ -21,7 +21,13 @@ export const SubmitButton = ({
   const isPending = pending ?? formPending;
 
   return (
-    <Button type="submit" disabled={disabled || isPending} aria-busy={isPending} {...props}>
+    <Button
+      data-ui="SubmitButton"
+      type="submit"
+      disabled={disabled || isPending}
+      aria-busy={isPending}
+      {...props}
+    >
       {isPending ? (
         <>
           <Spinner label={pendingLabel} />

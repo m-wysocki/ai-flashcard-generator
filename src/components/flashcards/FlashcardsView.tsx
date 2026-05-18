@@ -5,9 +5,9 @@ import { useActionState, useMemo, useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/AlertDialog";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/Dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Field } from "@/components/ui/Field";
+import { Field } from "@/components/ui/Field/Field";
+import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import { StatList } from "@/components/ui/StatList";
-import { TextareaField } from "@/components/ui/TextareaField";
 import { Button } from "@/components/ui/Button/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
@@ -42,7 +42,7 @@ export function FlashcardsView(props: FlashcardsViewProps) {
   );
 
   return (
-    <div className="grid gap-4">
+    <div data-ui="FlashcardsView" className="grid gap-4">
       <StatList
         items={[
           { label: "Do powtórki dzisiaj", value: props.reviewStats?.dueToday ?? dueCards.length },
@@ -60,7 +60,7 @@ export function FlashcardsView(props: FlashcardsViewProps) {
         <form className="grid gap-3" action={createFormAction}>
           <Field name="front" label="Front (PL)" required />
           <Field name="back" label="Back (EN)" required />
-          <TextareaField name="notes" label="Notatki (opcjonalnie)" rows={4} />
+          <Field as="textarea" name="notes" label="Notatki (opcjonalnie)" rows={4} />
           {createState && !createState.ok ? (
             <p className="text-sm text-[var(--color-danger)]">{createState.error}</p>
           ) : null}
@@ -106,6 +106,7 @@ function TabLink({
 }) {
   return (
     <Button
+      data-ui="FlashcardsView.TabLink"
       asChild
       variant={activeTab === tab ? "primary" : "tertiary"}
     >
@@ -132,11 +133,12 @@ function FlashcardsList({
   }
 
   return (
-    <ul className="grid gap-3">
+    <ul data-ui="FlashcardsView.FlashcardsList" className="grid gap-3">
       {flashcards.map((flashcard) => (
-        <li
+        <ShadowFrame
+          as="article"
           key={flashcard.id}
-          className="rounded-lg border-[var(--border-strong)] border-[var(--color-border)] p-3 shadow-[var(--shadow-offset)]"
+          className="p-3"
         >
           <p className="font-semibold">{flashcard.front}</p>
           <p>{flashcard.back}</p>
@@ -145,7 +147,7 @@ function FlashcardsList({
             <EditFlashcardDialog flashcard={flashcard} updateFlashcardAction={updateFlashcardAction} />
             <DeleteFlashcardDialog flashcardId={flashcard.id} deleteFlashcardAction={deleteFlashcardAction} />
           </div>
-        </li>
+        </ShadowFrame>
       ))}
     </ul>
   );
@@ -166,7 +168,7 @@ function EditFlashcardDialog({
       <DialogTrigger asChild>
         <Button type="button">Edytuj</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent data-ui="FlashcardsView.EditFlashcardDialog">
         <DialogTitle>Edytuj fiszkę</DialogTitle>
         <DialogDescription>Zmień pola i zapisz.</DialogDescription>
         <form
@@ -181,7 +183,13 @@ function EditFlashcardDialog({
           <input type="hidden" name="flashcardId" value={flashcard.id} />
           <Field name="front" label="Front (PL)" defaultValue={flashcard.front} required />
           <Field name="back" label="Back (EN)" defaultValue={flashcard.back} required />
-          <TextareaField name="notes" label="Notatki (opcjonalnie)" defaultValue={flashcard.notes ?? ""} rows={3} />
+          <Field
+            as="textarea"
+            name="notes"
+            label="Notatki (opcjonalnie)"
+            defaultValue={flashcard.notes ?? ""}
+            rows={3}
+          />
           {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
           <SubmitButton pending={pending} pendingLabel="Zapisywanie..." variant="primary">
             Zapisz zmiany
@@ -210,7 +218,7 @@ function DeleteFlashcardDialog({
           Usuń
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent data-ui="FlashcardsView.DeleteFlashcardDialog">
         <AlertDialogTitle>Usunąć fiszkę?</AlertDialogTitle>
         <AlertDialogDescription>Tej operacji nie można cofnąć.</AlertDialogDescription>
         {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}

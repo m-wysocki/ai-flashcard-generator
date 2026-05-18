@@ -16,7 +16,7 @@ export const LoadingOverlay = ({
   className,
 }: LoadingOverlayProps) => {
   return (
-    <div className={cn("relative", className)} aria-busy={isLoading}>
+    <div data-ui="LoadingOverlay" className={cn("relative", className)} aria-busy={isLoading}>
       {children}
       {isLoading ? (
         <div className="absolute inset-0 z-10 grid place-items-center rounded-lg bg-white/60 backdrop-blur-[1px]">
@@ -26,4 +26,3 @@ export const LoadingOverlay = ({
     </div>
   );
 };
-

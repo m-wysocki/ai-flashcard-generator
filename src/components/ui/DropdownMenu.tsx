@@ -15,6 +15,7 @@ export const DropdownMenuContent = ({
 }: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>) => (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
+      data-ui="DropdownMenuContent"
       sideOffset={sideOffset}
       className={cn(
         "z-50 min-w-40 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-1.5 shadow-[var(--shadow-offset)]",
@@ -30,6 +31,7 @@ export const DropdownMenuItem = ({
   ...props
 }: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>) => (
   <DropdownMenuPrimitive.Item
+    data-ui="DropdownMenuItem"
     className={cn(
       "flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none focus:bg-[var(--color-surface-soft)]",
       className,

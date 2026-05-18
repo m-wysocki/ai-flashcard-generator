@@ -16,6 +16,7 @@ export const AlertDialogContent = ({
   <AlertDialogPrimitive.Portal>
     <AlertDialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/25" />
     <AlertDialogPrimitive.Content
+      data-ui="AlertDialogContent"
       className={cn(
         "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-offset-modal)]",
         className,

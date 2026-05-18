@@ -7,7 +7,7 @@ type GeneratorLanguageToggleProps = {
 
 export function GeneratorLanguageToggle({ language, onChange }: GeneratorLanguageToggleProps) {
   return (
-    <div className="inline-flex gap-2">
+    <div data-ui="GeneratorLanguageToggle" className="inline-flex gap-2">
       <Button type="button" variant={language === "pl" ? "primary" : "secondary"} onClick={() => onChange("pl")}>
         PL
       </Button>

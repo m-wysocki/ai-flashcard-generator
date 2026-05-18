@@ -33,6 +33,7 @@ export const IconButton = ({
 }: IconButtonProps) => {
   return (
     <button
+      data-ui="IconButton"
       className={cn(iconButtonVariants({ variant, size }), className)}
       type="button"
       {...props}

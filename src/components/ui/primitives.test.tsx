@@ -1,9 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { Field } from "./Field";
+import { Field } from "./Field/Field";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { ProgressBar } from "./ProgressBar";
 import { SubmitButton } from "./SubmitButton";
-import { TextareaField } from "./TextareaField";
 
 describe("ui primitives", () => {
   it("renders pending state in SubmitButton when pending prop is true", () => {
@@ -50,9 +49,9 @@ describe("ui primitives", () => {
     expect(error).toHaveAttribute("role", "alert");
   });
 
-  it("connects TextareaField error text with textarea and exposes alert semantics", () => {
+  it("connects Field error text with textarea and exposes alert semantics", () => {
     render(
-      <TextareaField label="Notes" name="notes" error="Please add at least one example." />,
+      <Field as="textarea" label="Notes" name="notes" error="Please add at least one example." />,
     );
 
     const textarea = screen.getByLabelText("Notes");

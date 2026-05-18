@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button/Button";
+import { Field } from "@/components/ui/Field/Field";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { TextareaField } from "@/components/ui/TextareaField";
 
 type GeneratorFormProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -28,7 +28,7 @@ export function GeneratorForm({
   pending,
 }: GeneratorFormProps) {
   return (
-    <form className="grid gap-3" action={action}>
+    <form data-ui="GeneratorForm" className="grid gap-3" action={action}>
       <div className="inline-flex gap-2" role="tablist" aria-label={inputLanguageLabel}>
         <Button
           type="button"
@@ -50,7 +50,7 @@ export function GeneratorForm({
         </Button>
       </div>
       <input type="hidden" name="inputLanguage" value={inputLanguage} />
-      <TextareaField name="text" label={textLabel} required rows={4} />
+      <Field as="textarea" name="text" label={textLabel} required rows={4} />
       <SubmitButton variant="primary" pending={pending} pendingLabel={generatingLabel}>
         {generateLabel}
       </SubmitButton>

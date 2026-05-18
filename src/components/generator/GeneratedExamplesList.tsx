@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Panel } from "@/components/ui/Panel";
+import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import type { Material } from "./types";
 
 type GeneratedExamplesListProps = {
@@ -29,7 +30,7 @@ export function GeneratedExamplesList({
   }
 
   return (
-    <div className="grid gap-3">
+    <div data-ui="GeneratedExamplesList" className="grid gap-3">
       <Panel className="grid gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
           {examplesLabel}
@@ -50,9 +51,10 @@ export function GeneratedExamplesList({
         {material.examples.map((example, index) => {
           const isSelected = selectedExampleIndex === index;
           return (
-            <li
+            <ShadowFrame
+              as="article"
               key={`${example.english}-select-${index}`}
-              className="grid gap-2 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] p-3"
+              className="grid gap-2 p-3"
             >
               <p>{example.polish}</p>
               <p className="font-semibold">{example.english}</p>
@@ -63,7 +65,7 @@ export function GeneratedExamplesList({
               >
                 {selectLabel}
               </Button>
-            </li>
+            </ShadowFrame>
           );
         })}
       </ul>

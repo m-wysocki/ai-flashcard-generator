@@ -10,7 +10,16 @@ const eslintConfig = [
   globalIgnores([".next/**", "node_modules/**", "coverage/**", "dist/**", "storybook-static/**"]),
   {
     rules: {
-      "max-len": ["error", { code: 100, tabWidth: 2, ignoreUrls: true }],
+      "max-len": [
+        "error",
+        {
+          code: 100,
+          tabWidth: 2,
+          ignoreUrls: true,
+          ignoreStrings: false,
+          ignoreTemplateLiterals: false,
+        },
+      ],
     },
   },
   ...storybook.configs["flat/recommended"],

@@ -12,6 +12,7 @@ export const ProgressBar = ({ isVisible, className }: ProgressBarProps) => {
 
   return (
     <div
+      data-ui="ProgressBar"
       role="progressbar"
       aria-label="Route loading"
       className={cn("fixed left-0 right-0 top-0 z-50 h-1 bg-transparent", className)}

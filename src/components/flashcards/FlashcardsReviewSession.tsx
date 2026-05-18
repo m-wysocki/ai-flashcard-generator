@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button/Button";
+import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import type { ReviewGrade } from "@/server/review/service";
 
 type ReviewCard = {
@@ -32,7 +33,10 @@ export function FlashcardsReviewSession({
 
   if (!current) {
     return (
-      <main className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4">
+      <main
+        data-ui="FlashcardsReviewSession"
+        className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4"
+      >
         <p className="m-0 text-lg text-[var(--color-text)]">To wszystko na teraz.</p>
         <Button asChild variant="primary">
           <Link href="/app">Wróć do Fiszek</Link>
@@ -42,24 +46,27 @@ export function FlashcardsReviewSession({
   }
 
   return (
-    <main className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4">
+    <main
+      data-ui="FlashcardsReviewSession"
+      className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4"
+    >
       <header className="grid grid-cols-3 gap-2">
-        <p className="m-0 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)] shadow-[var(--shadow-offset)]">
+        <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
           Do powtórki dzisiaj: {stats.dueToday}
-        </p>
-        <p className="m-0 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)] shadow-[var(--shadow-offset)]">
+        </ShadowFrame>
+        <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
           Wszystkie fiszki: {stats.totalCards}
-        </p>
-        <p className="m-0 rounded-lg border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-center text-xs text-[var(--color-muted)] shadow-[var(--shadow-offset)]">
+        </ShadowFrame>
+        <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
           Powtórzone dzisiaj: {stats.reviewedToday + reviewedNow}
-        </p>
+        </ShadowFrame>
       </header>
       <p className="m-0 text-sm text-[var(--color-muted)]">
         {reviewedNow + 1} / {Math.max(initialCards.length, reviewedNow + 1)}
       </p>
-      <p className="m-0 rounded-xl border-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xl text-[var(--color-text)] shadow-[var(--shadow-offset)]">
+      <ShadowFrame className="rounded-xl p-4 text-xl text-[var(--color-text)]">
         {current.front}
-      </p>
+      </ShadowFrame>
       {revealed ? (
         <>
           <p className="m-0 text-[var(--color-text)]">{current.back}</p>

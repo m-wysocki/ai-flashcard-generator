@@ -20,6 +20,7 @@ export function BottomNav() {
     <>
       <ProgressBar isVisible={isPending} />
       <nav
+        data-ui="BottomNav"
         aria-label="Główna nawigacja"
         className="fixed inset-x-0 bottom-0 border-t-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2"
       >
