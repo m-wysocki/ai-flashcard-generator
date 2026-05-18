@@ -56,4 +56,24 @@ describe("ReviewSession", () => {
     }
     await screen.findByText("To wszystko na teraz.");
   });
+
+  it("keeps current card when grading fails and shows error", async () => {
+    const gradeAction = jest.fn().mockResolvedValue({ ok: false });
+
+    render(
+      <ReviewSession
+        initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+        stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+        gradeAction={gradeAction}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+    fireEvent.click(screen.getByRole("button", { name: "Good" }));
+
+    await waitFor(() => expect(gradeAction).toHaveBeenCalledTimes(1));
+    expect(screen.getByText("Nie udało się zapisać oceny. Spróbuj ponownie.")).toBeInTheDocument();
+    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Good" })).toBeInTheDocument();
+  });
 });

@@ -14,11 +14,11 @@ describe("GeneratorView", () => {
       />,
     );
 
-    expect(screen.getAllByText("Wpisz tekst i kliknij Generate.")).toHaveLength(2);
+    expect(screen.getByText("Wpisz tekst i kliknij Generate.")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "EN" }));
 
-    expect(screen.getAllByText("Type text and click Generate.")).toHaveLength(2);
+    expect(screen.getByText("Type text and click Generate.")).toBeInTheDocument();
     expect(window.localStorage.getItem("ui-language")).toBe("en");
   });
 
@@ -78,5 +78,31 @@ describe("GeneratorView", () => {
         },
       ]),
     );
+  });
+
+  it("shows a clear message when generated material has no examples to save", async () => {
+    render(
+      <GeneratorView
+        generateLearningMaterialAction={async () => ({
+          ok: true,
+          material: {
+            translations: ["I need to figure this out."],
+            meanings: [],
+            examples: [],
+            notes: null,
+          },
+        })}
+        createFlashcardAction={async () => {}}
+      />,
+    );
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Text" }), {
+      target: { value: "rozgryźć" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+
+    expect(
+      await screen.findByText("Brak przykładów do zapisania jako fiszka."),
+    ).toBeInTheDocument();
   });
 });

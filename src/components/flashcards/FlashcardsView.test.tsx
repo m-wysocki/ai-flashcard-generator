@@ -50,5 +50,41 @@ describe("FlashcardsView", () => {
     );
     expect(screen.getByRole("link", { name: "Dodaj" })).toHaveAttribute("aria-current", "page");
   });
-});
 
+  it("shows due empty state when no cards are due", () => {
+    render(
+      <FlashcardsView
+        activeTab="due"
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        dueFlashcardIds={[]}
+        createFlashcardAction={async () => ({ ok: true })}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("Brak fiszek do powtórki.")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Start powtórki" })).not.toBeInTheDocument();
+  });
+
+  it("keeps delete dialog open and shows error when delete fails", async () => {
+    render(
+      <FlashcardsView
+        activeTab="all"
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        dueFlashcardIds={[]}
+        createFlashcardAction={async () => ({ ok: true })}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: false, error: "Nie udało się usunąć fiszki." })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Usuń" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Potwierdź usuń" }));
+
+    await waitFor(() =>
+      expect(screen.getByText("Nie udało się usunąć fiszki.")).toBeInTheDocument(),
+    );
+    expect(screen.getByRole("heading", { name: "Usunąć fiszkę?" })).toBeInTheDocument();
+  });
+});

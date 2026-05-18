@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/Button/Button";
+import { Button } from "@/components/ui/Button";
 import type { ReviewGrade } from "@/server/review/service";
 
 type ReviewCard = {
@@ -23,6 +23,7 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
   const [revealed, setRevealed] = useState(false);
   const [reviewedNow, setReviewedNow] = useState(0);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const current = queue[0];
 
   if (!current) {
@@ -73,9 +74,15 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
                 disabled={grading !== null}
                 onClick={async () => {
                   setGrading(grade);
+                  setError(null);
                   const result = await gradeAction({ flashcardId: current.id, grade });
+                  if (!result.ok) {
+                    setError("Nie udało się zapisać oceny. Spróbuj ponownie.");
+                    setGrading(null);
+                    return;
+                  }
                   const nextQueue = queue.slice(1);
-                  if (result.ok && result.shouldRequeue) {
+                  if (result.shouldRequeue) {
                     nextQueue.push(current);
                   }
                   setQueue(nextQueue);
@@ -96,6 +103,7 @@ export function ReviewSession({ initialCards, stats, gradeAction }: ReviewSessio
               </Button>
             ))}
           </div>
+          {error ? <p className="m-0 text-sm text-red-700">{error}</p> : null}
         </>
       ) : (
         <Button type="button" variant="primary" onClick={() => setRevealed(true)} disabled={grading !== null}>

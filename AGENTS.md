@@ -7,21 +7,21 @@ Build an AI language learning app for Polish speakers learning English. The app 
 - the learner has a Polish thought and wants natural English phrasing,
 - the learner sees an English word or phrase and wants Polish meaning plus natural English usage.
 
-The MVP is a focused learning tool, not a general AI chat product. Use `docs/prd/ai-language-learning-mvp.md` as the source of truth for product scope. Use `idea.md` as supporting project guidance for stack, architecture, and engineering principles. If the two conflict, follow the PRD.
+The MVP is a focused learning tool, not a general AI chat product. Use these agent instructions as the source of truth for product scope. Use `idea.md` as supporting project guidance for stack, architecture, and engineering principles. If the two conflict, follow these agent instructions.
 
 ## Agent skills
 
 ### Issue tracker
 
-Issues are tracked in GitHub Issues for `m-wysocki/ai-flashcard-generator`. See `docs/agents/issue-tracker.md`.
+Issues are tracked in GitHub Issues for `m-wysocki/ai-flashcard-generator`.
 
 ### Triage labels
 
-This repo uses the default triage label vocabulary. See `docs/agents/triage-labels.md`.
+This repo uses the default triage label vocabulary.
 
 ### Domain docs
 
-This repo uses a single-context domain docs layout. See `docs/agents/domain.md`.
+Use these agent instructions, `idea.md`, and the current codebase as domain context.
 
 ## Scope Guardrails
 
@@ -100,7 +100,7 @@ This repo uses a single-context domain docs layout. See `docs/agents/domain.md`.
 - Keep the public root page minimal and honest about restricted access.
 - Support Polish and English UI language demos; store language preference locally in the browser.
 - `DESIGN.md` is the source of truth for visual decisions: colors, typography, spacing, radius, shadows, component appearance, and visual tone.
-- If `DESIGN.md` conflicts with PRD scope, MVP behavior, or domain rules, pause and ask before implementation.
+- If `DESIGN.md` conflicts with MVP behavior or domain rules, pause and ask before implementation.
 - Prefer clean, accessible, responsive UI over decorative complexity.
 - Extract reusable UI into small focused components under `src/components`.
 - Prefer reusable UI primitives under `src/components/ui/*` where practical.

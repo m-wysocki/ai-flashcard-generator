@@ -5,10 +5,14 @@ describe("HomePage", () => {
   it("explains the private app and links to auth routes", () => {
     render(<HomePage />);
 
-    expect(screen.getByText("Private English learning app")).toBeInTheDocument();
-    expect(screen.getByText("Access is invite-only for now.")).toBeInTheDocument();
+    expect(screen.getByText("Invite-only English learning")).toBeInTheDocument();
+    expect(screen.getByText("Registration requires a valid invite code.")).toBeInTheDocument();
     expect(screen.queryByText(/portfolio/i)).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Login" })).toHaveAttribute("href", "/login");
-    expect(screen.getByRole("link", { name: "Register" })).toHaveAttribute("href", "/register");
+    const requestAccessLinks = screen.getAllByRole("link", { name: "Request access" });
+    expect(requestAccessLinks.length).toBeGreaterThan(0);
+    for (const link of requestAccessLinks) {
+      expect(link).toHaveAttribute("href", "/register");
+    }
   });
 });

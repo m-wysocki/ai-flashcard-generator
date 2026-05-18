@@ -17,6 +17,7 @@ type GeneratorCopy = {
   notes: string;
   noNotes: string;
   useAsFlashcard: string;
+  noExamplesToSave: string;
   frontLabel: string;
   backLabel: string;
   notesLabel: string;
@@ -43,6 +44,7 @@ export const appCopy: Record<UiLanguage, { generator: GeneratorCopy }> = {
       notes: "Notes",
       noNotes: "Brak dodatkowych notatek.",
       useAsFlashcard: "Użyj jako fiszki",
+      noExamplesToSave: "Brak przykładów do zapisania jako fiszka.",
       frontLabel: "Front (PL)",
       backLabel: "Back (EN)",
       notesLabel: "Notatki (opcjonalnie)",
@@ -68,6 +70,7 @@ export const appCopy: Record<UiLanguage, { generator: GeneratorCopy }> = {
       notes: "Notes",
       noNotes: "No additional notes.",
       useAsFlashcard: "Use as flashcard",
+      noExamplesToSave: "No examples available to save as a flashcard.",
       frontLabel: "Front (PL)",
       backLabel: "Back (EN)",
       notesLabel: "Notes (optional)",
@@ -76,4 +79,3 @@ export const appCopy: Record<UiLanguage, { generator: GeneratorCopy }> = {
     },
   },
 };
-

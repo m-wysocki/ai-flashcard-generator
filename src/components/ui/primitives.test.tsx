@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
+import { Field } from "./Field";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { ProgressBar } from "./ProgressBar";
 import { SubmitButton } from "./SubmitButton";
+import { TextareaField } from "./TextareaField";
 
 describe("ui primitives", () => {
   it("renders pending state in SubmitButton when pending prop is true", () => {
@@ -34,5 +36,31 @@ describe("ui primitives", () => {
 
     rerender(<ProgressBar isVisible />);
     expect(screen.getByRole("progressbar", { name: "Route loading" })).toBeInTheDocument();
+  });
+
+  it("connects Field error text with input and exposes alert semantics", () => {
+    render(<Field label="Email" name="email" error="Incorrect email or password." />);
+
+    const input = screen.getByLabelText("Email");
+    const error = screen.getByText("Incorrect email or password.");
+
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input).toHaveAttribute("aria-describedby", "email-error");
+    expect(error).toHaveAttribute("id", "email-error");
+    expect(error).toHaveAttribute("role", "alert");
+  });
+
+  it("connects TextareaField error text with textarea and exposes alert semantics", () => {
+    render(
+      <TextareaField label="Notes" name="notes" error="Please add at least one example." />,
+    );
+
+    const textarea = screen.getByLabelText("Notes");
+    const error = screen.getByText("Please add at least one example.");
+
+    expect(textarea).toHaveAttribute("aria-invalid", "true");
+    expect(textarea).toHaveAttribute("aria-describedby", "notes-error");
+    expect(error).toHaveAttribute("id", "notes-error");
+    expect(error).toHaveAttribute("role", "alert");
   });
 });

@@ -1,0 +1,19 @@
+import { Button } from "@/components/ui/Button";
+
+type GeneratorLanguageToggleProps = {
+  language: "pl" | "en";
+  onChange: (value: "pl" | "en") => void;
+};
+
+export function GeneratorLanguageToggle({ language, onChange }: GeneratorLanguageToggleProps) {
+  return (
+    <div className="inline-flex gap-2">
+      <Button type="button" variant={language === "pl" ? "primary" : "secondary"} onClick={() => onChange("pl")}>
+        PL
+      </Button>
+      <Button type="button" variant={language === "en" ? "primary" : "secondary"} onClick={() => onChange("en")}>
+        EN
+      </Button>
+    </div>
+  );
+}

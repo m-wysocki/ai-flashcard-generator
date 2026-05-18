@@ -1,23 +1,21 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { LearningPreview } from "@/components/LearningPreview/LearningPreview";
-import { Button } from "@/components/Button/Button";
-import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { appCopy } from "@/content/app-copy";
+import { GeneratorForm } from "./GeneratorForm";
+import { GeneratedExamplesList } from "./GeneratedExamplesList";
+import { GeneratedFlashcardForm } from "./GeneratedFlashcardForm";
+import { GeneratorLanguageToggle } from "./GeneratorLanguageToggle";
+import { LearningMaterialPreview } from "./LearningMaterialPreview";
+import type { Material } from "./types";
 
-type Material = {
-  translations: string[];
-  meanings: string[];
-  examples: Array<{ english: string; polish: string }>;
-  notes: string | null;
-};
+type GeneratorActionState = { ok: true; material: Material } | { ok: false; error: string } | null;
 
 type GeneratorAction = (
-  state: { ok: true; material: Material } | { ok: false; error: string } | null,
+  state: GeneratorActionState,
   formData: FormData,
-) => Promise<{ ok: true; material: Material } | { ok: false; error: string } | null>;
+) => Promise<GeneratorActionState>;
 
 type CreateFlashcardAction = (formData: FormData) => unknown | Promise<unknown>;
 
@@ -49,92 +47,50 @@ export function GeneratorView({
 
   return (
     <div className="grid gap-4">
-      <div className="inline-flex gap-2">
-        <Button type="button" variant={language === "pl" ? "primary" : "secondary"} onClick={() => setLanguage("pl")}>
-          PL
-        </Button>
-        <Button type="button" variant={language === "en" ? "primary" : "secondary"} onClick={() => setLanguage("en")}>
-          EN
-        </Button>
-      </div>
-      <form className="grid gap-3" action={formAction}>
-        <div className="inline-flex gap-2" role="tablist" aria-label={copy.inputLanguageLabel}>
-          <Button
-            type="button"
-            variant={inputLanguage === "POLISH" ? "primary" : "secondary"}
-            role="tab"
-            aria-selected={inputLanguage === "POLISH"}
-            onClick={() => setInputLanguage("POLISH")}
-          >
-            {copy.polishInput}
-          </Button>
-          <Button
-            type="button"
-            variant={inputLanguage === "ENGLISH" ? "primary" : "secondary"}
-            role="tab"
-            aria-selected={inputLanguage === "ENGLISH"}
-            onClick={() => setInputLanguage("ENGLISH")}
-          >
-            {copy.englishInput}
-          </Button>
-        </div>
-        <input type="hidden" name="inputLanguage" value={inputLanguage} />
-        <label className="grid gap-1 text-sm">
-          <span>{copy.textLabel}</span>
-          <textarea name="text" required rows={4} className="rounded-lg border border-[var(--color-border)] p-3" />
-        </label>
-        <Button type="submit" variant="primary" disabled={pending}>
-          {pending ? copy.generating : copy.generate}
-        </Button>
-      </form>
-      {state && !state.ok ? <p>{state.error}</p> : null}
-      <LearningPreview
-        aria-label={copy.generatorWorkspace}
+      <GeneratorLanguageToggle language={language} onChange={setLanguage} />
+      <GeneratorForm
+        action={formAction}
+        inputLanguage={inputLanguage}
+        onInputLanguageChange={setInputLanguage}
+        inputLanguageLabel={copy.inputLanguageLabel}
+        polishInputLabel={copy.polishInput}
+        englishInputLabel={copy.englishInput}
+        textLabel={copy.textLabel}
+        generateLabel={copy.generate}
+        generatingLabel={copy.generating}
+        pending={pending}
+      />
+      {state && !state.ok ? <p role="alert">{state.error}</p> : null}
+      <LearningMaterialPreview
         inputLabel={inputLanguage === "POLISH" ? copy.polishInput : copy.englishInput}
         modeLabel={pending ? copy.generating : copy.ready}
-        inputText={pending ? "..." : copy.placeholderPrompt}
         outputLabel={inputLanguage === "POLISH" ? copy.naturalEnglish : copy.polishMeaning}
         outputText={outputText}
       />
       {state?.ok ? (
         <>
-          <LearningPreview
-            aria-label={copy.usageExamples}
-            inputLabel={copy.examples}
-            modeLabel="AI"
-            inputText={state.material.examples.map((example) => `${example.english}\n${example.polish}`).join("\n\n")}
-            outputLabel={copy.notes}
-            outputText={state.material.notes ?? copy.noNotes}
+          <GeneratedExamplesList
+            material={state.material}
+            selectedExampleIndex={selectedExampleIndex}
+            onSelect={setSelectedExampleIndex}
+            examplesLabel={copy.examples}
+            notesLabel={copy.notes}
+            noNotesLabel={copy.noNotes}
+            selectLabel={copy.useAsFlashcard}
+            noExamplesLabel={copy.noExamplesToSave}
           />
-          <ul className="grid gap-3">
-            {state.material.examples.map((example, index) => (
-              <li key={`${example.english}-${index}`} className="rounded-lg border border-[var(--color-border)] p-3">
-                <p>{example.polish}</p>
-                <p className="font-semibold">{example.english}</p>
-                <Button type="button" variant="primary" onClick={() => setSelectedExampleIndex(index)}>
-                  {copy.useAsFlashcard}
-                </Button>
-              </li>
-            ))}
-          </ul>
           {selectedExample ? (
-            <form className="grid gap-3" action={createFlashcardAction as (formData: FormData) => void | Promise<void>}>
-              <label className="grid gap-1 text-sm">
-                <span>{copy.frontLabel}</span>
-                <input name="front" defaultValue={selectedExample.polish} required className="rounded-lg border border-[var(--color-border)] px-3 py-2" />
-              </label>
-              <label className="grid gap-1 text-sm">
-                <span>{copy.backLabel}</span>
-                <input name="back" defaultValue={selectedExample.english} required className="rounded-lg border border-[var(--color-border)] px-3 py-2" />
-              </label>
-              <label className="grid gap-1 text-sm">
-                <span>{copy.notesLabel}</span>
-                <textarea name="notes" defaultValue={state.material.notes ?? ""} rows={4} className="rounded-lg border border-[var(--color-border)] p-3" />
-              </label>
-              <SubmitButton variant="primary" pendingLabel={copy.saving}>
-                {copy.saveGeneratedFlashcard}
-              </SubmitButton>
-            </form>
+            <GeneratedFlashcardForm
+              action={createFlashcardAction as (formData: FormData) => void | Promise<void>}
+              frontDefault={selectedExample.polish}
+              backDefault={selectedExample.english}
+              notesDefault={state.material.notes ?? ""}
+              frontLabel={copy.frontLabel}
+              backLabel={copy.backLabel}
+              notesLabel={copy.notesLabel}
+              submitLabel={copy.saveGeneratedFlashcard}
+              savingLabel={copy.saving}
+            />
           ) : null}
         </>
       ) : null}

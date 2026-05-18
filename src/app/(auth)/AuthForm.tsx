@@ -1,10 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button } from "@/components/Button/Button";
-import { TextField } from "@/components/TextField/TextField";
+import { Field } from "@/components/ui/Field";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 import type { AuthActionState } from "@/server/auth/actions";
-import styles from "./auth.module.scss";
 
 type AuthFormProps = {
   action: (previousState: AuthActionState, formData: FormData) => Promise<AuthActionState>;
@@ -18,9 +17,9 @@ export function AuthForm({ action, submitLabel, includeInviteCode = false }: Aut
   const [state, formAction, isPending] = useActionState(action, initialState);
 
   return (
-    <form className={styles.AuthPageForm} action={formAction}>
-      <TextField label="Email" name="email" type="email" autoComplete="email" required />
-      <TextField
+    <form className="grid gap-3" action={formAction}>
+      <Field label="Email" name="email" type="email" autoComplete="email" required />
+      <Field
         label="Password"
         name="password"
         type="password"
@@ -29,12 +28,16 @@ export function AuthForm({ action, submitLabel, includeInviteCode = false }: Aut
         required
       />
       {includeInviteCode ? (
-        <TextField label="Invite code" name="inviteCode" type="text" required />
+        <Field label="Invite code" name="inviteCode" type="text" required />
       ) : null}
-      {state.error ? <p className={styles.AuthPageError}>{state.error}</p> : null}
-      <Button type="submit" variant="primary" disabled={isPending}>
-        {isPending ? "Please wait" : submitLabel}
-      </Button>
+      {state.error ? (
+        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          {state.error}
+        </p>
+      ) : null}
+      <SubmitButton variant="primary" pending={isPending} pendingLabel="Please wait">
+        {submitLabel}
+      </SubmitButton>
     </form>
   );
 }

@@ -1,55 +1,65 @@
 import Link from "next/link";
-import { Badge } from "@/components/Badge/Badge";
-import { Button } from "@/components/Button/Button";
-import { LearningPreview } from "@/components/LearningPreview/LearningPreview";
-import styles from "./page.module.scss";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Panel } from "@/components/ui/Panel";
 
 export default function HomePage() {
   return (
-    <main className={styles.Landing}>
-      <header className={styles.LandingHeader}>
-        <span className={styles.LandingBrand}>AI Flashcard Generator</span>
-        <nav className={styles.LandingNav} aria-label="Account">
+    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-8 px-4 py-6 sm:px-6 sm:py-8">
+      <header className="flex items-center justify-between gap-3">
+        <span className="text-sm font-semibold tracking-wide text-[var(--color-muted)]">
+          AI Flashcard Generator
+        </span>
+        <nav className="flex items-center gap-2" aria-label="Account">
           <Button asChild>
             <Link href="/login">Login</Link>
           </Button>
           <Button asChild variant="primary">
-            <Link href="/register">Register</Link>
+            <Link href="/register">Request access</Link>
           </Button>
         </nav>
       </header>
 
-      <section className={styles.LandingMain}>
-        <div className={styles.LandingContent}>
-          <Badge className={styles.LandingKicker}>Private English learning app</Badge>
-          <h1 className={styles.LandingTitle}>English practice from real language moments.</h1>
-          <p className={styles.LandingText}>
-            A private learning app for Polish speakers. Generate natural English examples, save
-            the useful ones as flashcards, and review them later with spaced repetition.
-          </p>
-          <div className={styles.LandingActions}>
-            <Button asChild variant="primary">
-              <Link href="/register">Request access</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/login">I already have an account</Link>
-            </Button>
-          </div>
+      <section className="grid gap-4">
+        <Badge variant="accent" className="w-fit">
+          Invite-only English learning
+        </Badge>
+        <h1 className="max-w-2xl text-2xl font-semibold text-[var(--color-text)] sm:text-3xl">
+          English practice for Polish speakers, built around real language moments.
+        </h1>
+        <p className="max-w-2xl text-sm text-[var(--color-muted)] sm:text-base">
+          Generate natural English phrasing, save one flashcard at a time, then review due cards
+          with spaced repetition.
+        </p>
+        <p className="text-sm text-[var(--color-muted)]">
+          Registration requires a valid invite code.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="primary">
+            <Link href="/register">Request access</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/login">I already have an account</Link>
+          </Button>
         </div>
-        <LearningPreview
-          aria-label="Learning material preview"
-          inputLabel="Generator"
-          modeLabel="Polish input"
-          inputText="Nie jestem pewien, czy dobrze to rozumiem."
-          outputLabel="Natural English"
-          outputText="I’m not sure I’m understanding this correctly."
-          flashcardFront="Nie jestem pewien..."
-          flashcardBack="I’m not sure..."
-        />
       </section>
 
-      <footer className={styles.LandingFooter}>
-        Access is invite-only for now.
+      <Panel>
+        <Card className="grid gap-3 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+            How it works
+          </p>
+          <ul className="grid gap-2 text-sm text-[var(--color-text)]">
+            <li>1. Add a Polish thought or an English phrase.</li>
+            <li>2. Get structured examples and meanings.</li>
+            <li>3. Save one polished flashcard and review it later.</li>
+          </ul>
+        </Card>
+      </Panel>
+
+      <footer className="mt-auto text-xs text-[var(--color-muted)]">
+        Access is restricted to registered users with invite-code registration.
       </footer>
     </main>
   );

@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/AlertDialog";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/AlertDialog";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/Dialog";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { Button } from "@/components/Button/Button";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
 
 type Flashcard = {
@@ -80,6 +81,7 @@ export function FlashcardsView(props: FlashcardsViewProps) {
       {props.activeTab === "due" ? (
         <FlashcardsList
           flashcards={dueCards}
+          emptyMessage="Brak fiszek do powtórki."
           updateFlashcardAction={props.updateFlashcardAction}
           deleteFlashcardAction={props.deleteFlashcardAction}
         />
@@ -117,15 +119,17 @@ function TabLink({
 
 function FlashcardsList({
   flashcards,
+  emptyMessage = "Brak fiszek.",
   updateFlashcardAction,
   deleteFlashcardAction,
 }: {
   flashcards: Flashcard[];
+  emptyMessage?: string;
   updateFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
   deleteFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
 }) {
   if (flashcards.length === 0) {
-    return <p>Brak fiszek.</p>;
+    return <EmptyState title={emptyMessage} />;
   }
 
   return (
@@ -193,11 +197,12 @@ function DeleteFlashcardDialog({
   flashcardId: string;
   deleteFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
 }) {
+  const [open, setOpen] = useState(false);
   const [state, setState] = useState<FlashcardActionState | null>(null);
   const [pending, setPending] = useState(false);
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button type="button" variant="secondary">
           Usuń
@@ -216,15 +221,16 @@ function DeleteFlashcardDialog({
               setPending(true);
               const result = await deleteFlashcardAction(formData);
               setState(result);
+              if (result.ok) {
+                setOpen(false);
+              }
               setPending(false);
             }}
           >
             <input type="hidden" name="flashcardId" value={flashcardId} />
-            <AlertDialogAction asChild>
-              <SubmitButton pending={pending} pendingLabel="Usuwanie..." variant="secondary">
-                Potwierdź usuń
-              </SubmitButton>
-            </AlertDialogAction>
+            <SubmitButton pending={pending} pendingLabel="Usuwanie..." variant="secondary">
+              Potwierdź usuń
+            </SubmitButton>
           </form>
         </div>
       </AlertDialogContent>

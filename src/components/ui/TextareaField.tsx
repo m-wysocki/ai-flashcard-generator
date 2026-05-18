@@ -17,10 +17,13 @@ export const TextareaField = ({
   const describedBy = error ? `${fieldId}-error` : undefined;
 
   return (
-    <label className="grid gap-1.5 text-sm">
-      <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+    <div className="grid gap-1.5 text-sm">
+      <label
+        htmlFor={fieldId}
+        className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]"
+      >
         {label}
-      </span>
+      </label>
       <textarea
         id={fieldId}
         aria-invalid={Boolean(error)}
@@ -32,11 +35,10 @@ export const TextareaField = ({
         {...props}
       />
       {error ? (
-        <span id={describedBy} className="text-xs text-red-700">
+        <span id={describedBy} role="alert" className="text-xs text-red-700">
           {error}
         </span>
       ) : null}
-    </label>
+    </div>
   );
 };
-
