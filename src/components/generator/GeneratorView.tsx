@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { appCopy } from "@/content/app-copy";
+import { Heading } from "@/components/ui/Heading/Heading";
 import { GeneratorForm } from "./GeneratorForm";
 import { GeneratedExamplesList } from "./GeneratedExamplesList";
 import { GeneratedFlashcardForm } from "./GeneratedFlashcardForm";
@@ -49,7 +50,9 @@ export function GeneratorView({
 
   return (
     <div data-ui="GeneratorView" className="grid gap-4">
-      <h1 className="text-2xl font-semibold">{title}</h1>
+      <Heading as="h1" size="md">
+        {title}
+      </Heading>
       <GeneratorForm
         action={formAction}
         inputLanguage={inputLanguage}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button/Button";
+import { Heading } from "@/components/ui/Heading/Heading";
 import { Logo } from "@/components/ui/Logo/Logo";
 import { Panel } from "@/components/ui/Panel";
 
@@ -31,9 +32,13 @@ export default async function HomePage() {
         <Badge variant="accent" className="w-fit">
           Invite-only English learning
         </Badge>
-        <h1 className="max-w-2xl text-2xl font-semibold text-[var(--color-text)] sm:text-3xl">
+        <Heading
+          as="h1"
+          size="md"
+          className="max-w-2xl sm:text-3xl sm:leading-10"
+        >
           English practice for Polish speakers, built around real language moments.
-        </h1>
+        </Heading>
         <p className="max-w-2xl text-sm text-[var(--color-muted)] sm:text-base">
           Generate natural English phrasing, save one flashcard at a time, then review due cards
           with spaced repetition.

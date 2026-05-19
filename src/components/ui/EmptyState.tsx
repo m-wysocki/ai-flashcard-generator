@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { Heading } from "@/components/ui/Heading/Heading";
 
 type EmptyStateProps = HTMLAttributes<HTMLDivElement> & {
   title: string;
@@ -23,7 +24,9 @@ export const EmptyState = ({
       )}
       {...props}
     >
-      <h2 className="text-base font-semibold">{title}</h2>
+      <Heading as="h2" size="sm" className="text-base leading-6">
+        {title}
+      </Heading>
       {description ? <p className="text-sm text-[var(--color-muted)]">{description}</p> : null}
       {action ? <div className="mt-2 flex justify-center">{action}</div> : null}
     </div>
