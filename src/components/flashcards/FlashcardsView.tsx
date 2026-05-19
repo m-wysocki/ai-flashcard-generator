@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/AlertDialog";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/Dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Field } from "@/components/ui/Field/Field";
 import { Heading } from "@/components/ui/Heading/Heading";
+import {
+  ModalDialog,
+  ModalDialogClose,
+} from "@/components/ui/ModalDialog/ModalDialog";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import { StatList } from "@/components/ui/StatList";
 import { Button } from "@/components/ui/Button/Button";
@@ -191,13 +193,12 @@ function EditFlashcardDialog({
   const [pending, setPending] = useState(false);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button type="button">{copy.edit}</Button>
-      </DialogTrigger>
-      <DialogContent data-ui="FlashcardsView.EditFlashcardDialog">
-        <DialogTitle>{copy.editTitle}</DialogTitle>
-        <DialogDescription>{copy.editDescription}</DialogDescription>
+    <ModalDialog
+      trigger={<Button type="button">{copy.edit}</Button>}
+      title={copy.editTitle}
+      description={copy.editDescription}
+    >
+      <div data-ui="FlashcardsView.EditFlashcardDialog">
         <form
           className="mt-3 grid gap-2"
           action={async (formData) => {
@@ -222,8 +223,8 @@ function EditFlashcardDialog({
             {copy.saveChanges}
           </SubmitButton>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }
 
@@ -242,20 +243,21 @@ function DeleteFlashcardDialog({
   const [pending, setPending] = useState(false);
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
+    <ModalDialog
+      open={open}
+      onOpenChange={setOpen}
+      trigger={
         <Button type="button" color="secondary">
           {copy.delete}
         </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent data-ui="FlashcardsView.DeleteFlashcardDialog">
-        <AlertDialogTitle>{copy.deleteTitle}</AlertDialogTitle>
-        <AlertDialogDescription>{copy.deleteDescription}</AlertDialogDescription>
-        {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
-        <div className="mt-3 flex justify-end gap-2">
-          <AlertDialogCancel asChild>
+      }
+      title={copy.deleteTitle}
+      description={copy.deleteDescription}
+      actions={
+        <>
+          <ModalDialogClose asChild>
             <Button type="button">{copy.cancel}</Button>
-          </AlertDialogCancel>
+          </ModalDialogClose>
           <form
             action={async (formData) => {
               setPending(true);
@@ -272,8 +274,12 @@ function DeleteFlashcardDialog({
               {copy.deleteConfirm}
             </SubmitButton>
           </form>
-        </div>
-      </AlertDialogContent>
-    </AlertDialog>
+        </>
+      }
+    >
+      <div data-ui="FlashcardsView.DeleteFlashcardDialog">
+        {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
+      </div>
+    </ModalDialog>
   );
 }
