@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { DropdownButton } from "./DropdownButton/DropdownButton";
 import { Field } from "./Field/Field";
-import { LoadingOverlay } from "./LoadingOverlay";
 import { ProgressBar } from "./ProgressBar";
 import { SegmentedSwitch } from "./SegmentedSwitch/SegmentedSwitch";
 import { SubmitButton } from "./SubmitButton";
@@ -18,17 +17,6 @@ describe("ui primitives", () => {
 
     expect(screen.getByRole("button", { name: /Saving card/ })).toBeDisabled();
     expect(screen.getByRole("status", { name: "Saving card" })).toBeInTheDocument();
-  });
-
-  it("sets aria-busy and loading indicator in LoadingOverlay", () => {
-    const { container } = render(
-      <LoadingOverlay isLoading label="Generating">
-        <div>Content</div>
-      </LoadingOverlay>,
-    );
-
-    expect(container.firstChild).toHaveAttribute("aria-busy", "true");
-    expect(screen.getByRole("status", { name: "Generating" })).toBeInTheDocument();
   });
 
   it("renders ProgressBar only when visible", () => {

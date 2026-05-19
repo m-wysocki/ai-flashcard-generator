@@ -1,143 +1,107 @@
-# ai-flashcard-generator
+# AI Flashcard Generator
 
-## Local Setup
+A focused web app for Polish speakers learning English.
+Instead of trying to be a general AI chat, this project turns real
+language-learning moments into practical flashcards and schedules them for
+effective review.
 
-Use Node from `.nvmrc`:
+## What problem this solves
+
+Language learners repeatedly hit two situations:
+
+1. **"How do I say this naturally in English?"** (starting from Polish)
+2. **"What does this English phrase mean, and how is it used naturally?"**
+   (starting from English)
+
+The app supports both flows, generates structured learning material with AI,
+and lets the user save one edited flashcard at a time directly into a
+spaced-repetition workflow.
+
+## Core MVP features
+
+- AI generation in two explicit input modes:
+  - **Polish input** -> natural English phrasing
+  - **English input** -> Polish meaning + natural English usage
+- Structured AI output:
+  - translation/meaning
+  - natural English example sentences
+  - Polish translations for examples
+  - optional usage notes
+- Save flow with **edit-before-save**, one flashcard at a time
+- Flashcard model focused on production practice: `front`, `back`, `notes`
+- New cards are due immediately
+- Deterministic review flow powered by **FSRS**:
+  - grades: Again / Hard / Good / Easy
+  - schedule updates immediately after each grade
+  - "Again" cards return to the end of the same session
+- Flashcard sections:
+  - Due
+  - All cards
+  - Add manually
+- Lightweight learning stats: due today, total cards, reviewed today
+- English answer playback after reveal (browser Web Speech API)
+- Restricted access model (invite-code registration + authenticated routes)
+
+## Product and engineering principles
+
+- Clear MVP scope with strong guardrails
+- AI is used only where it adds direct value: generating learning material
+- Review remains deterministic, fast, and low-cost (no AI during reviews)
+- Secure-by-default auth behavior and failure handling
+- Structured validation for server inputs and AI outputs
+- Maintainable fullstack architecture without unnecessary services
+
+## Tech stack
+
+- **Framework:** Next.js (App Router), TypeScript
+- **Architecture:** monolithic fullstack Next.js app
+- **Database:** Neon PostgreSQL + Prisma
+- **Authentication:** Auth.js credentials + DB sessions + bcrypt password hashing
+- **Validation:** Zod
+- **AI:** OpenAI API (server-side only, model configurable via environment variable)
+- **Spaced repetition:** FSRS
+- **UI:** Tailwind CSS, Radix UI, reusable UI primitives
+- **Icons:** lucide-react
+- **Deployment target:** Vercel
+
+## Security and AI safeguards
+
+- Passwords are hashed (never stored in plaintext)
+- Registration requires a reusable invite code from environment config
+- Login/registration failures are generic (no account-enumeration leaks)
+- OpenAI keys are never exposed to client code
+- AI responses must pass structured validation before display/use
+- Invalid structured output gets one server-side retry
+- Daily AI limits count only successful, validated generations shown to users
+- AI logs are intentionally minimal (no full prompts or full outputs)
+
+## Project structure (high level)
+
+- `src/app` - Next.js App Router routes and screens
+- `src/components` - domain UI and reusable UI primitives
+- `src/lib` (and related server modules) - core logic:
+  - auth
+  - AI generation/parsing/limits
+  - flashcard persistence
+  - FSRS scheduling
+  - environment configuration
+
+## Local development
 
 ```bash
-nvm use
 npm install
-```
-
-Create a local `.env` file from the example:
-
-```bash
-cp .env.example .env
-```
-
-## Environment Variables
-
-### `DATABASE_URL`
-
-Required for the app runtime and Prisma.
-
-Use one of these:
-
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/ai_flashcard_generator"
-```
-
-For Neon, use the pooled connection string here. The host usually contains `-pooler`.
-
-It should look like:
-
-```env
-DATABASE_URL="postgresql://USER:PASSWORD@HOST-pooler.REGION.aws.neon.tech/DBNAME?channel_binding=require&sslmode=require"
-```
-
-Do not commit `.env`.
-
-### `AUTH_SECRET`
-
-Required by Auth.js for signing session/auth cookies.
-
-Generate a local value with:
-
-```bash
-npx auth secret
-```
-
-### `DATABASE_URL_UNPOOLED`
-
-Used by Prisma CLI and migrations when using Neon. If this is not set, Prisma falls back to `DATABASE_URL`.
-
-For Neon, use the direct connection string here. The host usually does not contain `-pooler`.
-
-```env
-DATABASE_URL_UNPOOLED="postgresql://USER:PASSWORD@HOST.REGION.aws.neon.tech/DBNAME?sslmode=require"
-```
-
-### `INVITE_CODE`
-
-Optional for app startup. Required only when registration should be enabled.
-
-If missing or empty, registration is disabled, but login/existing app access should still work.
-
-```env
-INVITE_CODE="MATWYS"
-```
-
-### `OPENAI_API_KEY`
-
-Optional for app startup. Required only when AI generation should work.
-
-If missing or empty, only the generator should fail gracefully. The rest of the app should still start.
-
-```env
-OPENAI_API_KEY="sk-..."
-```
-
-### `OPENAI_MODEL`
-
-Optional. Defaults to `gpt-4.1-mini`.
-
-```env
-OPENAI_MODEL="gpt-4.1-mini"
-```
-
-## Checking The Current Foundation
-
-Without a real database connection you can still run:
-
-```bash
-npm run lint
-npm run typecheck
-npm test -- --runInBand
-npm run build
-npm run db:generate
-```
-
-To validate the Prisma schema with the same connection setup used by migrations, provide `DATABASE_URL_UNPOOLED`:
-
-```bash
-DATABASE_URL="postgresql://user:password@localhost:5432/ai_flashcard_generator" DATABASE_URL_UNPOOLED="postgresql://user:password@localhost:5432/ai_flashcard_generator" npm run db:validate
-```
-
-To actually apply migrations, you need a reachable PostgreSQL database:
-
-```bash
-npm run db:migrate
-```
-
-## Local PostgreSQL Option
-
-If you do not want to create Neon yet, run a local PostgreSQL database with Docker:
-
-```bash
-docker run --name ai-flashcard-postgres \
-  -e POSTGRES_USER=user \
-  -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=ai_flashcard_generator \
-  -p 5432:5432 \
-  -d postgres:16
-```
-
-Then use:
-
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/ai_flashcard_generator"
-```
-
-and run:
-
-```bash
-npm run db:migrate
-```
-
-## Development Server
-
-```bash
 npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+## Testing and quality checks
+
+```bash
+npm test
+npm run typecheck
+```
+
+The project emphasizes behavior-focused testing, with TDD for high-risk logic
+such as auth validation, AI parsing, daily limits, due queues, and FSRS
+scheduling.
