@@ -1,9 +1,17 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
+import { auth } from "@/auth";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button/Button";
 import { Panel } from "@/components/ui/Panel";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+
+  if (session?.user?.email) {
+    redirect("/app");
+  }
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-8 px-4 py-6 sm:px-6 sm:py-8">
       <header className="flex items-center justify-between gap-3">
