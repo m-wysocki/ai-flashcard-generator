@@ -10,6 +10,7 @@ describe("GeneratorView", () => {
     render(
       <GeneratorView
         language="pl"
+        title="Słownik"
         generateLearningMaterialAction={async () => null}
         createFlashcardAction={async () => {}}
       />,
@@ -27,6 +28,7 @@ describe("GeneratorView", () => {
     render(
       <GeneratorView
         language="pl"
+        title="Słownik"
         generateLearningMaterialAction={async () => ({
           ok: true,
           material: {
@@ -84,6 +86,7 @@ describe("GeneratorView", () => {
     render(
       <GeneratorView
         language="pl"
+        title="Słownik"
         generateLearningMaterialAction={async () => ({
           ok: true,
           material: {

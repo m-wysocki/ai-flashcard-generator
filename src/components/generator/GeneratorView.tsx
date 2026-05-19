@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { appCopy } from "@/content/app-copy";
+import { Heading } from "@/components/ui/Heading/Heading";
 import { GeneratorForm } from "./GeneratorForm";
 import { GeneratedExamplesList } from "./GeneratedExamplesList";
 import { GeneratedFlashcardForm } from "./GeneratedFlashcardForm";
@@ -20,12 +21,14 @@ type CreateFlashcardAction = (formData: FormData) => unknown | Promise<unknown>;
 
 type GeneratorViewProps = {
   language: UiLanguage;
+  title: string;
   generateLearningMaterialAction: GeneratorAction;
   createFlashcardAction: CreateFlashcardAction;
 };
 
 export function GeneratorView({
   language,
+  title,
   generateLearningMaterialAction,
   createFlashcardAction,
 }: GeneratorViewProps) {
@@ -47,6 +50,9 @@ export function GeneratorView({
 
   return (
     <div data-ui="GeneratorView" className="grid gap-4">
+      <Heading as="h1" size="md">
+        {title}
+      </Heading>
       <GeneratorForm
         action={formAction}
         inputLanguage={inputLanguage}

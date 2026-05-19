@@ -3,16 +3,18 @@ import { BottomNav } from "./BottomNav";
 import { AppHeader } from "./AppHeader";
 
 type AppFrameProps = {
-  title: string;
   headerAction?: ReactNode;
   children: ReactNode;
 };
 
-export function AppFrame({ title, headerAction, children }: AppFrameProps) {
+export function AppFrame({ headerAction, children }: AppFrameProps) {
   return (
-    <main data-ui="AppFrame" className="mx-auto min-h-screen w-full max-w-3xl px-4 pb-24 pt-4">
-      <AppHeader title={title} action={headerAction} />
-      <section>{children}</section>
+    <main
+      data-ui="AppFrame"
+      className="min-h-screen w-full pb-[calc(7rem+env(safe-area-inset-bottom))]"
+    >
+      <AppHeader action={headerAction} />
+      <section className="mx-auto w-full max-w-3xl px-4 pt-6">{children}</section>
       <BottomNav />
     </main>
   );

@@ -1,5 +1,8 @@
 import type { Preview } from "@storybook/nextjs-vite";
 import { Quicksand } from "next/font/google";
+import type { ComponentType } from "react";
+import { useEffect } from "react";
+// @ts-ignore
 import "../src/app/globals.css";
 
 const quicksand = Quicksand({
@@ -9,14 +12,22 @@ const quicksand = Quicksand({
   display: "swap",
 });
 
+function FontDecorator({ Story }: { Story: ComponentType }) {
+  useEffect(() => {
+    document.documentElement.classList.add(quicksand.variable, quicksand.className);
+    document.body.classList.add(quicksand.className);
+
+    return () => {
+      document.documentElement.classList.remove(quicksand.variable, quicksand.className);
+      document.body.classList.remove(quicksand.className);
+    };
+  }, []);
+
+  return <Story />;
+}
+
 const preview: Preview = {
-  decorators: [
-    (Story) => (
-      <div className={quicksand.variable} style={{ fontFamily: quicksand.style.fontFamily }}>
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [(Story) => <FontDecorator Story={Story} />],
   parameters: {
     layout: "centered",
     controls: {

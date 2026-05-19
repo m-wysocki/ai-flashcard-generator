@@ -8,6 +8,7 @@ import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescript
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/Dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Field } from "@/components/ui/Field/Field";
+import { Heading } from "@/components/ui/Heading/Heading";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import { StatList } from "@/components/ui/StatList";
 import { Button } from "@/components/ui/Button/Button";
@@ -22,6 +23,7 @@ type Flashcard = {
 };
 
 type FlashcardsViewProps = {
+  title: string;
   flashcards: Flashcard[];
   dueFlashcardIds: string[];
   activeTab: "due" | "all" | "add";
@@ -47,6 +49,9 @@ export function FlashcardsView(props: FlashcardsViewProps) {
 
   return (
     <div data-ui="FlashcardsView" className="grid gap-4">
+      <Heading as="h1" size="md">
+        {props.title}
+      </Heading>
       <StatList
         items={[
           { label: copy.statsDueToday, value: props.reviewStats?.dueToday ?? dueCards.length },

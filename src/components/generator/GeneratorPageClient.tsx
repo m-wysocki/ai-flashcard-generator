@@ -31,12 +31,10 @@ export function GeneratorPageClient({
   const commonCopy = appCopy[language].common;
 
   return (
-    <AppFrame
-      title={commonCopy.appTitleGenerator}
-      headerAction={<HeaderControls email={email} onLanguageChange={setLanguage} />}
-    >
+    <AppFrame headerAction={<HeaderControls email={email} onLanguageChange={setLanguage} />}>
       <GeneratorView
         language={language}
+        title={commonCopy.appTitleGenerator}
         generateLearningMaterialAction={generateLearningMaterialAction}
         createFlashcardAction={createFlashcardAction}
       />

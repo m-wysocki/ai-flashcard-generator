@@ -35,11 +35,9 @@ export function FlashcardsPageClient({
   const commonCopy = appCopy[language].common;
 
   return (
-    <AppFrame
-      title={commonCopy.appTitleFlashcards}
-      headerAction={<HeaderControls email={email} />}
-    >
+    <AppFrame headerAction={<HeaderControls email={email} />}>
       <FlashcardsView
+        title={commonCopy.appTitleFlashcards}
         activeTab={activeTab}
         flashcards={flashcards}
         dueFlashcardIds={dueFlashcardIds}
