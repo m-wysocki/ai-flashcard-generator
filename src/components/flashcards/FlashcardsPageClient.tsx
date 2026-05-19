@@ -4,7 +4,7 @@ import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { AppFrame } from "@/components/app-shell/AppFrame";
 import { HeaderControls } from "@/components/app-shell/HeaderControls";
-import { FlashcardsView } from "./FlashcardsView";
+import { FlashcardsView } from "./FlashcardsView/FlashcardsView";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
 
 type FlashcardsPageClientProps = {
