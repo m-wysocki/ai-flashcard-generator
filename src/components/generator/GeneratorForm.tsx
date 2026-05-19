@@ -32,7 +32,7 @@ export function GeneratorForm({
       <div className="inline-flex gap-2" role="tablist" aria-label={inputLanguageLabel}>
         <Button
           type="button"
-          variant={inputLanguage === "POLISH" ? "primary" : "secondary"}
+          color={inputLanguage === "POLISH" ? "primary" : "secondary"}
           role="tab"
           aria-selected={inputLanguage === "POLISH"}
           onClick={() => onInputLanguageChange("POLISH")}
@@ -41,7 +41,7 @@ export function GeneratorForm({
         </Button>
         <Button
           type="button"
-          variant={inputLanguage === "ENGLISH" ? "primary" : "secondary"}
+          color={inputLanguage === "ENGLISH" ? "primary" : "secondary"}
           role="tab"
           aria-selected={inputLanguage === "ENGLISH"}
           onClick={() => onInputLanguageChange("ENGLISH")}
@@ -51,7 +51,7 @@ export function GeneratorForm({
       </div>
       <input type="hidden" name="inputLanguage" value={inputLanguage} />
       <Field as="textarea" name="text" label={textLabel} required rows={4} />
-      <SubmitButton variant="primary" pending={pending} pendingLabel={generatingLabel}>
+      <SubmitButton color="primary" pending={pending} pendingLabel={generatingLabel}>
         {generateLabel}
       </SubmitButton>
     </form>

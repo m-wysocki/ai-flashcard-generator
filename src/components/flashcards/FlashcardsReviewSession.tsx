@@ -42,7 +42,7 @@ export function FlashcardsReviewSession({
         className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4"
       >
         <p className="m-0 text-lg text-[var(--color-text)]">{copy.done}</p>
-        <Button asChild variant="primary">
+        <Button asChild color="primary">
           <Link href="/app">{copy.backToFlashcards}</Link>
         </Button>
       </main>
@@ -90,7 +90,7 @@ export function FlashcardsReviewSession({
               <Button
                 key={grade}
                 type="button"
-                variant={grade === "good" ? "primary" : "secondary"}
+                color={grade === "good" ? "primary" : "secondary"}
                 disabled={grading !== null}
                 onClick={async () => {
                   setGrading(grade);
@@ -126,7 +126,7 @@ export function FlashcardsReviewSession({
           {error ? <p className="m-0 text-sm text-[var(--color-danger)]">{error}</p> : null}
         </>
       ) : (
-        <Button type="button" variant="primary" onClick={() => setRevealed(true)} disabled={grading !== null}>
+        <Button type="button" color="primary" onClick={() => setRevealed(true)} disabled={grading !== null}>
           {copy.revealAnswer}
         </Button>
       )}

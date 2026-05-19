@@ -22,7 +22,7 @@ export default async function HomePage() {
           <Button asChild>
             <Link href="/login">Login</Link>
           </Button>
-          <Button asChild variant="primary">
+          <Button asChild color="primary">
             <Link href="/register">Request access</Link>
           </Button>
         </nav>
@@ -43,7 +43,7 @@ export default async function HomePage() {
           Registration requires a valid invite code.
         </p>
         <div className="flex flex-wrap gap-2">
-          <Button asChild variant="primary">
+          <Button asChild color="primary">
             <Link href="/register">Request access</Link>
           </Button>
           <Button asChild>

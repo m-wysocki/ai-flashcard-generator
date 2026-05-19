@@ -3,9 +3,9 @@ import { Slot, Slottable } from "@radix-ui/react-slot";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-const buttonVariants = cva(
+const buttonStyles = cva(
   [
-    "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full",
+    "inline-flex cursor-pointer items-center justify-center whitespace-nowrap",
     "border-(length:--border-strong) border-black font-(family-name:--font-sans) text-sm font-semibold text-[var(--color-text)]",
     "shadow-[var(--shadow-offset)] transition-all focus-visible:outline-none",
     "focus-visible:ring-2 focus-visible:ring-[var(--color-text)]",
@@ -15,7 +15,7 @@ const buttonVariants = cva(
   ],
   {
     variants: {
-      variant: {
+      color: {
         primary:
           "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)]",
         secondary:
@@ -28,52 +28,57 @@ const buttonVariants = cva(
         sm: "h-9 px-3",
         md: "h-10 px-4",
         lg: "h-11 px-5",
+        xl: "h-16 px-2",
+      },
+      shape: {
+        pill: "rounded-full",
+        tile: "rounded-lg",
+      },
+      iconPosition: {
+        left: "flex-row gap-2",
+        right: "flex-row-reverse gap-2",
+        top: "flex-col gap-1",
       },
     },
     defaultVariants: {
-      variant: "secondary",
+      color: "secondary",
       size: "md",
+      shape: "pill",
+      iconPosition: "left",
     },
   },
 );
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
-  VariantProps<typeof buttonVariants> & {
+  VariantProps<typeof buttonStyles> & {
     asChild?: boolean;
     icon?: ReactNode;
-    iconPosition?: "start" | "end";
-    iconOnly?: boolean;
   };
 
 export const Button = ({
   className,
-  variant,
+  color,
   size,
+  shape,
+  iconPosition,
   asChild,
   icon,
-  iconPosition = "start",
-  iconOnly = false,
   children,
   ...props
 }: ButtonProps) => {
   const Component = asChild ? Slot : "button";
-  const iconOnlySizeClass =
-    size === "sm" ? "size-9" : size === "lg" ? "size-11" : "size-10";
 
   return (
     <Component
       data-ui="Button"
       className={cn(
-        buttonVariants({ variant, size }),
-        iconOnly ? cn("gap-0 p-0", iconOnlySizeClass) : null,
+        buttonStyles({ color, size, shape, iconPosition }),
         className,
       )}
       {...props}
     >
-      {iconOnly ? <span aria-hidden>{icon ?? children}</span> : null}
-      {!iconOnly && icon && iconPosition === "start" ? <span aria-hidden>{icon}</span> : null}
-      {!iconOnly ? <Slottable>{children}</Slottable> : null}
-      {!iconOnly && icon && iconPosition === "end" ? <span aria-hidden>{icon}</span> : null}
+      {icon ? <span aria-hidden className="shrink-0">{icon}</span> : null}
+      {children ? <Slottable>{children}</Slottable> : null}
     </Component>
   );
 };

@@ -60,7 +60,7 @@ export function GeneratedExamplesList({
               <p className="font-semibold">{example.english}</p>
               <Button
                 type="button"
-                variant={isSelected ? "secondary" : "primary"}
+                color={isSelected ? "secondary" : "primary"}
                 onClick={() => onSelect(index)}
               >
                 {selectLabel}

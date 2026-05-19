@@ -68,14 +68,14 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           {createState && !createState.ok ? (
             <p className="text-sm text-[var(--color-danger)]">{createState.error}</p>
           ) : null}
-          <SubmitButton variant="primary" pending={createPending} pendingLabel={copy.addSaving}>
+          <SubmitButton color="primary" pending={createPending} pendingLabel={copy.addSaving}>
             {copy.addSave}
           </SubmitButton>
         </form>
       ) : null}
 
       {props.activeTab === "due" && dueCards.length > 0 ? (
-        <Button asChild variant="primary">
+        <Button asChild color="primary">
           <Link href="/app/review">{copy.reviewStart}</Link>
         </Button>
       ) : null}
@@ -114,7 +114,7 @@ function TabLink({
     <Button
       data-ui="FlashcardsView.TabLink"
       asChild
-      variant={activeTab === tab ? "primary" : "tertiary"}
+      color={activeTab === tab ? "primary" : "tertiary"}
     >
       <Link href={`/app/flashcards?tab=${tab}`} aria-current={activeTab === tab ? "page" : undefined}>
         {label}
@@ -213,7 +213,7 @@ function EditFlashcardDialog({
             rows={3}
           />
           {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
-          <SubmitButton pending={pending} pendingLabel={copy.addSaving} variant="primary">
+          <SubmitButton pending={pending} pendingLabel={copy.addSaving} color="primary">
             {copy.saveChanges}
           </SubmitButton>
         </form>
@@ -239,7 +239,7 @@ function DeleteFlashcardDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button type="button" variant="secondary">
+        <Button type="button" color="secondary">
           {copy.delete}
         </Button>
       </AlertDialogTrigger>
@@ -263,7 +263,7 @@ function DeleteFlashcardDialog({
             }}
           >
             <input type="hidden" name="flashcardId" value={flashcardId} />
-            <SubmitButton pending={pending} pendingLabel={copy.deleting} variant="secondary">
+            <SubmitButton pending={pending} pendingLabel={copy.deleting} color="secondary">
               {copy.deleteConfirm}
             </SubmitButton>
           </form>

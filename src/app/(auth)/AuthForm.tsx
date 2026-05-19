@@ -38,7 +38,7 @@ export function AuthForm({ action, submitLabel, includeInviteCode = false }: Aut
           {state.error}
         </p>
       ) : null}
-      <SubmitButton variant="primary" pending={isPending} pendingLabel="Please wait">
+      <SubmitButton color="primary" pending={isPending} pendingLabel="Please wait">
         {submitLabel}
       </SubmitButton>
     </form>

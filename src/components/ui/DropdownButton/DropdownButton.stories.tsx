@@ -16,10 +16,10 @@ export const Default: Story = {
     trigger: (
       <Button
         aria-label="Open menu"
-        variant="tertiary"
+        color="tertiary"
         size="md"
-        iconOnly
         icon={<UserRound size={16} />}
+        className="size-10 p-0"
       />
     ),
     children: (
@@ -27,7 +27,7 @@ export const Default: Story = {
         <p className="text-[var(--color-text)]">learner@example.com</p>
         <Button
           type="button"
-          variant="ghost"
+          color="ghost"
           size="sm"
           className="w-full justify-start rounded-md px-2"
         >
