@@ -32,7 +32,7 @@ export function MobileBottomMenu({
       className={cn(
         "fixed inset-x-0 bottom-0 z-30 border-t-(length:--border-strong)",
         "border-[var(--color-border)] bg-[var(--color-surface)]",
-        "px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]",
+        "px-2 pt-2 pb-[calc(0.875rem+env(safe-area-inset-bottom))]",
         className,
       )}
     >
