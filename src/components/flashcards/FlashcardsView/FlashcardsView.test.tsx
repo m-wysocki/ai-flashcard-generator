@@ -91,4 +91,25 @@ describe("FlashcardsView", () => {
     );
     expect(screen.getByRole("heading", { name: "Usunąć fiszkę?" })).toBeInTheDocument();
   });
+
+  it("shows edit error when update fails", async () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="all"
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        dueFlashcardIds={[]}
+        createFlashcardAction={async () => ({ ok: true })}
+        updateFlashcardAction={async () => ({ ok: false, error: "Nie udało się zaktualizować fiszki." })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edytuj" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Zapisz zmiany" }));
+
+    await waitFor(() =>
+      expect(screen.getByText("Nie udało się zaktualizować fiszki.")).toBeInTheDocument(),
+    );
+  });
 });
