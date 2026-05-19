@@ -20,12 +20,14 @@ type CreateFlashcardAction = (formData: FormData) => unknown | Promise<unknown>;
 
 type GeneratorViewProps = {
   language: UiLanguage;
+  title: string;
   generateLearningMaterialAction: GeneratorAction;
   createFlashcardAction: CreateFlashcardAction;
 };
 
 export function GeneratorView({
   language,
+  title,
   generateLearningMaterialAction,
   createFlashcardAction,
 }: GeneratorViewProps) {
@@ -47,6 +49,7 @@ export function GeneratorView({
 
   return (
     <div data-ui="GeneratorView" className="grid gap-4">
+      <h1 className="text-2xl font-semibold">{title}</h1>
       <GeneratorForm
         action={formAction}
         inputLanguage={inputLanguage}

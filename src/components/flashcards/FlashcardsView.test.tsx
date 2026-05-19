@@ -5,6 +5,7 @@ describe("FlashcardsView", () => {
   it("renders URL tab links and marks active tab", () => {
     render(
       <FlashcardsView
+        title="Fiszki"
         activeTab="due"
         flashcards={[]}
         dueFlashcardIds={[]}
@@ -32,6 +33,7 @@ describe("FlashcardsView", () => {
   it("shows add error and stays on add tab when create fails", async () => {
     render(
       <FlashcardsView
+        title="Fiszki"
         activeTab="add"
         flashcards={[]}
         dueFlashcardIds={[]}
@@ -54,6 +56,7 @@ describe("FlashcardsView", () => {
   it("shows due empty state when no cards are due", () => {
     render(
       <FlashcardsView
+        title="Fiszki"
         activeTab="due"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
         dueFlashcardIds={[]}
@@ -70,6 +73,7 @@ describe("FlashcardsView", () => {
   it("keeps delete dialog open and shows error when delete fails", async () => {
     render(
       <FlashcardsView
+        title="Fiszki"
         activeTab="all"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
         dueFlashcardIds={[]}

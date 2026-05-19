@@ -22,6 +22,7 @@ type Flashcard = {
 };
 
 type FlashcardsViewProps = {
+  title: string;
   flashcards: Flashcard[];
   dueFlashcardIds: string[];
   activeTab: "due" | "all" | "add";
@@ -47,6 +48,7 @@ export function FlashcardsView(props: FlashcardsViewProps) {
 
   return (
     <div data-ui="FlashcardsView" className="grid gap-4">
+      <h1 className="text-2xl font-semibold">{props.title}</h1>
       <StatList
         items={[
           { label: copy.statsDueToday, value: props.reviewStats?.dueToday ?? dueCards.length },
