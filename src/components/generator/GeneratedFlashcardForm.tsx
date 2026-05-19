@@ -31,7 +31,7 @@ export function GeneratedFlashcardForm({
         <Field name="front" label={frontLabel} defaultValue={frontDefault} required />
         <Field name="back" label={backLabel} defaultValue={backDefault} required />
         <Field as="textarea" name="notes" label={notesLabel} defaultValue={notesDefault} rows={4} />
-        <SubmitButton variant="primary" pendingLabel={savingLabel}>
+        <SubmitButton color="primary" pendingLabel={savingLabel}>
           {submitLabel}
         </SubmitButton>
       </form>

@@ -6,6 +6,7 @@ import { getReviewStats } from "@/server/review/service";
 
 jest.mock("next/navigation", () => ({
   usePathname: () => "/app",
+  useRouter: () => ({ push: jest.fn() }),
 }));
 
 jest.mock("@/auth", () => ({
@@ -46,8 +47,8 @@ describe("AppPage smoke", () => {
     render(await AppPage());
 
     expect(screen.getByRole("heading", { name: "Słownik" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Generator" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Fiszki" })).toHaveAttribute("href", "/app/flashcards");
+    expect(screen.getByRole("button", { name: "Generator" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Fiszki" })).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByRole("button", { name: "Otwórz panel konta" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Generuj" })).toBeInTheDocument();
     expect(listUserFlashcards).not.toHaveBeenCalled();

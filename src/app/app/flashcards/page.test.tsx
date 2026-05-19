@@ -7,6 +7,7 @@ import { getReviewStats } from "@/server/review/service";
 
 jest.mock("next/navigation", () => ({
   usePathname: () => "/app/flashcards",
+  useRouter: () => ({ push: jest.fn() }),
 }));
 
 jest.mock("@/auth", () => ({
@@ -62,8 +63,8 @@ describe("FlashcardsPage smoke", () => {
     render(await FlashcardsPage({}));
 
     expect(screen.getByRole("heading", { name: "Fiszki" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Generator" })).toHaveAttribute("href", "/app");
-    expect(screen.getByRole("link", { name: "Fiszki" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: "Generator" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "Fiszki" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Otwórz panel konta" })).toBeInTheDocument();
     expect(screen.getByText("Do powtórki dzisiaj")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Start powtórki" })).toHaveAttribute(

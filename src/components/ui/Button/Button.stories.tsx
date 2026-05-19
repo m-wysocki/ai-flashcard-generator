@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     children: "Zapisz fiszkę",
-    variant: "primary",
+    color: "primary",
     size: "md",
   },
 };
@@ -25,7 +25,7 @@ export const Primary: Story = {
 export const Secondary: Story = {
   args: {
     children: "Anuluj",
-    variant: "secondary",
+    color: "secondary",
     size: "md",
   },
 };
@@ -33,7 +33,7 @@ export const Secondary: Story = {
 export const Tertiary: Story = {
   args: {
     children: "Szczegóły",
-    variant: "tertiary",
+    color: "tertiary",
     size: "md",
   },
 };
@@ -41,7 +41,7 @@ export const Tertiary: Story = {
 export const Ghost: Story = {
   args: {
     children: "Pomiń",
-    variant: "ghost",
+    color: "ghost",
     size: "md",
   },
 };
@@ -49,7 +49,7 @@ export const Ghost: Story = {
 export const Small: Story = {
   args: {
     children: "Mały",
-    variant: "secondary",
+    color: "secondary",
     size: "sm",
   },
 };
@@ -57,54 +57,90 @@ export const Small: Story = {
 export const Large: Story = {
   args: {
     children: "Duży",
-    variant: "primary",
+    color: "primary",
     size: "lg",
+  },
+};
+
+export const TileShape: Story = {
+  args: {
+    children: "Kafelek",
+    color: "tertiary",
+    shape: "tile",
+    size: "md",
   },
 };
 
 export const Disabled: Story = {
   args: {
     children: "Zablokowany",
-    variant: "secondary",
+    color: "secondary",
     size: "md",
     disabled: true,
   },
 };
 
-export const WithIconStart: Story = {
+export const WithIconLeft: Story = {
   args: {
     children: "Dalej",
-    variant: "primary",
+    color: "primary",
     size: "md",
     icon: <ArrowRight size={16} />,
-    iconPosition: "start",
+    iconPosition: "left",
   },
 };
 
-export const WithIconEnd: Story = {
+export const WithIconRight: Story = {
   args: {
     children: "Dalej",
-    variant: "primary",
+    color: "primary",
     size: "md",
     icon: <ArrowRight size={16} />,
-    iconPosition: "end",
+    iconPosition: "right",
   },
 };
 
-export const IconOnly: Story = {
+export const WithIconTop: Story = {
   args: {
-    "aria-label": "Dalej",
-    variant: "primary",
-    size: "md",
+    children: "Generator",
+    color: "primary",
+    shape: "tile",
+    size: "xl",
     icon: <ArrowRight size={16} />,
-    iconOnly: true,
+    iconPosition: "top",
+  },
+};
+
+export const MobileNavActive: Story = {
+  args: {
+    children: "Generator",
+    color: "primary",
+    shape: "tile",
+    size: "xl",
+    icon: <ArrowRight size={16} />,
+    iconPosition: "top",
+  },
+};
+
+export const MobileNavInactive: Story = {
+  args: {
+    children: "Fiszki",
+    color: "tertiary",
+    shape: "tile",
+    size: "xl",
+    icon: <ArrowRight size={16} />,
+    iconPosition: "top",
+    className: [
+      "border-[var(--color-border)]",
+      "bg-[var(--color-surface-soft)] hover:bg-[var(--color-surface)]",
+    ].join(" "),
   },
 };
 
 export const CssCheck: Story = {
   args: {
     children: "Sprawdz styl",
-    variant: "primary",
+    color: "primary",
     size: "md",
   },
   play: async ({ canvas }) => {

@@ -21,11 +21,10 @@ export function AccountDropdown({ email }: AccountDropdownProps) {
         trigger={
           <Button
             aria-label={copy.openAccountPanel}
-            variant="tertiary"
+            color="tertiary"
             size="md"
-            iconOnly
             icon={<UserRound size={16} />}
-            className="rounded-full focus-visible:outline-none focus-visible:ring-0"
+            className="size-10 p-0 focus-visible:outline-none focus-visible:ring-0"
           />
         }
         contentClassName="w-auto max-w-[calc(100vw-2rem)]"
@@ -35,7 +34,7 @@ export function AccountDropdown({ email }: AccountDropdownProps) {
           <form action={logoutAction}>
             <Button
               type="submit"
-              variant="ghost"
+              color="ghost"
               size="sm"
               className="w-full justify-start rounded-md px-2"
             >
