@@ -129,6 +129,8 @@ Use these agent instructions, `idea.md`, and the current codebase as domain cont
   multiple short lines so they fit comfortably on screen and stay easy to scan during review.
 - CRITICAL: Every component must expose a stable `data-ui="ComponentName"` attribute on its main
   DOM wrapper so it is easy to identify in browser inspector when using Tailwind-heavy markup.
+- CRITICAL: When deleting files, always remove any directories that become empty as part of the
+  same cleanup.
 - After implementing all requested changes from a prompt, run a final code review using the
   `vercel-react-best-practices` skill before finishing.
 

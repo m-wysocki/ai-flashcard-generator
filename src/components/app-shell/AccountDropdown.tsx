@@ -1,4 +1,8 @@
+"use client";
+
 import { UserRound } from "lucide-react";
+import { appCopy } from "@/content/app-copy";
+import { useUiLanguage } from "@/hooks/use-ui-language";
 import { logoutAction } from "@/server/auth/actions";
 import { Button } from "@/components/ui/Button/Button";
 import { DropdownButton } from "@/components/ui/DropdownButton/DropdownButton";
@@ -8,12 +12,15 @@ type AccountDropdownProps = {
 };
 
 export function AccountDropdown({ email }: AccountDropdownProps) {
+  const { language } = useUiLanguage();
+  const copy = appCopy[language].common;
+
   return (
     <div data-ui="AccountDropdown">
       <DropdownButton
         trigger={
           <Button
-            aria-label="Open account panel"
+            aria-label={copy.openAccountPanel}
             variant="tertiary"
             size="md"
             iconOnly
@@ -32,7 +39,7 @@ export function AccountDropdown({ email }: AccountDropdownProps) {
               size="sm"
               className="w-full justify-start rounded-md px-2"
             >
-              Wyloguj
+              {copy.logout}
             </Button>
           </form>
         </div>

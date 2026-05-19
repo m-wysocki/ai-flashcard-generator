@@ -3,25 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { appCopy } from "@/content/app-copy";
+import { useUiLanguage } from "@/hooks/use-ui-language";
 import { Button } from "@/components/ui/Button/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 
-const links = [
-  { href: "/app", label: "Generator" },
-  { href: "/app/flashcards", label: "Fiszki" },
-] as const;
-
 export function BottomNav() {
+  const { language } = useUiLanguage();
+  const copy = appCopy[language].common;
   const pathname = usePathname();
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const isPending = pendingHref !== null && pendingHref !== pathname;
+  const links = [
+    { href: "/app", label: copy.tabGenerator },
+    { href: "/app/flashcards", label: copy.tabFlashcards },
+  ] as const;
 
   return (
     <>
       <ProgressBar isVisible={isPending} />
       <nav
         data-ui="BottomNav"
-        aria-label="Główna nawigacja"
+        aria-label={copy.bottomNavLabel}
         className="fixed inset-x-0 bottom-0 border-t-[var(--border-strong)] border-[var(--color-border)] bg-[var(--color-surface)] p-2"
       >
         <ul className="mx-auto grid w-full max-w-md grid-cols-2 gap-2">

@@ -1,47 +1,109 @@
 export type UiLanguage = "pl" | "en";
 
-type GeneratorCopy = {
-  inputLanguageLabel: string;
-  polishInput: string;
-  englishInput: string;
-  textLabel: string;
-  generate: string;
-  generating: string;
-  generatorWorkspace: string;
-  ready: string;
-  placeholderPrompt: string;
-  naturalEnglish: string;
-  polishMeaning: string;
-  usageExamples: string;
-  examples: string;
-  notes: string;
-  noNotes: string;
-  useAsFlashcard: string;
-  noExamplesToSave: string;
-  frontLabel: string;
-  backLabel: string;
-  notesLabel: string;
-  saveGeneratedFlashcard: string;
-  saving: string;
+type AppCopy = {
+  common: {
+    appTitleGenerator: string;
+    appTitleFlashcards: string;
+    bottomNavLabel: string;
+    tabGenerator: string;
+    tabFlashcards: string;
+    openAccountPanel: string;
+    logout: string;
+    uiLanguageLabel: string;
+    languagePl: string;
+    languageEn: string;
+  };
+  generator: {
+    inputLanguageLabel: string;
+    polishInput: string;
+    englishInput: string;
+    textLabel: string;
+    generate: string;
+    generating: string;
+    ready: string;
+    placeholderPrompt: string;
+    naturalEnglish: string;
+    polishMeaning: string;
+    examples: string;
+    notes: string;
+    noNotes: string;
+    useAsFlashcard: string;
+    noExamplesToSave: string;
+    frontLabel: string;
+    backLabel: string;
+    notesLabel: string;
+    saveGeneratedFlashcard: string;
+    saving: string;
+  };
+  flashcards: {
+    statsDueToday: string;
+    statsAll: string;
+    statsReviewedToday: string;
+    tabsLabel: string;
+    tabDue: string;
+    tabAll: string;
+    tabAdd: string;
+    addSave: string;
+    addSaving: string;
+    reviewStart: string;
+    noDueCards: string;
+    noCards: string;
+    edit: string;
+    editTitle: string;
+    editDescription: string;
+    saveChanges: string;
+    delete: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    cancel: string;
+    deleteConfirm: string;
+    deleting: string;
+  };
+  review: {
+    done: string;
+    backToFlashcards: string;
+    dueToday: string;
+    allCards: string;
+    reviewedToday: string;
+    saveError: string;
+    saving: string;
+    again: string;
+    hard: string;
+    good: string;
+    easy: string;
+    revealAnswer: string;
+    endSession: string;
+    playback: string;
+  };
 };
 
-export const appCopy: Record<UiLanguage, { generator: GeneratorCopy }> = {
+export const appCopy: Record<UiLanguage, AppCopy> = {
   pl: {
+    common: {
+      appTitleGenerator: "Słownik",
+      appTitleFlashcards: "Fiszki",
+      bottomNavLabel: "Główna nawigacja",
+      tabGenerator: "Generator",
+      tabFlashcards: "Fiszki",
+      openAccountPanel: "Otwórz panel konta",
+      logout: "Wyloguj",
+      uiLanguageLabel: "Język interfejsu",
+      languagePl: "PL",
+      languageEn: "EN",
+    },
     generator: {
       inputLanguageLabel: "Język wejściowy",
-      polishInput: "Polish input",
-      englishInput: "English input",
-      textLabel: "Text",
-      generate: "Generate",
-      generating: "Generating...",
-      generatorWorkspace: "Generator workspace",
-      ready: "Ready",
-      placeholderPrompt: "Wpisz tekst i kliknij Generate.",
-      naturalEnglish: "Natural English",
-      polishMeaning: "Polish meaning",
-      usageExamples: "Usage examples",
-      examples: "Examples",
-      notes: "Notes",
+      polishInput: "Polski",
+      englishInput: "Angielski",
+      textLabel: "Tekst",
+      generate: "Generuj",
+      generating: "Generowanie...",
+      ready: "Gotowe",
+      placeholderPrompt: "Wpisz tekst i kliknij Generuj.",
+      naturalEnglish: "Naturalny angielski",
+      polishMeaning: "Znaczenie po polsku",
+      examples: "Przykłady",
+      notes: "Notatki",
       noNotes: "Brak dodatkowych notatek.",
       useAsFlashcard: "Użyj jako fiszki",
       noExamplesToSave: "Brak przykładów do zapisania jako fiszka.",
@@ -51,21 +113,71 @@ export const appCopy: Record<UiLanguage, { generator: GeneratorCopy }> = {
       saveGeneratedFlashcard: "Zapisz wygenerowaną fiszkę",
       saving: "Zapisywanie...",
     },
+    flashcards: {
+      statsDueToday: "Do powtórki dzisiaj",
+      statsAll: "Wszystkie fiszki",
+      statsReviewedToday: "Powtórzone dzisiaj",
+      tabsLabel: "Karty fiszek",
+      tabDue: "Do powtórki",
+      tabAll: "Wszystkie",
+      tabAdd: "Dodaj",
+      addSave: "Zapisz fiszkę",
+      addSaving: "Zapisywanie...",
+      reviewStart: "Start powtórki",
+      noDueCards: "Brak fiszek do powtórki.",
+      noCards: "Brak fiszek.",
+      edit: "Edytuj",
+      editTitle: "Edytuj fiszkę",
+      editDescription: "Zmień pola i zapisz.",
+      saveChanges: "Zapisz zmiany",
+      delete: "Usuń",
+      deleteTitle: "Usunąć fiszkę?",
+      deleteDescription: "Tej operacji nie można cofnąć.",
+      cancel: "Anuluj",
+      deleteConfirm: "Potwierdź usuń",
+      deleting: "Usuwanie...",
+    },
+    review: {
+      done: "To wszystko na teraz.",
+      backToFlashcards: "Wróć do Fiszek",
+      dueToday: "Do powtórki dzisiaj",
+      allCards: "Wszystkie fiszki",
+      reviewedToday: "Powtórzone dzisiaj",
+      saveError: "Nie udało się zapisać oceny. Spróbuj ponownie.",
+      saving: "Zapisywanie...",
+      again: "Ponownie",
+      hard: "Trudne",
+      good: "Dobrze",
+      easy: "Łatwe",
+      revealAnswer: "Pokaż odpowiedź",
+      endSession: "Zakończ sesję",
+      playback: "Odtwórz wymowę",
+    },
   },
   en: {
+    common: {
+      appTitleGenerator: "Dictionary",
+      appTitleFlashcards: "Flashcards",
+      bottomNavLabel: "Main navigation",
+      tabGenerator: "Generator",
+      tabFlashcards: "Flashcards",
+      openAccountPanel: "Open account panel",
+      logout: "Log out",
+      uiLanguageLabel: "Interface language",
+      languagePl: "PL",
+      languageEn: "EN",
+    },
     generator: {
       inputLanguageLabel: "Input language",
-      polishInput: "Polish input",
-      englishInput: "English input",
+      polishInput: "Polish",
+      englishInput: "English",
       textLabel: "Text",
       generate: "Generate",
       generating: "Generating...",
-      generatorWorkspace: "Generator workspace",
       ready: "Ready",
       placeholderPrompt: "Type text and click Generate.",
       naturalEnglish: "Natural English",
-      polishMeaning: "Polish meaning",
-      usageExamples: "Usage examples",
+      polishMeaning: "Meaning in Polish",
       examples: "Examples",
       notes: "Notes",
       noNotes: "No additional notes.",
@@ -76,6 +188,46 @@ export const appCopy: Record<UiLanguage, { generator: GeneratorCopy }> = {
       notesLabel: "Notes (optional)",
       saveGeneratedFlashcard: "Save generated flashcard",
       saving: "Saving...",
+    },
+    flashcards: {
+      statsDueToday: "Due today",
+      statsAll: "All cards",
+      statsReviewedToday: "Reviewed today",
+      tabsLabel: "Flashcards tabs",
+      tabDue: "Due",
+      tabAll: "All",
+      tabAdd: "Add",
+      addSave: "Save flashcard",
+      addSaving: "Saving...",
+      reviewStart: "Start review",
+      noDueCards: "No cards due.",
+      noCards: "No flashcards yet.",
+      edit: "Edit",
+      editTitle: "Edit flashcard",
+      editDescription: "Update fields and save.",
+      saveChanges: "Save changes",
+      delete: "Delete",
+      deleteTitle: "Delete flashcard?",
+      deleteDescription: "This action cannot be undone.",
+      cancel: "Cancel",
+      deleteConfirm: "Confirm delete",
+      deleting: "Deleting...",
+    },
+    review: {
+      done: "That's all for now.",
+      backToFlashcards: "Back to Flashcards",
+      dueToday: "Due today",
+      allCards: "All cards",
+      reviewedToday: "Reviewed today",
+      saveError: "Could not save the grade. Try again.",
+      saving: "Saving...",
+      again: "Again",
+      hard: "Hard",
+      good: "Good",
+      easy: "Easy",
+      revealAnswer: "Reveal answer",
+      endSession: "End session",
+      playback: "Play pronunciation",
     },
   },
 };

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { appCopy } from "@/content/app-copy";
+import { useUiLanguage } from "@/hooks/use-ui-language";
 import { Button } from "@/components/ui/Button/Button";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import type { ReviewGrade } from "@/server/review/service";
@@ -24,6 +26,8 @@ export function FlashcardsReviewSession({
   stats,
   gradeAction,
 }: FlashcardsReviewSessionProps) {
+  const { language } = useUiLanguage();
+  const copy = appCopy[language].review;
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
   const [reviewedNow, setReviewedNow] = useState(0);
@@ -37,9 +41,9 @@ export function FlashcardsReviewSession({
         data-ui="FlashcardsReviewSession"
         className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4"
       >
-        <p className="m-0 text-lg text-[var(--color-text)]">To wszystko na teraz.</p>
+        <p className="m-0 text-lg text-[var(--color-text)]">{copy.done}</p>
         <Button asChild variant="primary">
-          <Link href="/app">Wróć do Fiszek</Link>
+          <Link href="/app">{copy.backToFlashcards}</Link>
         </Button>
       </main>
     );
@@ -52,13 +56,13 @@ export function FlashcardsReviewSession({
     >
       <header className="grid grid-cols-3 gap-2">
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          Do powtórki dzisiaj: {stats.dueToday}
+          {copy.dueToday}: {stats.dueToday}
         </ShadowFrame>
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          Wszystkie fiszki: {stats.totalCards}
+          {copy.allCards}: {stats.totalCards}
         </ShadowFrame>
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          Powtórzone dzisiaj: {stats.reviewedToday + reviewedNow}
+          {copy.reviewedToday}: {stats.reviewedToday + reviewedNow}
         </ShadowFrame>
       </header>
       <p className="m-0 text-sm text-[var(--color-muted)]">
@@ -72,7 +76,12 @@ export function FlashcardsReviewSession({
           <p className="m-0 text-[var(--color-text)]">{current.back}</p>
           {current.notes ? <p className="m-0 text-[var(--color-muted)]">{current.notes}</p> : null}
           <div className="grid gap-2">
-            <Button type="button" onClick={() => speakEnglish(current.back)} disabled={grading !== null}>
+            <Button
+              type="button"
+              onClick={() => speakEnglish(current.back)}
+              disabled={grading !== null}
+              aria-label={copy.playback}
+            >
               🔊
             </Button>
           </div>
@@ -88,7 +97,7 @@ export function FlashcardsReviewSession({
                   setError(null);
                   const result = await gradeAction({ flashcardId: current.id, grade });
                   if (!result.ok) {
-                    setError("Nie udało się zapisać oceny. Spróbuj ponownie.");
+                    setError(copy.saveError);
                     setGrading(null);
                     return;
                   }
@@ -103,14 +112,14 @@ export function FlashcardsReviewSession({
                 }}
               >
                 {grading === grade
-                  ? "Zapisywanie..."
+                  ? copy.saving
                   : grade === "again"
-                    ? "Again"
+                    ? copy.again
                     : grade === "hard"
-                      ? "Hard"
+                      ? copy.hard
                       : grade === "good"
-                        ? "Good"
-                        : "Easy"}
+                        ? copy.good
+                        : copy.easy}
               </Button>
             ))}
           </div>
@@ -118,11 +127,11 @@ export function FlashcardsReviewSession({
         </>
       ) : (
         <Button type="button" variant="primary" onClick={() => setRevealed(true)} disabled={grading !== null}>
-          Pokaż odpowiedź
+          {copy.revealAnswer}
         </Button>
       )}
       <Button asChild>
-        <Link href="/app">Zakończ sesję</Link>
+        <Link href="/app">{copy.endSession}</Link>
       </Button>
     </main>
   );

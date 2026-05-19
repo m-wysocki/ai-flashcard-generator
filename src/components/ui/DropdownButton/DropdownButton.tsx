@@ -1,11 +1,8 @@
 "use client";
 
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import type { ReactNode } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import { cn } from "@/lib/cn";
 
 type DropdownButtonProps = {
@@ -26,8 +23,8 @@ export function DropdownButton({
   triggerClassName,
 }: DropdownButtonProps) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
+    <DropdownMenuPrimitive.Root>
+      <DropdownMenuPrimitive.Trigger
         asChild
         className={cn(
           "active:translate-x-0 active:translate-y-0",
@@ -38,16 +35,24 @@ export function DropdownButton({
         )}
       >
         {trigger}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align={align}
-        sideOffset={sideOffset}
-        className={contentClassName}
-      >
-        <div data-ui="DropdownButton" className="px-1 py-0.5">
-          {children}
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenuPrimitive.Trigger>
+      <DropdownMenuPrimitive.Portal>
+        <DropdownMenuPrimitive.Content
+          align={align}
+          sideOffset={sideOffset}
+          asChild
+        >
+          <ShadowFrame
+            data-ui="DropdownButton"
+            className={cn(
+              "z-50 min-w-40 p-1.5",
+              contentClassName,
+            )}
+          >
+            {children}
+          </ShadowFrame>
+        </DropdownMenuPrimitive.Content>
+      </DropdownMenuPrimitive.Portal>
+    </DropdownMenuPrimitive.Root>
   );
 }

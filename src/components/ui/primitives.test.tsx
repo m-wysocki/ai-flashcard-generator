@@ -3,6 +3,7 @@ import { DropdownButton } from "./DropdownButton/DropdownButton";
 import { Field } from "./Field/Field";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { ProgressBar } from "./ProgressBar";
+import { SegmentedSwitch } from "./SegmentedSwitch/SegmentedSwitch";
 import { SubmitButton } from "./SubmitButton";
 
 describe("ui primitives", () => {
@@ -72,5 +73,23 @@ describe("ui primitives", () => {
     );
 
     expect(screen.getByRole("button", { name: "Open panel" })).toBeInTheDocument();
+  });
+
+  it("renders SegmentedSwitch with radiogroup semantics", () => {
+    render(
+      <SegmentedSwitch
+        ariaLabel="UI language"
+        value="pl"
+        onChange={() => {}}
+        options={[
+          { value: "pl", label: "PL" },
+          { value: "en", label: "EN" },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("radiogroup", { name: "UI language" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "PL" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: "EN" })).toHaveAttribute("aria-checked", "false");
   });
 });

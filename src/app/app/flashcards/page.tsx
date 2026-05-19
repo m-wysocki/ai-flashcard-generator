@@ -1,7 +1,5 @@
 import { auth } from "@/auth";
-import { AccountDropdown } from "@/components/app-shell/AccountDropdown";
-import { AppFrame } from "@/components/app-shell/AppFrame";
-import { FlashcardsView } from "@/components/flashcards/FlashcardsView";
+import { FlashcardsPageClient } from "@/components/flashcards/FlashcardsPageClient";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import {
   createManualFlashcardAction,
@@ -39,26 +37,20 @@ export default async function FlashcardsPage({
     : [[], [], undefined];
 
   return (
-    <AppFrame
-      title="Fiszki"
-      headerAction={
-        session?.user?.email ? <AccountDropdown email={session.user.email} /> : undefined
-      }
-    >
-      <FlashcardsView
-        activeTab={parseTab(params?.tab)}
-        flashcards={flashcards.map((flashcard) => ({
-          id: flashcard.id,
-          front: flashcard.front,
-          back: flashcard.back,
-          notes: flashcard.notes,
-        }))}
-        dueFlashcardIds={dueFlashcards.map((flashcard) => flashcard.id)}
-        reviewStats={reviewStats}
-        createFlashcardAction={createManualFlashcardAction}
-        updateFlashcardAction={updateManualFlashcardAction}
-        deleteFlashcardAction={deleteManualFlashcardAction}
-      />
-    </AppFrame>
+    <FlashcardsPageClient
+      email={session?.user?.email ?? undefined}
+      activeTab={parseTab(params?.tab)}
+      flashcards={flashcards.map((flashcard) => ({
+        id: flashcard.id,
+        front: flashcard.front,
+        back: flashcard.back,
+        notes: flashcard.notes,
+      }))}
+      dueFlashcardIds={dueFlashcards.map((flashcard) => flashcard.id)}
+      reviewStats={reviewStats}
+      createFlashcardAction={createManualFlashcardAction}
+      updateFlashcardAction={updateManualFlashcardAction}
+      deleteFlashcardAction={deleteManualFlashcardAction}
+    />
   );
 }

@@ -17,13 +17,13 @@ describe("FlashcardsReviewSession", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
-    fireEvent.click(screen.getByRole("button", { name: "Again" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ponownie" }));
     await screen.findByRole("button", { name: "Pokaż odpowiedź" });
 
     expect(screen.getByText("A")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
-    fireEvent.click(screen.getByRole("button", { name: "Good" }));
+    fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
     await waitFor(() => expect(gradeAction).toHaveBeenCalledTimes(2));
     await screen.findByText("To wszystko na teraz.");
   });
@@ -46,10 +46,10 @@ describe("FlashcardsReviewSession", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
-    fireEvent.click(screen.getByRole("button", { name: "Good" }));
+    fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
     expect(screen.getByRole("button", { name: "Zapisywanie..." })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Again" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Ponownie" })).toBeDisabled();
 
     if (resolveGrade) {
       resolveGrade({ ok: true, shouldRequeue: false });
@@ -69,11 +69,11 @@ describe("FlashcardsReviewSession", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
-    fireEvent.click(screen.getByRole("button", { name: "Good" }));
+    fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
     await waitFor(() => expect(gradeAction).toHaveBeenCalledTimes(1));
     expect(screen.getByText("Nie udało się zapisać oceny. Spróbuj ponownie.")).toBeInTheDocument();
     expect(screen.getByText("A")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Good" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Dobrze" })).toBeInTheDocument();
   });
 });

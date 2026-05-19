@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
+import { appCopy } from "@/content/app-copy";
+import { useUiLanguage } from "@/hooks/use-ui-language";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/AlertDialog";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/Dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -33,6 +35,8 @@ type FlashcardsViewProps = {
 };
 
 export function FlashcardsView(props: FlashcardsViewProps) {
+  const { language } = useUiLanguage();
+  const copy = appCopy[language].flashcards;
   const dueSet = useMemo(() => new Set(props.dueFlashcardIds), [props.dueFlashcardIds]);
   const dueCards = props.flashcards.filter((flashcard) => dueSet.has(flashcard.id));
 
@@ -45,43 +49,44 @@ export function FlashcardsView(props: FlashcardsViewProps) {
     <div data-ui="FlashcardsView" className="grid gap-4">
       <StatList
         items={[
-          { label: "Do powtórki dzisiaj", value: props.reviewStats?.dueToday ?? dueCards.length },
-          { label: "Wszystkie fiszki", value: props.reviewStats?.totalCards ?? props.flashcards.length },
-          { label: "Powtórzone dzisiaj", value: props.reviewStats?.reviewedToday ?? 0 },
+          { label: copy.statsDueToday, value: props.reviewStats?.dueToday ?? dueCards.length },
+          { label: copy.statsAll, value: props.reviewStats?.totalCards ?? props.flashcards.length },
+          { label: copy.statsReviewedToday, value: props.reviewStats?.reviewedToday ?? 0 },
         ]}
       />
-      <nav aria-label="Karty fiszek" className="inline-flex flex-wrap gap-2">
-        <TabLink tab="due" activeTab={props.activeTab} label="Do powtórki" />
-        <TabLink tab="all" activeTab={props.activeTab} label="Wszystkie" />
-        <TabLink tab="add" activeTab={props.activeTab} label="Dodaj" />
+      <nav aria-label={copy.tabsLabel} className="inline-flex flex-wrap gap-2">
+        <TabLink tab="due" activeTab={props.activeTab} label={copy.tabDue} />
+        <TabLink tab="all" activeTab={props.activeTab} label={copy.tabAll} />
+        <TabLink tab="add" activeTab={props.activeTab} label={copy.tabAdd} />
       </nav>
 
       {props.activeTab === "add" ? (
         <form className="grid gap-3" action={createFormAction}>
-          <Field name="front" label="Front (PL)" required />
-          <Field name="back" label="Back (EN)" required />
-          <Field as="textarea" name="notes" label="Notatki (opcjonalnie)" rows={4} />
+          <Field name="front" label={appCopy[language].generator.frontLabel} required />
+          <Field name="back" label={appCopy[language].generator.backLabel} required />
+          <Field as="textarea" name="notes" label={appCopy[language].generator.notesLabel} rows={4} />
           {createState && !createState.ok ? (
             <p className="text-sm text-[var(--color-danger)]">{createState.error}</p>
           ) : null}
-          <SubmitButton variant="primary" pending={createPending} pendingLabel="Zapisywanie...">
-            Zapisz fiszkę
+          <SubmitButton variant="primary" pending={createPending} pendingLabel={copy.addSaving}>
+            {copy.addSave}
           </SubmitButton>
         </form>
       ) : null}
 
       {props.activeTab === "due" && dueCards.length > 0 ? (
         <Button asChild variant="primary">
-          <Link href="/app/review">Start powtórki</Link>
+          <Link href="/app/review">{copy.reviewStart}</Link>
         </Button>
       ) : null}
 
       {props.activeTab === "due" ? (
         <FlashcardsList
           flashcards={dueCards}
-          emptyMessage="Brak fiszek do powtórki."
+          emptyMessage={copy.noDueCards}
           updateFlashcardAction={props.updateFlashcardAction}
           deleteFlashcardAction={props.deleteFlashcardAction}
+          language={language}
         />
       ) : null}
       {props.activeTab === "all" ? (
@@ -89,6 +94,7 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           flashcards={props.flashcards}
           updateFlashcardAction={props.updateFlashcardAction}
           deleteFlashcardAction={props.deleteFlashcardAction}
+          language={language}
         />
       ) : null}
     </div>
@@ -119,17 +125,21 @@ function TabLink({
 
 function FlashcardsList({
   flashcards,
-  emptyMessage = "Brak fiszek.",
+  emptyMessage,
   updateFlashcardAction,
   deleteFlashcardAction,
+  language,
 }: {
   flashcards: Flashcard[];
   emptyMessage?: string;
   updateFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
   deleteFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
+  language: "pl" | "en";
 }) {
+  const copy = appCopy[language].flashcards;
+
   if (flashcards.length === 0) {
-    return <EmptyState title={emptyMessage} />;
+    return <EmptyState title={emptyMessage ?? copy.noCards} />;
   }
 
   return (
@@ -144,8 +154,16 @@ function FlashcardsList({
           <p>{flashcard.back}</p>
           {flashcard.notes ? <p className="text-sm text-[var(--color-muted)]">{flashcard.notes}</p> : null}
           <div className="mt-2 flex gap-2">
-            <EditFlashcardDialog flashcard={flashcard} updateFlashcardAction={updateFlashcardAction} />
-            <DeleteFlashcardDialog flashcardId={flashcard.id} deleteFlashcardAction={deleteFlashcardAction} />
+            <EditFlashcardDialog
+              flashcard={flashcard}
+              updateFlashcardAction={updateFlashcardAction}
+              language={language}
+            />
+            <DeleteFlashcardDialog
+              flashcardId={flashcard.id}
+              deleteFlashcardAction={deleteFlashcardAction}
+              language={language}
+            />
           </div>
         </ShadowFrame>
       ))}
@@ -156,21 +174,25 @@ function FlashcardsList({
 function EditFlashcardDialog({
   flashcard,
   updateFlashcardAction,
+  language,
 }: {
   flashcard: Flashcard;
   updateFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
+  language: "pl" | "en";
 }) {
+  const copy = appCopy[language].flashcards;
+  const generatorCopy = appCopy[language].generator;
   const [state, setState] = useState<FlashcardActionState | null>(null);
   const [pending, setPending] = useState(false);
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button type="button">Edytuj</Button>
+        <Button type="button">{copy.edit}</Button>
       </DialogTrigger>
       <DialogContent data-ui="FlashcardsView.EditFlashcardDialog">
-        <DialogTitle>Edytuj fiszkę</DialogTitle>
-        <DialogDescription>Zmień pola i zapisz.</DialogDescription>
+        <DialogTitle>{copy.editTitle}</DialogTitle>
+        <DialogDescription>{copy.editDescription}</DialogDescription>
         <form
           className="mt-3 grid gap-2"
           action={async (formData) => {
@@ -181,18 +203,18 @@ function EditFlashcardDialog({
           }}
         >
           <input type="hidden" name="flashcardId" value={flashcard.id} />
-          <Field name="front" label="Front (PL)" defaultValue={flashcard.front} required />
-          <Field name="back" label="Back (EN)" defaultValue={flashcard.back} required />
+          <Field name="front" label={generatorCopy.frontLabel} defaultValue={flashcard.front} required />
+          <Field name="back" label={generatorCopy.backLabel} defaultValue={flashcard.back} required />
           <Field
             as="textarea"
             name="notes"
-            label="Notatki (opcjonalnie)"
+            label={generatorCopy.notesLabel}
             defaultValue={flashcard.notes ?? ""}
             rows={3}
           />
           {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
-          <SubmitButton pending={pending} pendingLabel="Zapisywanie..." variant="primary">
-            Zapisz zmiany
+          <SubmitButton pending={pending} pendingLabel={copy.addSaving} variant="primary">
+            {copy.saveChanges}
           </SubmitButton>
         </form>
       </DialogContent>
@@ -203,10 +225,13 @@ function EditFlashcardDialog({
 function DeleteFlashcardDialog({
   flashcardId,
   deleteFlashcardAction,
+  language,
 }: {
   flashcardId: string;
   deleteFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
+  language: "pl" | "en";
 }) {
+  const copy = appCopy[language].flashcards;
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<FlashcardActionState | null>(null);
   const [pending, setPending] = useState(false);
@@ -215,16 +240,16 @@ function DeleteFlashcardDialog({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button type="button" variant="secondary">
-          Usuń
+          {copy.delete}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent data-ui="FlashcardsView.DeleteFlashcardDialog">
-        <AlertDialogTitle>Usunąć fiszkę?</AlertDialogTitle>
-        <AlertDialogDescription>Tej operacji nie można cofnąć.</AlertDialogDescription>
+        <AlertDialogTitle>{copy.deleteTitle}</AlertDialogTitle>
+        <AlertDialogDescription>{copy.deleteDescription}</AlertDialogDescription>
         {state && !state.ok ? <p className="text-sm text-[var(--color-danger)]">{state.error}</p> : null}
         <div className="mt-3 flex justify-end gap-2">
           <AlertDialogCancel asChild>
-            <Button type="button">Anuluj</Button>
+            <Button type="button">{copy.cancel}</Button>
           </AlertDialogCancel>
           <form
             action={async (formData) => {
@@ -238,8 +263,8 @@ function DeleteFlashcardDialog({
             }}
           >
             <input type="hidden" name="flashcardId" value={flashcardId} />
-            <SubmitButton pending={pending} pendingLabel="Usuwanie..." variant="secondary">
-              Potwierdź usuń
+            <SubmitButton pending={pending} pendingLabel={copy.deleting} variant="secondary">
+              {copy.deleteConfirm}
             </SubmitButton>
           </form>
         </div>

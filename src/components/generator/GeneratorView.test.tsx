@@ -6,20 +6,19 @@ describe("GeneratorView", () => {
     window.localStorage.clear();
   });
 
-  it("switches UI language and stores preference", () => {
+  it("renders copy for provided UI language", () => {
     render(
       <GeneratorView
+        language="pl"
         generateLearningMaterialAction={async () => null}
         createFlashcardAction={async () => {}}
       />,
     );
 
-    expect(screen.getByText("Wpisz tekst i kliknij Generate.")).toBeInTheDocument();
+    expect(screen.getByText("Wpisz tekst i kliknij Generuj.")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "EN" }));
-
-    expect(screen.getByText("Type text and click Generate.")).toBeInTheDocument();
-    expect(window.localStorage.getItem("ui-language")).toBe("en");
+    expect(screen.queryByText("Type text and click Generate.")).not.toBeInTheDocument();
+    expect(window.localStorage.getItem("ui-language")).toBeNull();
   });
 
   it("lets user edit one generated example and save it as a flashcard", async () => {
@@ -27,6 +26,7 @@ describe("GeneratorView", () => {
 
     render(
       <GeneratorView
+        language="pl"
         generateLearningMaterialAction={async () => ({
           ok: true,
           material: {
@@ -49,10 +49,10 @@ describe("GeneratorView", () => {
       />,
     );
 
-    fireEvent.change(screen.getByRole("textbox", { name: "Text" }), {
+    fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
       target: { value: "rozgryźć" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
 
     const chooseButtons = await screen.findAllByRole("button", { name: "Użyj jako fiszki" });
     fireEvent.click(chooseButtons[0]);
@@ -83,6 +83,7 @@ describe("GeneratorView", () => {
   it("shows a clear message when generated material has no examples to save", async () => {
     render(
       <GeneratorView
+        language="pl"
         generateLearningMaterialAction={async () => ({
           ok: true,
           material: {
@@ -96,10 +97,10 @@ describe("GeneratorView", () => {
       />,
     );
 
-    fireEvent.change(screen.getByRole("textbox", { name: "Text" }), {
+    fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
       target: { value: "rozgryźć" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
 
     expect(
       await screen.findByText("Brak przykładów do zapisania jako fiszka."),
