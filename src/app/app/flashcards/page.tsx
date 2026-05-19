@@ -1,8 +1,7 @@
 import { auth } from "@/auth";
+import { AccountDropdown } from "@/components/app-shell/AccountDropdown";
 import { AppFrame } from "@/components/app-shell/AppFrame";
-import { Button } from "@/components/ui/Button/Button";
 import { FlashcardsView } from "@/components/flashcards/FlashcardsView";
-import { logoutAction } from "@/server/auth/actions";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import {
   createManualFlashcardAction,
@@ -43,11 +42,7 @@ export default async function FlashcardsPage({
     <AppFrame
       title="Fiszki"
       headerAction={
-        <form action={logoutAction}>
-          <Button type="submit" variant="primary">
-            Logout
-          </Button>
-        </form>
+        session?.user?.email ? <AccountDropdown email={session.user.email} /> : undefined
       }
     >
       <FlashcardsView

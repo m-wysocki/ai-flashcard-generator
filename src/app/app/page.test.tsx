@@ -48,6 +48,7 @@ describe("AppPage smoke", () => {
     expect(screen.getByRole("heading", { name: "Słownik" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Generator" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Fiszki" })).toHaveAttribute("href", "/app/flashcards");
+    expect(screen.getByRole("button", { name: "Open account panel" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Generate" })).toBeInTheDocument();
     expect(listUserFlashcards).not.toHaveBeenCalled();
     expect(listUserDueFlashcards).not.toHaveBeenCalled();

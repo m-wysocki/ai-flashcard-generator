@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { DropdownButton } from "./DropdownButton/DropdownButton";
 import { Field } from "./Field/Field";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { ProgressBar } from "./ProgressBar";
@@ -61,5 +62,15 @@ describe("ui primitives", () => {
     expect(textarea).toHaveAttribute("aria-describedby", "notes-error");
     expect(error).toHaveAttribute("id", "notes-error");
     expect(error).toHaveAttribute("role", "alert");
+  });
+
+  it("renders dropdown trigger", () => {
+    render(
+      <DropdownButton trigger={<button type="button">Open panel</button>}>
+        <p>Panel content</p>
+      </DropdownButton>,
+    );
+
+    expect(screen.getByRole("button", { name: "Open panel" })).toBeInTheDocument();
   });
 });
