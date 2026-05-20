@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState, useMemo } from "react";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
+import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { StatList } from "@/components/ui/StatList";
 import { Button } from "@/components/ui/Button/Button";
@@ -32,6 +32,7 @@ type FlashcardsViewProps = {
 export function FlashcardsView(props: FlashcardsViewProps) {
   const { language } = useUiLanguage();
   const copy = appCopy[language].flashcards;
+  const { navigate } = useNavigation();
   const dueSet = useMemo(() => new Set(props.dueFlashcardIds), [props.dueFlashcardIds]);
   const dueCards = props.flashcards.filter((flashcard) => dueSet.has(flashcard.id));
 
@@ -64,8 +65,8 @@ export function FlashcardsView(props: FlashcardsViewProps) {
       ) : null}
 
       {props.activeTab === "due" && dueCards.length > 0 ? (
-        <Button asChild color="primary">
-          <Link href="/app/review">{copy.reviewStart}</Link>
+        <Button type="button" color="primary" onClick={() => navigate("/app/review")}>
+          {copy.reviewStart}
         </Button>
       ) : null}
 

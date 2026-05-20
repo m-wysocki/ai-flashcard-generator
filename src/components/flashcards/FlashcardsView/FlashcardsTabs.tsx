@@ -1,5 +1,7 @@
-import Link from "next/link";
+"use client";
+
 import { appCopy } from "@/content/app-copy";
+import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
 import type { FlashcardsCopyLanguage, FlashcardsTab } from "./types";
 
@@ -12,6 +14,7 @@ type FlashcardsTabsProps = {
 
 export function FlashcardsTabs({ activeTab, language }: FlashcardsTabsProps) {
   const copy = appCopy[language].flashcards;
+  const { navigate } = useNavigation();
   const tabLabelByKey: Record<FlashcardsTab, string> = {
     due: copy.tabDue,
     all: copy.tabAll,
@@ -28,15 +31,12 @@ export function FlashcardsTabs({ activeTab, language }: FlashcardsTabsProps) {
         <Button
           data-ui="FlashcardsView.TabLink"
           key={tab}
-          asChild
+          type="button"
           color={activeTab === tab ? "primary" : "tertiary"}
+          aria-current={activeTab === tab ? "page" : undefined}
+          onClick={() => navigate(`/app/flashcards?tab=${tab}`)}
         >
-          <Link
-            href={`/app/flashcards?tab=${tab}`}
-            aria-current={activeTab === tab ? "page" : undefined}
-          >
-            {tabLabelByKey[tab]}
-          </Link>
+          {tabLabelByKey[tab]}
         </Button>
       ))}
     </nav>

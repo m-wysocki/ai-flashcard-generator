@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { FlashcardsView } from "./FlashcardsView";
 
 describe("FlashcardsView", () => {
-  it("renders URL tab links and marks active tab", () => {
+  it("renders tab buttons and marks active tab", () => {
     render(
       <FlashcardsView
         title="Fiszki"
@@ -15,19 +15,10 @@ describe("FlashcardsView", () => {
       />,
     );
 
-    expect(screen.getByRole("link", { name: "Do powtórki" })).toHaveAttribute(
-      "href",
-      "/app/flashcards?tab=due",
-    );
-    expect(screen.getByRole("link", { name: "Wszystkie" })).toHaveAttribute(
-      "href",
-      "/app/flashcards?tab=all",
-    );
-    expect(screen.getByRole("link", { name: "Dodaj" })).toHaveAttribute(
-      "href",
-      "/app/flashcards?tab=add",
-    );
-    expect(screen.getByRole("link", { name: "Do powtórki" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: "Do powtórki" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Wszystkie" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Dodaj" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Do powtórki" })).toHaveAttribute("aria-current", "page");
   });
 
   it("shows add error and stays on add tab when create fails", async () => {
@@ -50,7 +41,7 @@ describe("FlashcardsView", () => {
     await waitFor(() =>
       expect(screen.getByText("Nie udało się zapisać fiszki.")).toBeInTheDocument(),
     );
-    expect(screen.getByRole("link", { name: "Dodaj" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: "Dodaj" })).toHaveAttribute("aria-current", "page");
   });
 
   it("shows due empty state when no cards are due", () => {
@@ -67,7 +58,7 @@ describe("FlashcardsView", () => {
     );
 
     expect(screen.getByText("Brak fiszek do powtórki.")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Start powtórki" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Start powtórki" })).not.toBeInTheDocument();
   });
 
   it("keeps delete dialog open and shows error when delete fails", async () => {

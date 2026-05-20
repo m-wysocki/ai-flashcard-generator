@@ -9,6 +9,7 @@ type AppCopy = {
     tabFlashcards: string;
     openAccountPanel: string;
     logout: string;
+    loggingOut: string;
     uiLanguageLabel: string;
     languagePl: string;
     languageEn: string;
@@ -88,6 +89,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       tabFlashcards: "Fiszki",
       openAccountPanel: "Otwórz panel konta",
       logout: "Wyloguj",
+      loggingOut: "Wylogowywanie...",
       uiLanguageLabel: "Język interfejsu",
       languagePl: "PL",
       languageEn: "EN",
@@ -165,6 +167,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       tabFlashcards: "Flashcards",
       openAccountPanel: "Open account panel",
       logout: "Log out",
+      loggingOut: "Logging out...",
       uiLanguageLabel: "Interface language",
       languagePl: "PL",
       languageEn: "EN",

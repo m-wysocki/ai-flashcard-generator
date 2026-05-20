@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { appCopy } from "@/content/app-copy";
+import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
 import { Field } from "@/components/ui/Field/Field";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
@@ -21,10 +23,19 @@ export function EditFlashcardDialog({
 }: EditFlashcardDialogProps) {
   const copy = appCopy[language].flashcards;
   const generatorCopy = appCopy[language].generator;
-  const { pending, state, submit } = useAsyncFormAction(updateFlashcardAction);
+  const { refresh } = useNavigation();
+  const [open, setOpen] = useState(false);
+  const { pending, state, submit } = useAsyncFormAction(updateFlashcardAction, {
+    onSuccess: () => {
+      setOpen(false);
+      refresh();
+    },
+  });
 
   return (
     <ModalDialog
+      open={open}
+      onOpenChange={setOpen}
       trigger={<Button type="button">{copy.edit}</Button>}
       title={copy.editTitle}
       description={copy.editDescription}
