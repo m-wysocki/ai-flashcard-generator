@@ -1,6 +1,7 @@
 node_modules/
 .next/
 .codex/
+.claude/
 .idea/
 .scratch/
 .swc/
@@ -13,6 +14,8 @@ tsconfig.tsbuildinfo
 idea.md
 skills-lock.json
 *skill.log.json
+AGENTS.md
+CLAUDE.md
 
 *storybook.log
 storybook-static
