@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { normalizePgConnectionString } from "./normalize-connection-string";
 
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL ?? "",
+  connectionString: normalizePgConnectionString(process.env.DATABASE_URL ?? ""),
 });
 
 const globalForPrisma = globalThis as unknown as {

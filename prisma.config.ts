@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
+import { normalizePgConnectionString } from "./src/server/db/normalize-connection-string";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -7,6 +8,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "",
+    url: normalizePgConnectionString(
+      process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "",
+    ),
   },
 });
