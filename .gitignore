@@ -1,6 +1,8 @@
 node_modules/
 .next/
 .codex/
+.claude/
+CLAUDE.md
 .idea/
 .scratch/
 .swc/
