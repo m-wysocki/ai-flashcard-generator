@@ -32,6 +32,7 @@ type AppCopy = {
     frontLabel: string;
     backLabel: string;
     notesLabel: string;
+    saveFlashcardDialogTitle: string;
     saveGeneratedFlashcard: string;
     saving: string;
   };
@@ -110,6 +111,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       frontLabel: "Front (PL)",
       backLabel: "Back (EN)",
       notesLabel: "Notatki (opcjonalnie)",
+      saveFlashcardDialogTitle: "Nowa fiszka",
       saveGeneratedFlashcard: "Zapisz wygenerowaną fiszkę",
       saving: "Zapisywanie...",
     },
@@ -186,6 +188,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       frontLabel: "Front (PL)",
       backLabel: "Back (EN)",
       notesLabel: "Notes (optional)",
+      saveFlashcardDialogTitle: "New flashcard",
       saveGeneratedFlashcard: "Save generated flashcard",
       saving: "Saving...",
     },

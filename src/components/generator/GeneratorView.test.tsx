@@ -59,15 +59,17 @@ describe("GeneratorView", () => {
     const chooseButtons = await screen.findAllByRole("button", { name: "Użyj jako fiszki" });
     fireEvent.click(chooseButtons[0]);
 
-    fireEvent.change(screen.getByRole("textbox", { name: "Front (PL)" }), {
-      target: { value: "Rozgryźć to dziś." },
-    });
-    fireEvent.change(screen.getByRole("textbox", { name: "Back (EN)" }), {
-      target: { value: "I need to figure this out today." },
-    });
-    fireEvent.change(screen.getByRole("textbox", { name: "Notatki (opcjonalnie)" }), {
-      target: { value: "Useful for problem solving." },
-    });
+    const frontField = await screen.findByRole("textbox", { name: "Front (PL)" });
+    const backField = screen.getByRole("textbox", { name: "Back (EN)" });
+    const notesField = screen.getByRole("textbox", { name: "Notatki (opcjonalnie)" });
+
+    expect(frontField).toHaveValue("Muszę to dziś rozgryźć.");
+    expect(backField).toHaveValue("I need to figure this out today.");
+    expect(notesField).toHaveValue("");
+
+    fireEvent.change(frontField, { target: { value: "Rozgryźć to dziś." } });
+    fireEvent.change(backField, { target: { value: "I need to figure this out today." } });
+    fireEvent.change(notesField, { target: { value: "Useful for problem solving." } });
 
     fireEvent.click(screen.getByRole("button", { name: "Zapisz wygenerowaną fiszkę" }));
 

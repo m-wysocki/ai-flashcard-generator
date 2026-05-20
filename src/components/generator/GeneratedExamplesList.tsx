@@ -4,10 +4,11 @@ import { Panel } from "@/components/ui/Panel";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import type { Material } from "./types";
 
+type Example = { english: string; polish: string };
+
 type GeneratedExamplesListProps = {
   material: Material;
-  selectedExampleIndex: number | null;
-  onSelect: (index: number) => void;
+  onSelect: (example: Example) => void;
   examplesLabel: string;
   notesLabel: string;
   noNotesLabel: string;
@@ -17,7 +18,6 @@ type GeneratedExamplesListProps = {
 
 export function GeneratedExamplesList({
   material,
-  selectedExampleIndex,
   onSelect,
   examplesLabel,
   notesLabel,
@@ -48,26 +48,23 @@ export function GeneratedExamplesList({
         </p>
       </Panel>
       <ul className="grid gap-3">
-        {material.examples.map((example, index) => {
-          const isSelected = selectedExampleIndex === index;
-          return (
-            <ShadowFrame
-              as="article"
-              key={`${example.english}-select-${index}`}
-              className="grid gap-2 p-3"
+        {material.examples.map((example, index) => (
+          <ShadowFrame
+            as="article"
+            key={`${example.english}-select-${index}`}
+            className="grid gap-2 p-3"
+          >
+            <p>{example.polish}</p>
+            <p className="font-semibold">{example.english}</p>
+            <Button
+              type="button"
+              color="primary"
+              onClick={() => onSelect(example)}
             >
-              <p>{example.polish}</p>
-              <p className="font-semibold">{example.english}</p>
-              <Button
-                type="button"
-                color={isSelected ? "secondary" : "primary"}
-                onClick={() => onSelect(index)}
-              >
-                {selectLabel}
-              </Button>
-            </ShadowFrame>
-          );
-        })}
+              {selectLabel}
+            </Button>
+          </ShadowFrame>
+        ))}
       </ul>
     </div>
   );
