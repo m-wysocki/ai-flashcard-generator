@@ -8,7 +8,7 @@ import { Heading } from "@/components/ui/Heading/Heading";
 import { cn } from "@/lib/cn";
 
 type ModalDialogProps = {
-  trigger: ReactNode;
+  trigger?: ReactNode;
   title: string;
   description?: string;
   children: ReactNode;
@@ -30,7 +30,7 @@ export function ModalDialog({
 }: ModalDialogProps) {
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
-      <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger>
+      {trigger ? <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger> : null}
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/25" />
         <DialogPrimitive.Content

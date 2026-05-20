@@ -1,5 +1,4 @@
 import { Field } from "@/components/ui/Field/Field";
-import { Panel } from "@/components/ui/Panel";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 
 type GeneratedFlashcardFormProps = {
@@ -26,7 +25,7 @@ export function GeneratedFlashcardForm({
   savingLabel,
 }: GeneratedFlashcardFormProps) {
   return (
-    <Panel data-ui="GeneratedFlashcardForm" className="grid gap-3">
+    <div data-ui="GeneratedFlashcardForm" className="grid gap-3">
       <form data-ui="GeneratedFlashcardForm.Form" className="grid gap-3" action={action}>
         <Field name="front" label={frontLabel} defaultValue={frontDefault} required />
         <Field name="back" label={backLabel} defaultValue={backDefault} required />
@@ -35,6 +34,6 @@ export function GeneratedFlashcardForm({
           {submitLabel}
         </SubmitButton>
       </form>
-    </Panel>
+    </div>
   );
 }
