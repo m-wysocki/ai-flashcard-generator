@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { appCopy } from "@/content/app-copy";
+import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
 import {
   ModalDialog,
@@ -23,11 +24,14 @@ export function DeleteFlashcardDialog({
   language,
 }: DeleteFlashcardDialogProps) {
   const copy = appCopy[language].flashcards;
+  const { refresh } = useNavigation();
   const [open, setOpen] = useState(false);
-  const { pending, state, submit } = useAsyncFormAction(
-    deleteFlashcardAction,
-    { onSuccess: () => setOpen(false) },
-  );
+  const { pending, state, submit } = useAsyncFormAction(deleteFlashcardAction, {
+    onSuccess: () => {
+      setOpen(false);
+      refresh();
+    },
+  });
 
   return (
     <ModalDialog

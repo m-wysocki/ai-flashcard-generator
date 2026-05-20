@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
+import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
+import { Spinner } from "@/components/ui/Spinner";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import type { ReviewGrade } from "@/server/review/service";
 
@@ -28,6 +29,7 @@ export function FlashcardsReviewSession({
 }: FlashcardsReviewSessionProps) {
   const { language } = useUiLanguage();
   const copy = appCopy[language].review;
+  const { navigate } = useNavigation();
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
   const [reviewedNow, setReviewedNow] = useState(0);
@@ -42,8 +44,8 @@ export function FlashcardsReviewSession({
         className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4"
       >
         <p className="m-0 text-lg text-[var(--color-text)]">{copy.done}</p>
-        <Button asChild color="primary">
-          <Link href="/app">{copy.backToFlashcards}</Link>
+        <Button type="button" color="primary" onClick={() => navigate("/app")}>
+          {copy.backToFlashcards}
         </Button>
       </main>
     );
@@ -111,15 +113,20 @@ export function FlashcardsReviewSession({
                   setGrading(null);
                 }}
               >
-                {grading === grade
-                  ? copy.saving
-                  : grade === "again"
-                    ? copy.again
-                    : grade === "hard"
-                      ? copy.hard
-                      : grade === "good"
-                        ? copy.good
-                        : copy.easy}
+                {grading === grade ? (
+                  <>
+                    <span aria-hidden="true"><Spinner /></span>
+                    <span>{copy.saving}</span>
+                  </>
+                ) : grade === "again" ? (
+                  copy.again
+                ) : grade === "hard" ? (
+                  copy.hard
+                ) : grade === "good" ? (
+                  copy.good
+                ) : (
+                  copy.easy
+                )}
               </Button>
             ))}
           </div>
@@ -130,8 +137,8 @@ export function FlashcardsReviewSession({
           {copy.revealAnswer}
         </Button>
       )}
-      <Button asChild>
-        <Link href="/app">{copy.endSession}</Link>
+      <Button type="button" onClick={() => navigate("/app")}>
+        {copy.endSession}
       </Button>
     </main>
   );

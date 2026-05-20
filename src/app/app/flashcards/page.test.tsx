@@ -67,10 +67,7 @@ describe("FlashcardsPage smoke", () => {
     expect(screen.getByRole("button", { name: "Fiszki" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Otwórz panel konta" })).toBeInTheDocument();
     expect(screen.getByText("Do powtórki dzisiaj")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Start powtórki" })).toHaveAttribute(
-      "href",
-      "/app/review",
-    );
+    expect(screen.getByRole("button", { name: "Start powtórki" })).toBeInTheDocument();
     expect(screen.getByText("Cześć")).toBeInTheDocument();
   });
 });

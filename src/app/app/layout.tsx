@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { NavigationProvider } from "@/components/app-shell/NavigationContext";
+import { NavigationProgressBar } from "@/components/app-shell/NavigationProgressBar";
 
 export default async function AppLayout({
   children,
@@ -12,5 +14,10 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  return children;
+  return (
+    <NavigationProvider>
+      <NavigationProgressBar />
+      {children}
+    </NavigationProvider>
+  );
 }

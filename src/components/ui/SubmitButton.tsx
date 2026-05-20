@@ -27,6 +27,7 @@ export const SubmitButton = ({
       disabled={disabled || isPending}
       aria-busy={isPending}
       {...props}
+      aria-label={isPending ? pendingLabel : undefined}
     >
       {isPending ? (
         <>
