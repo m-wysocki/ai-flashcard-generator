@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCcw, Zap, ThumbsUp, Star, Volume2 } from "lucide-react";
+import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
@@ -187,6 +187,7 @@ export function FlashcardsReviewSession({
             disabled={grading !== null}
           >
             {copy.revealAnswer}
+            <ArrowDownToLine className="h-4 w-4" />
           </Button>
         </div>
       )}
