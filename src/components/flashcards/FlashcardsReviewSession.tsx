@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine } from "lucide-react";
+import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
@@ -19,8 +21,17 @@ type ReviewCard = {
 type FlashcardsReviewSessionProps = {
   initialCards: ReviewCard[];
   stats: { dueToday: number; totalCards: number; reviewedToday: number };
-  gradeAction: (input: { flashcardId: string; grade: ReviewGrade }) => Promise<{ ok: boolean; shouldRequeue?: boolean }>;
+  gradeAction: (
+    input: { flashcardId: string; grade: ReviewGrade },
+  ) => Promise<{ ok: boolean; shouldRequeue?: boolean }>;
 };
+
+const GRADE_CONFIG = [
+  { grade: "again" as const, Icon: RotateCcw, color: "primary" as const },
+  { grade: "hard" as const, Icon: Zap, color: "secondary" as const },
+  { grade: "good" as const, Icon: ThumbsUp, color: "success" as const },
+  { grade: "easy" as const, Icon: Star, color: "tertiary" as const },
+];
 
 export function FlashcardsReviewSession({
   initialCards,
@@ -41,7 +52,10 @@ export function FlashcardsReviewSession({
     return (
       <main
         data-ui="FlashcardsReviewSession"
-        className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4"
+        className={cn(
+          "mx-auto grid min-h-screen w-full max-w-3xl",
+          "content-start gap-4 bg-[var(--color-background)] p-4",
+        )}
       >
         <p className="m-0 text-lg text-[var(--color-text)]">{copy.done}</p>
         <Button type="button" color="primary" onClick={() => navigate("/app")}>
@@ -54,7 +68,10 @@ export function FlashcardsReviewSession({
   return (
     <main
       data-ui="FlashcardsReviewSession"
-      className="mx-auto grid min-h-screen w-full max-w-3xl content-start gap-4 bg-[var(--color-background)] p-4"
+      className={cn(
+        "mx-auto grid min-h-screen w-full max-w-3xl",
+        "content-start gap-4 bg-[var(--color-background)] p-4",
+      )}
     >
       <header className="grid grid-cols-3 gap-2">
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
@@ -67,37 +84,76 @@ export function FlashcardsReviewSession({
           {copy.reviewedToday}: {stats.reviewedToday + reviewedNow}
         </ShadowFrame>
       </header>
-      <p className="m-0 text-sm text-[var(--color-muted)]">
-        {reviewedNow + 1} / {Math.max(initialCards.length, reviewedNow + 1)}
-      </p>
-      <ShadowFrame className="rounded-xl p-4 text-xl text-[var(--color-text)]">
-        {current.front}
+      <div className="flex items-center justify-between">
+        <p className="m-0 text-sm text-[var(--color-muted)]">
+          {reviewedNow + 1} / {Math.max(initialCards.length, reviewedNow + 1)}
+        </p>
+        <Button
+          type="button"
+          color="ghost"
+          size="sm"
+          shape="pill"
+          onClick={() => navigate("/app")}
+        >
+          {copy.endSession}
+        </Button>
+      </div>
+      <ShadowFrame className="rounded-xl p-4">
+        <p className="m-0 text-xl text-[var(--color-text)]">{current.front}</p>
+        {revealed && (
+          <>
+            <div className="my-3 h-px bg-black/15" />
+            <div className="flex items-center gap-2">
+              <p className="m-0 text-xl font-bold text-[var(--color-text)]">
+                {current.back}
+              </p>
+              <Button
+                type="button"
+                color="ghost"
+                size="sm"
+                shape="pill"
+                className="size-9 shrink-0 p-0"
+                onClick={() => speakEnglish(current.back)}
+                disabled={grading !== null}
+                aria-label={copy.playback}
+                icon={<Volume2 size={16} />}
+              />
+            </div>
+            {current.notes && (
+              <>
+                <div className="my-2 h-px bg-black/10" />
+                <p className={cn(
+                  "m-0 text-sm font-light italic",
+                  "text-[var(--color-muted)]",
+                )}>
+                  {current.notes}
+                </p>
+              </>
+            )}
+          </>
+        )}
       </ShadowFrame>
       {revealed ? (
         <>
-          <p className="m-0 text-[var(--color-text)]">{current.back}</p>
-          {current.notes ? <p className="m-0 text-[var(--color-muted)]">{current.notes}</p> : null}
-          <div className="grid gap-2">
-            <Button
-              type="button"
-              onClick={() => speakEnglish(current.back)}
-              disabled={grading !== null}
-              aria-label={copy.playback}
-            >
-              🔊
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {(["again", "hard", "good", "easy"] as const).map((grade) => (
+          <div className="grid grid-cols-2 gap-3">
+            {GRADE_CONFIG.map(({ grade, Icon, color }) => (
               <Button
                 key={grade}
                 type="button"
-                color={grade === "good" ? "primary" : "secondary"}
+                color={color}
+                size="lg"
+                shape="tile"
+                iconPosition="top"
+                className="h-auto w-full py-4"
                 disabled={grading !== null}
+                icon={grading === grade ? <Spinner /> : <Icon size={20} />}
                 onClick={async () => {
                   setGrading(grade);
                   setError(null);
-                  const result = await gradeAction({ flashcardId: current.id, grade });
+                  const result = await gradeAction({
+                    flashcardId: current.id,
+                    grade,
+                  });
                   if (!result.ok) {
                     setError(copy.saveError);
                     setGrading(null);
@@ -113,33 +169,28 @@ export function FlashcardsReviewSession({
                   setGrading(null);
                 }}
               >
-                {grading === grade ? (
-                  <>
-                    <span aria-hidden="true"><Spinner /></span>
-                    <span>{copy.saving}</span>
-                  </>
-                ) : grade === "again" ? (
-                  copy.again
-                ) : grade === "hard" ? (
-                  copy.hard
-                ) : grade === "good" ? (
-                  copy.good
-                ) : (
-                  copy.easy
-                )}
+                {grading === grade ? copy.saving : copy[grade]}
               </Button>
             ))}
           </div>
-          {error ? <p className="m-0 text-sm text-[var(--color-danger)]">{error}</p> : null}
+          {error ? (
+            <p className="m-0 text-sm text-[var(--color-danger)]">{error}</p>
+          ) : null}
         </>
       ) : (
-        <Button type="button" color="primary" onClick={() => setRevealed(true)} disabled={grading !== null}>
-          {copy.revealAnswer}
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            type="button"
+            color="primary"
+            className="w-full sm:w-auto"
+            onClick={() => setRevealed(true)}
+            disabled={grading !== null}
+          >
+            {copy.revealAnswer}
+            <ArrowDownToLine className="h-4 w-4" />
+          </Button>
+        </div>
       )}
-      <Button type="button" onClick={() => navigate("/app")}>
-        {copy.endSession}
-      </Button>
     </main>
   );
 }

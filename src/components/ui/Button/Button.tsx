@@ -23,6 +23,8 @@ const buttonStyles = cva(
         tertiary:
           "bg-[var(--color-surface)] hover:bg-[var(--color-surface-soft)]",
         ghost: "border-transparent bg-transparent shadow-none hover:bg-[var(--color-surface-soft)]",
+        success: "bg-[var(--color-success)] hover:brightness-[0.97]",
+        danger: "bg-[var(--color-danger)] text-white hover:brightness-[0.95]",
       },
       size: {
         sm: "h-9 px-3",
