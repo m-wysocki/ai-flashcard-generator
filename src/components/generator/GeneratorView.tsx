@@ -1,17 +1,17 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState, useTransition } from "react";
 import { appCopy } from "@/content/app-copy";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
 import { GeneratorForm } from "./GeneratorForm";
 import { GeneratedExamplesList } from "./GeneratedExamplesList";
 import { GeneratedFlashcardForm } from "./GeneratedFlashcardForm";
-import { LearningMaterialPreview } from "./LearningMaterialPreview";
 import type { Material } from "./types";
 import type { UiLanguage } from "@/content/app-copy";
+import type { FlashcardActionState } from "@/server/flashcards/actions";
 
-type Example = { english: string; polish: string };
+type Example = { english: string; polish: string; note: string | null };
 
 type GeneratorActionState = { ok: true; material: Material } | { ok: false; error: string } | null;
 
@@ -20,7 +20,7 @@ type GeneratorAction = (
   formData: FormData,
 ) => Promise<GeneratorActionState>;
 
-type CreateFlashcardAction = (formData: FormData) => unknown | Promise<unknown>;
+type CreateFlashcardAction = (formData: FormData) => Promise<FlashcardActionState>;
 
 type GeneratorViewProps = {
   language: UiLanguage;
@@ -39,26 +39,51 @@ export function GeneratorView({
   const [inputLanguage, setInputLanguage] = useState<"POLISH" | "ENGLISH">("POLISH");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedExample, setSelectedExample] = useState<Example | null>(null);
+  const selectedIndexRef = useRef<number | null>(null);
+  const [savedIndices, setSavedIndices] = useState<Set<number>>(new Set());
+  const [createPending, startCreateTransition] = useTransition();
+  const [createError, setCreateError] = useState<string | null>(null);
   const [state, formAction, pending] = useActionState(generateLearningMaterialAction, null);
 
-  const outputText = state?.ok
-    ? inputLanguage === "POLISH"
-      ? state.material.translations.join("\n")
-      : state.material.meanings.join("\n")
-    : copy.placeholderPrompt;
+  function handleGenerateAction(formData: FormData) {
+    setSavedIndices(new Set());
+    formAction(formData);
+  }
 
-  function handleSelectExample(example: Example) {
+  function handleSelectExample(example: Example, index: number) {
     setSelectedExample(example);
+    selectedIndexRef.current = index;
+    setCreateError(null);
     setDialogOpen(true);
   }
+
+  function handleFlashcardSubmit(formData: FormData) {
+    const idx = selectedIndexRef.current;
+    startCreateTransition(async () => {
+      const result = await createFlashcardAction(formData);
+      if (result.ok) {
+        setDialogOpen(false);
+        if (idx !== null) {
+          setSavedIndices((prev) => new Set([...prev, idx]));
+        }
+        setCreateError(null);
+      } else {
+        setCreateError(result.error);
+      }
+    });
+  }
+
+  const material = state?.ok ? state.material : null;
+  const showTranslations = material && material.inputType !== "sentence";
 
   return (
     <div data-ui="GeneratorView" className="grid gap-4">
       <Heading as="h1" size="md">
         {title}
       </Heading>
+
       <GeneratorForm
-        action={formAction}
+        action={handleGenerateAction}
         inputLanguage={inputLanguage}
         onInputLanguageChange={setInputLanguage}
         inputLanguageLabel={copy.inputLanguageLabel}
@@ -69,24 +94,55 @@ export function GeneratorView({
         generatingLabel={copy.generating}
         pending={pending}
       />
-      {state && !state.ok ? <p role="alert">{state.error}</p> : null}
-      <LearningMaterialPreview
-        inputLabel={inputLanguage === "POLISH" ? copy.polishInput : copy.englishInput}
-        modeLabel={pending ? copy.generating : copy.ready}
-        outputLabel={inputLanguage === "POLISH" ? copy.naturalEnglish : copy.polishMeaning}
-        outputText={outputText}
-      />
-      {state?.ok ? (
+
+      {state && !state.ok ? (
+        <p role="alert" className="text-sm text-[var(--color-danger)]">
+          {state.error}
+        </p>
+      ) : null}
+
+      {showTranslations ? (
+        <div
+          data-ui="GeneratorView.Translations"
+          className="rounded-lg border-(length:--border-strong) border-black bg-[var(--color-surface-soft)] p-3"
+        >
+          <p
+            className={
+              "mb-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]"
+            }
+          >
+            {inputLanguage === "POLISH" ? copy.naturalEnglish : copy.polishMeaning}
+          </p>
+          <p className="whitespace-pre-wrap text-sm">
+            {inputLanguage === "POLISH"
+              ? material.translations.join("\n")
+              : material.meanings.join("\n")}
+          </p>
+        </div>
+      ) : null}
+
+      {material?.notes ? (
+        <div
+          data-ui="GeneratorView.GlobalNote"
+          className={
+            "rounded-lg border-2 border-dashed border-[var(--color-muted)] p-3 text-sm text-[var(--color-muted)]"
+          }
+        >
+          {material.notes}
+        </div>
+      ) : null}
+
+      {material ? (
         <GeneratedExamplesList
-          material={state.material}
+          examples={material.examples}
+          savedIndices={savedIndices}
           onSelect={handleSelectExample}
-          examplesLabel={copy.examples}
-          notesLabel={copy.notes}
-          noNotesLabel={copy.noNotes}
           selectLabel={copy.useAsFlashcard}
+          savedLabel={copy.flashcardSaved}
           noExamplesLabel={copy.noExamplesToSave}
         />
       ) : null}
+
       <ModalDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
@@ -94,15 +150,18 @@ export function GeneratorView({
       >
         {selectedExample ? (
           <GeneratedFlashcardForm
-            action={createFlashcardAction as (formData: FormData) => void | Promise<void>}
             frontDefault={selectedExample.polish}
             backDefault={selectedExample.english}
-            notesDefault=""
+            notesDefault={selectedExample.note ?? ""}
             frontLabel={copy.frontLabel}
             backLabel={copy.backLabel}
             notesLabel={copy.notesLabel}
+            clearNotesLabel={copy.clearNotes}
             submitLabel={copy.saveGeneratedFlashcard}
             savingLabel={copy.saving}
+            error={createError}
+            pending={createPending}
+            onSubmit={handleFlashcardSubmit}
           />
         ) : null}
       </ModalDialog>

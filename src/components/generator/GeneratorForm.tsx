@@ -50,7 +50,7 @@ export function GeneratorForm({
         </Button>
       </div>
       <input type="hidden" name="inputLanguage" value={inputLanguage} />
-      <Field as="textarea" name="text" label={textLabel} required rows={4} />
+      <Field name="text" label={textLabel} required />
       <SubmitButton color="primary" pending={pending} pendingLabel={generatingLabel}>
         {generateLabel}
       </SubmitButton>

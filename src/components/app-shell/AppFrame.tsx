@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Container } from "@/components/ui/Container/Container";
 import { BottomNav } from "./BottomNav";
 import { AppHeader } from "./AppHeader";
 
@@ -14,7 +15,9 @@ export function AppFrame({ headerAction, children }: AppFrameProps) {
       className="min-h-screen w-full pb-[calc(7rem+env(safe-area-inset-bottom))]"
     >
       <AppHeader action={headerAction} />
-      <section className="mx-auto w-full max-w-3xl px-4 pt-6">{children}</section>
+      <section className="pt-6">
+        <Container>{children}</Container>
+      </section>
       <BottomNav />
     </main>
   );

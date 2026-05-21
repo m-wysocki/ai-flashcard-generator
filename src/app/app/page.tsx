@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { GeneratorPageClient } from "@/components/generator/GeneratorPageClient";
 import { generateLearningMaterialAction } from "@/server/ai/actions";
-import { createManualFlashcardAction } from "@/server/flashcards/actions";
+import { createFlashcardFromGeneratorAction } from "@/server/flashcards/actions";
 
 export default async function AppPage() {
   const session = await auth();
@@ -10,7 +10,7 @@ export default async function AppPage() {
     <GeneratorPageClient
       email={session?.user?.email ?? undefined}
       generateLearningMaterialAction={generateLearningMaterialAction}
-      createFlashcardAction={createManualFlashcardAction}
+      createFlashcardAction={createFlashcardFromGeneratorAction}
     />
   );
 }

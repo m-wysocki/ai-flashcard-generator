@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { Container } from "@/components/ui/Container/Container";
 import { Logo } from "@/components/ui/Logo/Logo";
 
 type AppHeaderProps = {
@@ -12,15 +13,12 @@ export function AppHeader({ action }: AppHeaderProps) {
       data-ui="AppHeader"
       className={cn("border-b border-[var(--color-border)]", "bg-[var(--color-surface)]")}
     >
-      <div
-        className={cn(
-          "mx-auto flex w-full max-w-3xl items-center justify-between gap-3",
-          "px-4 py-3",
-        )}
-      >
-        <Logo />
-        {action ? <div>{action}</div> : null}
-      </div>
+      <Container>
+        <div className={cn("flex items-center justify-between gap-3", "py-3")}>
+          <Logo />
+          {action ? <div>{action}</div> : null}
+        </div>
+      </Container>
     </header>
   );
 }

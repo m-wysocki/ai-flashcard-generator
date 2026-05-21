@@ -6,6 +6,7 @@ import { AppFrame } from "@/components/app-shell/AppFrame";
 import { HeaderControls } from "@/components/app-shell/HeaderControls";
 import { GeneratorView } from "./GeneratorView";
 import type { Material } from "./types";
+import type { FlashcardActionState } from "@/server/flashcards/actions";
 
 type GeneratorActionState = { ok: true; material: Material } | { ok: false; error: string } | null;
 
@@ -14,7 +15,7 @@ type GeneratorAction = (
   formData: FormData,
 ) => Promise<GeneratorActionState>;
 
-type CreateFlashcardAction = (formData: FormData) => unknown | Promise<unknown>;
+type CreateFlashcardAction = (formData: FormData) => Promise<FlashcardActionState>;
 
 type GeneratorPageClientProps = {
   email?: string;

@@ -41,6 +41,33 @@ export async function createManualFlashcardAction(
   redirect("/app/flashcards?tab=all");
 }
 
+export async function createFlashcardFromGeneratorAction(
+  formData: FormData,
+): Promise<FlashcardActionState> {
+  const userId = await getAuthenticatedUserId().catch(() => null);
+
+  if (!userId) {
+    return { ok: false, error: defaultFlashcardActionError };
+  }
+
+  const result = await createManualFlashcard(
+    {
+      userId,
+      front: formData.get("front"),
+      back: formData.get("back"),
+      notes: formData.get("notes") ?? "",
+    },
+    { flashcards: prismaFlashcardsRepository },
+  );
+
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/app/flashcards");
+  return { ok: true };
+}
+
 export async function updateManualFlashcardAction(formData: FormData): Promise<FlashcardActionState> {
   const userId = await getAuthenticatedUserId();
 

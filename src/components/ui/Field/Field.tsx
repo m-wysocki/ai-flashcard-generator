@@ -41,7 +41,7 @@ export function Field(props: FieldProps) {
           className={cn(
             "min-h-24 rounded-lg",
             "border-(length:--border-strong) border-black",
-            "bg-[var(--color-surface-raised)] px-3 py-2 text-sm",
+            "bg-[var(--color-surface-raised)] px-3 py-2 text-base",
             "outline-none placeholder:text-[var(--color-muted)]",
             "focus-visible:shadow-[var(--shadow-offset)]",
             className,
@@ -56,7 +56,7 @@ export function Field(props: FieldProps) {
           className={cn(
             "h-10 rounded-lg",
             "border-(length:--border-strong) border-black",
-            "bg-[var(--color-surface-raised)] px-3 py-2 text-sm",
+            "bg-[var(--color-surface-raised)] px-3 py-2 text-base",
             "outline-none placeholder:text-[var(--color-muted)]",
             "focus-visible:shadow-[var(--shadow-offset)]",
             className,
