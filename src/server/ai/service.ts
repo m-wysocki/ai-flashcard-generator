@@ -12,21 +12,24 @@ const inputSchema = z.object({
 });
 
 const materialSchema = z.object({
+  inputType: z.enum(["word", "phrase", "sentence"]),
   translations: z.array(z.string().trim().min(1)).optional(),
   meanings: z.array(z.string().trim().min(1)).optional(),
   examples: z.array(
     z.object({
       english: z.string().trim().min(1),
       polish: z.string().trim().min(1),
+      note: z.string().trim().max(600).nullable().optional(),
     }),
   ),
   notes: z.string().trim().max(1200).nullable().optional(),
 });
 
 export type LearningMaterial = {
+  inputType: "word" | "phrase" | "sentence";
   translations: string[];
   meanings: string[];
-  examples: Array<{ english: string; polish: string }>;
+  examples: Array<{ english: string; polish: string; note: string | null }>;
   notes: string | null;
 };
 
@@ -134,18 +137,26 @@ function normalizeMaterial(
     return null;
   }
 
-  if (inputLanguage === "POLISH" && (!material.translations || material.translations.length === 0)) {
-    return null;
-  }
+  const isSentence = material.inputType === "sentence";
 
-  if (inputLanguage === "ENGLISH" && (!material.meanings || material.meanings.length === 0)) {
-    return null;
+  if (!isSentence) {
+    if (inputLanguage === "POLISH" && (!material.translations || material.translations.length === 0)) {
+      return null;
+    }
+    if (inputLanguage === "ENGLISH" && (!material.meanings || material.meanings.length === 0)) {
+      return null;
+    }
   }
 
   return {
+    inputType: material.inputType,
     translations: material.translations ?? [],
     meanings: material.meanings ?? [],
-    examples: material.examples,
+    examples: material.examples.map((e) => ({
+      english: e.english,
+      polish: e.polish,
+      note: e.note ?? null,
+    })),
     notes: material.notes ?? null,
   };
 }

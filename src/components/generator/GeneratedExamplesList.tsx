@@ -1,71 +1,71 @@
+import { Check, Info, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Panel } from "@/components/ui/Panel";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
-import type { Material } from "./types";
+import { cn } from "@/lib/cn";
 
-type Example = { english: string; polish: string };
+type Example = { english: string; polish: string; note: string | null };
 
 type GeneratedExamplesListProps = {
-  material: Material;
-  onSelect: (example: Example) => void;
-  examplesLabel: string;
-  notesLabel: string;
-  noNotesLabel: string;
+  examples: Example[];
+  savedIndices: Set<number>;
+  onSelect: (example: Example, index: number) => void;
   selectLabel: string;
+  savedLabel: string;
   noExamplesLabel: string;
 };
 
 export function GeneratedExamplesList({
-  material,
+  examples,
+  savedIndices,
   onSelect,
-  examplesLabel,
-  notesLabel,
-  noNotesLabel,
   selectLabel,
+  savedLabel,
   noExamplesLabel,
 }: GeneratedExamplesListProps) {
-  if (material.examples.length === 0) {
+  if (examples.length === 0) {
     return <EmptyState title={noExamplesLabel} />;
   }
 
   return (
-    <div data-ui="GeneratedExamplesList" className="grid gap-3">
-      <Panel className="grid gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-          {examplesLabel}
-        </p>
-        <ul className="grid gap-2 text-sm">
-          {material.examples.map((example, index) => (
-            <li key={`${example.english}-${index}`}>
-              <p>{example.english}</p>
-              <p className="text-[var(--color-muted)]">{example.polish}</p>
-            </li>
-          ))}
-        </ul>
-        <p className="text-xs text-[var(--color-muted)]">
-          {notesLabel}: {material.notes ?? noNotesLabel}
-        </p>
-      </Panel>
-      <ul className="grid gap-3">
-        {material.examples.map((example, index) => (
+    <ul data-ui="GeneratedExamplesList" className="grid gap-3">
+      {examples.map((example, index) => {
+        const saved = savedIndices.has(index);
+
+        return (
           <ShadowFrame
             as="article"
-            key={`${example.english}-select-${index}`}
+            key={`${example.english}-${index}`}
             className="grid gap-2 p-3"
           >
-            <p>{example.polish}</p>
+            <p className="text-sm text-[var(--color-muted)]">{example.polish}</p>
             <p className="font-semibold">{example.english}</p>
+
+            {example.note ? (
+              <p
+                className={cn(
+                  "flex items-start gap-1.5 text-xs",
+                  "text-[var(--color-muted)]",
+                )}
+              >
+                <Info size={12} className="mt-0.5 shrink-0" aria-hidden />
+                {example.note}
+              </p>
+            ) : null}
+
             <Button
               type="button"
-              color="primary"
-              onClick={() => onSelect(example)}
+              color={saved ? "success" : "primary"}
+              disabled={saved}
+              icon={saved ? <Check size={16} /> : <Plus size={16} />}
+              onClick={() => onSelect(example, index)}
+              className="mt-1"
             >
-              {selectLabel}
+              {saved ? savedLabel : selectLabel}
             </Button>
           </ShadowFrame>
-        ))}
-      </ul>
-    </div>
+        );
+      })}
+    </ul>
   );
 }

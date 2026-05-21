@@ -2,9 +2,10 @@ import { generateLearningMaterial } from "./service";
 import { AiQuotaError } from "./service";
 
 type MockResponse = {
+  inputType?: "word" | "phrase" | "sentence";
   translations?: string[];
   meanings?: string[];
-  examples?: Array<{ english: string; polish: string }>;
+  examples?: Array<{ english: string; polish: string; note?: string | null }>;
   notes?: string | null;
 };
 
@@ -24,8 +25,11 @@ describe("ai generation service", () => {
         aiClient: {
           async generate() {
             return {
-              translations: ["How do I say this?"],
-              examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?" }],
+              inputType: "sentence",
+              translations: [],
+              meanings: [],
+              examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", note: null }],
+              notes: null,
             };
           },
         },
@@ -43,9 +47,10 @@ describe("ai generation service", () => {
     expect(result).toEqual({
       ok: true,
       material: {
-        translations: ["How do I say this?"],
+        inputType: "sentence",
+        translations: [],
         meanings: [],
-        examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?" }],
+        examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", note: null }],
         notes: null,
       },
     });
@@ -71,8 +76,11 @@ describe("ai generation service", () => {
               return { meanings: [], examples: [] };
             }
             return {
+              inputType: "phrase",
+              translations: [],
               meanings: ["zrozumieć coś"],
-              examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć." }],
+              examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", note: null }],
+              notes: null,
             };
           },
         },
@@ -89,9 +97,10 @@ describe("ai generation service", () => {
     expect(result).toEqual({
       ok: true,
       material: {
+        inputType: "phrase",
         translations: [],
         meanings: ["zrozumieć coś"],
-        examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć." }],
+        examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", note: null }],
         notes: null,
       },
     });

@@ -12,13 +12,12 @@ describe("GeneratorView", () => {
         language="pl"
         title="Słownik"
         generateLearningMaterialAction={async () => null}
-        createFlashcardAction={async () => {}}
+        createFlashcardAction={async () => ({ ok: true })}
       />,
     );
 
-    expect(screen.getByText("Wpisz tekst i kliknij Generuj.")).toBeInTheDocument();
-
-    expect(screen.queryByText("Type text and click Generate.")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Generuj" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Generate" })).not.toBeInTheDocument();
     expect(window.localStorage.getItem("ui-language")).toBeNull();
   });
 
@@ -32,11 +31,20 @@ describe("GeneratorView", () => {
         generateLearningMaterialAction={async () => ({
           ok: true,
           material: {
+            inputType: "phrase",
             translations: ["I need to figure this out."],
             meanings: [],
             examples: [
-              { english: "I need to figure this out today.", polish: "Muszę to dziś rozgryźć." },
-              { english: "She figured out the answer quickly.", polish: "Szybko rozgryzła odpowiedź." },
+              {
+                english: "I need to figure this out today.",
+                polish: "Muszę to dziś rozgryźć.",
+                note: null,
+              },
+              {
+                english: "She figured out the answer quickly.",
+                polish: "Szybko rozgryzła odpowiedź.",
+                note: null,
+              },
             ],
             notes: "Often used for solving problems.",
           },
@@ -47,6 +55,7 @@ describe("GeneratorView", () => {
             back: String(formData.get("back") ?? ""),
             notes: String(formData.get("notes") ?? ""),
           });
+          return { ok: true };
         }}
       />,
     );
@@ -92,13 +101,14 @@ describe("GeneratorView", () => {
         generateLearningMaterialAction={async () => ({
           ok: true,
           material: {
+            inputType: "phrase",
             translations: ["I need to figure this out."],
             meanings: [],
             examples: [],
             notes: null,
           },
         })}
-        createFlashcardAction={async () => {}}
+        createFlashcardAction={async () => ({ ok: true })}
       />,
     );
 

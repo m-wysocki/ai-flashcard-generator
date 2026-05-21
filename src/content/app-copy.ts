@@ -36,6 +36,8 @@ type AppCopy = {
     saveFlashcardDialogTitle: string;
     saveGeneratedFlashcard: string;
     saving: string;
+    flashcardSaved: string;
+    clearNotes: string;
   };
   flashcards: {
     statsDueToday: string;
@@ -116,6 +118,8 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       saveFlashcardDialogTitle: "Nowa fiszka",
       saveGeneratedFlashcard: "Zapisz wygenerowaną fiszkę",
       saving: "Zapisywanie...",
+      flashcardSaved: "Zapisano",
+      clearNotes: "Wyczyść notatki",
     },
     flashcards: {
       statsDueToday: "Do powtórki dzisiaj",
@@ -194,6 +198,8 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       saveFlashcardDialogTitle: "New flashcard",
       saveGeneratedFlashcard: "Save generated flashcard",
       saving: "Saving...",
+      flashcardSaved: "Saved",
+      clearNotes: "Clear notes",
     },
     flashcards: {
       statsDueToday: "Due today",

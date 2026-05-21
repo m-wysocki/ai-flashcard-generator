@@ -5,10 +5,10 @@ import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { getAppEnv } from "@/server/config/app-env";
 import { openaiAiClient } from "./openai-client";
 import { prismaAiGenerationLogsRepository } from "./prisma-ai-generation-logs";
-import { generateLearningMaterial } from "./service";
+import { generateLearningMaterial, type LearningMaterial } from "./service";
 
 export type GeneratorActionState =
-  | { ok: true; material: { translations: string[]; meanings: string[]; examples: Array<{ english: string; polish: string }>; notes: string | null } }
+  | { ok: true; material: LearningMaterial }
   | { ok: false; error: string }
   | null;
 
