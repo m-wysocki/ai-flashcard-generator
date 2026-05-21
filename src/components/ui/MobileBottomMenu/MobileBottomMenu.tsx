@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { Container } from "@/components/ui/Container/Container";
 import { Button } from "@/components/ui/Button/Button";
 
 export type MobileBottomMenuItem = {
@@ -32,14 +33,15 @@ export function MobileBottomMenu({
       className={cn(
         "fixed inset-x-0 bottom-0 z-30 border-t-(length:--border-strong)",
         "border-[var(--color-border)] bg-[var(--color-surface)]",
-        "px-2 pt-2 pb-[calc(0.875rem+env(safe-area-inset-bottom))]",
+        "pt-2 pb-[calc(0.875rem+env(safe-area-inset-bottom))]",
         className,
       )}
     >
-      <ul
-        className="mx-auto grid w-full max-w-md gap-2"
-        style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
-      >
+      <Container>
+        <ul
+          className="grid w-full gap-2"
+          style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
+        >
         {items.map((item) => {
           const Icon = item.icon;
 
@@ -62,7 +64,8 @@ export function MobileBottomMenu({
             </li>
           );
         })}
-      </ul>
+        </ul>
+      </Container>
     </nav>
   );
 }
