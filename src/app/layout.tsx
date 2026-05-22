@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
 
@@ -12,6 +12,12 @@ const quicksand = Quicksand({
 export const metadata: Metadata = {
   title: "AI Flashcard Generator",
   description: "Private app for AI-assisted English learning.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
