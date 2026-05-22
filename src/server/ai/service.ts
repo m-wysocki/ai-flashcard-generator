@@ -7,12 +7,12 @@ const insufficientQuotaError = "Brak dostępnego limitu API OpenAI. Sprawdź bil
 
 const inputSchema = z.object({
   userId: z.string().trim().min(1),
-  inputLanguage: z.enum(["POLISH", "ENGLISH"]),
   text: z.string().trim().min(1).max(600),
 });
 
 const materialSchema = z.object({
   inputType: z.enum(["word", "phrase", "sentence"]),
+  detectedLanguage: z.enum(["POLISH", "ENGLISH"]),
   translations: z.array(z.string().trim().min(1)).optional(),
   meanings: z.array(z.string().trim().min(1)).optional(),
   examples: z.array(
@@ -27,6 +27,7 @@ const materialSchema = z.object({
 
 export type LearningMaterial = {
   inputType: "word" | "phrase" | "sentence";
+  detectedLanguage: "POLISH" | "ENGLISH";
   translations: string[];
   meanings: string[];
   examples: Array<{ english: string; polish: string; note: string | null }>;
@@ -39,13 +40,13 @@ export type AiGenerationLogsRepository = {
 };
 
 export type AiClient = {
-  generate(input: { model: string; apiKey: string; inputLanguage: "POLISH" | "ENGLISH"; text: string }): Promise<unknown>;
+  generate(input: { model: string; apiKey: string; text: string }): Promise<unknown>;
 };
 
 export class AiQuotaError extends Error {}
 
 export async function generateLearningMaterial(
-  input: { userId: unknown; inputLanguage: unknown; text: unknown },
+  input: { userId: unknown; text: unknown },
   dependencies: {
     logs: AiGenerationLogsRepository;
     aiClient: AiClient;
@@ -84,7 +85,6 @@ export async function generateLearningMaterial(
       const rawOutput = await dependencies.aiClient.generate({
         model: dependencies.openai.model,
         apiKey: dependencies.openai.apiKey,
-        inputLanguage: parsedInput.data.inputLanguage,
         text: parsedInput.data.text,
       });
 
@@ -93,14 +93,14 @@ export async function generateLearningMaterial(
         continue;
       }
 
-      const normalized = normalizeMaterial(parsedOutput.data, parsedInput.data.inputLanguage);
+      const normalized = normalizeMaterial(parsedOutput.data);
       if (!normalized) {
         continue;
       }
 
       await dependencies.logs.create({
         userId: parsedInput.data.userId,
-        inputLanguage: parsedInput.data.inputLanguage,
+        inputLanguage: parsedOutput.data.detectedLanguage,
         model: dependencies.openai.model,
         success: true,
       });
@@ -110,7 +110,7 @@ export async function generateLearningMaterial(
       if (error instanceof AiQuotaError) {
         await dependencies.logs.create({
           userId: parsedInput.data.userId,
-          inputLanguage: parsedInput.data.inputLanguage,
+          inputLanguage: "POLISH",
           model: dependencies.openai.model,
           success: false,
         });
@@ -122,17 +122,14 @@ export async function generateLearningMaterial(
 
   await dependencies.logs.create({
     userId: parsedInput.data.userId,
-    inputLanguage: parsedInput.data.inputLanguage,
+    inputLanguage: "POLISH",
     model: dependencies.openai.model,
     success: false,
   });
   return { ok: false, error: generationFailedError };
 }
 
-function normalizeMaterial(
-  material: z.infer<typeof materialSchema>,
-  inputLanguage: "POLISH" | "ENGLISH",
-): LearningMaterial | null {
+function normalizeMaterial(material: z.infer<typeof materialSchema>): LearningMaterial | null {
   if (material.examples.length === 0) {
     return null;
   }
@@ -140,16 +137,23 @@ function normalizeMaterial(
   const isSentence = material.inputType === "sentence";
 
   if (!isSentence) {
-    if (inputLanguage === "POLISH" && (!material.translations || material.translations.length === 0)) {
+    if (
+      material.detectedLanguage === "POLISH" &&
+      (!material.translations || material.translations.length === 0)
+    ) {
       return null;
     }
-    if (inputLanguage === "ENGLISH" && (!material.meanings || material.meanings.length === 0)) {
+    if (
+      material.detectedLanguage === "ENGLISH" &&
+      (!material.meanings || material.meanings.length === 0)
+    ) {
       return null;
     }
   }
 
   return {
     inputType: material.inputType,
+    detectedLanguage: material.detectedLanguage,
     translations: material.translations ?? [],
     meanings: material.meanings ?? [],
     examples: material.examples.map((e) => ({

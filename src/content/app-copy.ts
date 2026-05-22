@@ -15,9 +15,6 @@ type AppCopy = {
     languageEn: string;
   };
   generator: {
-    inputLanguageLabel: string;
-    polishInput: string;
-    englishInput: string;
     textLabel: string;
     generate: string;
     generating: string;
@@ -97,9 +94,6 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       languageEn: "EN",
     },
     generator: {
-      inputLanguageLabel: "Język wejściowy",
-      polishInput: "Polski",
-      englishInput: "Angielski",
       textLabel: "Tekst",
       generate: "Generuj",
       generating: "Generowanie...",
@@ -177,9 +171,6 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       languageEn: "EN",
     },
     generator: {
-      inputLanguageLabel: "Input language",
-      polishInput: "Polish",
-      englishInput: "English",
       textLabel: "Text",
       generate: "Generate",
       generating: "Generating...",

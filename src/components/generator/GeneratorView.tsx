@@ -36,7 +36,6 @@ export function GeneratorView({
   createFlashcardAction,
 }: GeneratorViewProps) {
   const copy = appCopy[language].generator;
-  const [inputLanguage, setInputLanguage] = useState<"POLISH" | "ENGLISH">("POLISH");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedExample, setSelectedExample] = useState<Example | null>(null);
   const selectedIndexRef = useRef<number | null>(null);
@@ -84,11 +83,6 @@ export function GeneratorView({
 
       <GeneratorForm
         action={handleGenerateAction}
-        inputLanguage={inputLanguage}
-        onInputLanguageChange={setInputLanguage}
-        inputLanguageLabel={copy.inputLanguageLabel}
-        polishInputLabel={copy.polishInput}
-        englishInputLabel={copy.englishInput}
         textLabel={copy.textLabel}
         generateLabel={copy.generate}
         generatingLabel={copy.generating}
@@ -111,10 +105,10 @@ export function GeneratorView({
               "mb-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]"
             }
           >
-            {inputLanguage === "POLISH" ? copy.naturalEnglish : copy.polishMeaning}
+            {material.detectedLanguage === "POLISH" ? copy.naturalEnglish : copy.polishMeaning}
           </p>
           <p className="whitespace-pre-wrap text-sm">
-            {inputLanguage === "POLISH"
+            {material.detectedLanguage === "POLISH"
               ? material.translations.join("\n")
               : material.meanings.join("\n")}
           </p>
