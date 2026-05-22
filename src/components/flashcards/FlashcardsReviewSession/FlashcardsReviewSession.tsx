@@ -10,13 +10,12 @@ import { Button } from "@/components/ui/Button/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import type { ReviewGrade } from "@/server/review/service";
-
-type ReviewCard = {
-  id: string;
-  front: string;
-  back: string;
-  notes: string | null;
-};
+import {
+  buildGradeIntervals,
+  buildInitialSeenCardIds,
+  speakEnglish,
+} from "./helpers";
+import type { ReviewCard } from "./helpers";
 
 type FlashcardsReviewSessionProps = {
   initialCards: ReviewCard[];
@@ -43,7 +42,7 @@ export function FlashcardsReviewSession({
   const { navigate } = useNavigation();
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
-  const [reviewedNow, setReviewedNow] = useState(0);
+  const [seenCardIds, setSeenCardIds] = useState(() => buildInitialSeenCardIds(initialCards));
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
   const current = queue[0];
@@ -65,6 +64,8 @@ export function FlashcardsReviewSession({
     );
   }
 
+  const gradeIntervals = buildGradeIntervals(current);
+
   return (
     <main
       data-ui="FlashcardsReviewSession"
@@ -81,12 +82,12 @@ export function FlashcardsReviewSession({
           {copy.allCards}: {stats.totalCards}
         </ShadowFrame>
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          {copy.reviewedToday}: {stats.reviewedToday + reviewedNow}
+          {copy.reviewedToday}: {stats.reviewedToday}
         </ShadowFrame>
       </header>
       <div className="flex items-center justify-between">
         <p className="m-0 text-sm text-[var(--color-muted)]">
-          {reviewedNow + 1} / {Math.max(initialCards.length, reviewedNow + 1)}
+          {seenCardIds.size} / {initialCards.length}
         </p>
         <Button
           type="button"
@@ -163,13 +164,30 @@ export function FlashcardsReviewSession({
                   if (result.shouldRequeue) {
                     nextQueue.push(current);
                   }
+                  const nextSeen = new Set(seenCardIds);
+                  if (nextQueue[0]) nextSeen.add(nextQueue[0].id);
                   setQueue(nextQueue);
-                  setReviewedNow((value) => value + 1);
+                  setSeenCardIds(nextSeen);
                   setRevealed(false);
                   setGrading(null);
                 }}
               >
-                {grading === grade ? copy.saving : copy[grade]}
+                {grading === grade ? (
+                  copy.saving
+                ) : (
+                  <span className="flex flex-col items-center gap-0.5">
+                    <span>{copy[grade]}</span>
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "text-xs font-light italic",
+                        "opacity-60",
+                      )}
+                    >
+                      {gradeIntervals[grade]}
+                    </span>
+                  </span>
+                )}
               </Button>
             ))}
           </div>
@@ -183,7 +201,10 @@ export function FlashcardsReviewSession({
             type="button"
             color="primary"
             className="w-full sm:w-auto"
-            onClick={() => setRevealed(true)}
+            onClick={() => {
+              setRevealed(true);
+              speakEnglish(current.back);
+            }}
             disabled={grading !== null}
           >
             {copy.revealAnswer}
@@ -193,14 +214,4 @@ export function FlashcardsReviewSession({
       )}
     </main>
   );
-}
-
-function speakEnglish(text: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    return;
-  }
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  window.speechSynthesis.speak(utterance);
 }

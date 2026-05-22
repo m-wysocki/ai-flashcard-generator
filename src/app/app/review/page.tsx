@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { FlashcardsReviewSession } from "@/components/flashcards/FlashcardsReviewSession";
+import { FlashcardsReviewSession } from "@/components/flashcards/FlashcardsReviewSession/FlashcardsReviewSession";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
 import { listUserDueFlashcards } from "@/server/flashcards/service";
@@ -26,6 +26,15 @@ export default async function ReviewPage() {
         front: card.front,
         back: card.back,
         notes: card.notes,
+        dueAtMs: card.dueAt.getTime(),
+        stability: card.stability ?? 0,
+        difficulty: card.difficulty ?? 0,
+        elapsedDays: card.elapsedDays ?? 0,
+        scheduledDays: card.scheduledDays ?? 0,
+        reps: card.reps ?? 0,
+        lapses: card.lapses ?? 0,
+        state: card.state ?? "NEW",
+        lastReviewAtMs: card.lastReviewAt?.getTime() ?? null,
       }))}
       stats={stats}
       gradeAction={gradeReviewFlashcardAction}
