@@ -23,46 +23,34 @@ const responseSchema = z
 
 export const openaiAiClient: AiClient = {
   async generate(input) {
-    const prompt =
-      input.inputLanguage === "POLISH"
-        ? `You are a Polish-English language learning assistant.
+    const prompt = `You are a Polish-English language learning assistant.
 
-Classify the user's Polish input using the "inputType" field:
+First, detect the language of the user's input and set "detectedLanguage":
+- "POLISH" if the input is in Polish
+- "ENGLISH" if the input is in English
+
+Classify the input using the "inputType" field:
 - "word" — a single word
 - "phrase" — a multi-word expression, idiom, or short phrase (not a complete sentence)
 - "sentence" — a complete sentence, question, or clause
 
-For "word" and "phrase": provide natural English translations in the "translations" array.
-For "sentence": set "translations" to an empty array.
-Set "meanings" to an empty array always (it is used only for English input).
+If detectedLanguage is "POLISH":
+  - For "word" and "phrase": provide natural English translations in the "translations" array.
+  - For "sentence": set "translations" to an empty array.
+  - Set "meanings" to an empty array always.
+
+If detectedLanguage is "ENGLISH":
+  - For "word" and "phrase": provide Polish meanings in the "meanings" array.
+  - For "sentence": set "meanings" to an empty array.
+  - Set "translations" to an empty array always.
 
 Generate exactly 3 to 4 example sentence pairs (each with "english" and "polish" fields).
 
-CRITICAL RULE for "english" and "polish" fields: the "english" field MUST always contain an English sentence, and the "polish" field MUST always contain a Polish sentence. Never put Polish text in the "english" field or English text in the "polish" field.
+CRITICAL RULE for "english" and "polish" fields: the "english" field MUST always contain an English sentence, and the "polish" field MUST always contain a Polish sentence. Never mix languages in these fields.
 
-IMPORTANT — when inputType is "sentence": the FIRST example's "polish" field MUST be the user's Polish input reproduced almost exactly (you may only fix obvious typos or punctuation). The FIRST example's "english" field MUST be a natural English translation of that sentence. Do NOT copy the Polish sentence into the "english" field.
+IMPORTANT — when inputType is "sentence" and detectedLanguage is "POLISH": the FIRST example's "polish" field MUST be the user's Polish input reproduced almost exactly. The FIRST example's "english" field MUST be a natural English translation.
 
-For each example, set "note" to a short, specific remark ONLY when it genuinely adds value — for example: a different register, a common collocation, a subtle meaning difference, or a usage restriction. Set "note" to null when there is nothing important to add.
-
-Set the global "notes" field ONLY for broader context about the whole word or phrase (e.g. etymology, formality level, frequency). Set it to null if nothing important to add.
-
-Input: ${input.text}`
-        : `You are a Polish-English language learning assistant.
-
-Classify the user's English input using the "inputType" field:
-- "word" — a single word
-- "phrase" — a multi-word expression, idiom, or short phrase (not a complete sentence)
-- "sentence" — a complete sentence, question, or clause
-
-For "word" and "phrase": provide Polish meanings in the "meanings" array.
-For "sentence": set "meanings" to an empty array.
-Set "translations" to an empty array always (it is used only for Polish input).
-
-Generate exactly 3 to 4 example sentence pairs (each with "english" and "polish" fields).
-
-CRITICAL RULE for "english" and "polish" fields: the "english" field MUST always contain an English sentence, and the "polish" field MUST always contain a Polish sentence. Never put English text in the "polish" field or Polish text in the "english" field.
-
-IMPORTANT — when inputType is "sentence": the FIRST example's "english" field MUST be the user's English input reproduced almost exactly (you may only fix obvious typos or punctuation). The FIRST example's "polish" field MUST be a natural Polish translation of that sentence. Do NOT copy the English sentence into the "polish" field.
+IMPORTANT — when inputType is "sentence" and detectedLanguage is "ENGLISH": the FIRST example's "english" field MUST be the user's English input reproduced almost exactly. The FIRST example's "polish" field MUST be a natural Polish translation.
 
 For each example, set "note" to a short, specific remark ONLY when it genuinely adds value — for example: a different register, a common collocation, a subtle meaning difference, or a usage restriction. Set "note" to null when there is nothing important to add.
 
@@ -91,6 +79,10 @@ Input: ${input.text}`;
                   type: "string",
                   enum: ["word", "phrase", "sentence"],
                 },
+                detectedLanguage: {
+                  type: "string",
+                  enum: ["POLISH", "ENGLISH"],
+                },
                 translations: {
                   type: "array",
                   items: { type: "string" },
@@ -116,7 +108,14 @@ Input: ${input.text}`;
                   type: ["string", "null"],
                 },
               },
-              required: ["inputType", "translations", "meanings", "examples", "notes"],
+              required: [
+                "inputType",
+                "detectedLanguage",
+                "translations",
+                "meanings",
+                "examples",
+                "notes",
+              ],
               additionalProperties: false,
             },
           },

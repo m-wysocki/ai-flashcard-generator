@@ -21,6 +21,76 @@ describe("GeneratorView", () => {
     expect(window.localStorage.getItem("ui-language")).toBeNull();
   });
 
+  it("does not render language toggle buttons", () => {
+    render(
+      <GeneratorView
+        language="pl"
+        title="Słownik"
+        generateLearningMaterialAction={async () => null}
+        createFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: "Polski" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Angielski" })).not.toBeInTheDocument();
+  });
+
+  it("shows natural english label when AI detected POLISH input", async () => {
+    render(
+      <GeneratorView
+        language="pl"
+        title="Słownik"
+        generateLearningMaterialAction={async () => ({
+          ok: true,
+          material: {
+            inputType: "phrase",
+            detectedLanguage: "POLISH",
+            translations: ["figure out"],
+            meanings: [],
+            examples: [{ english: "I need to figure this out.", polish: "Muszę to rozgryźć.", note: null }],
+            notes: null,
+          },
+        })}
+        createFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
+      target: { value: "rozgryźć" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
+
+    expect(await screen.findByText("Naturalny angielski")).toBeInTheDocument();
+  });
+
+  it("shows polish meaning label when AI detected ENGLISH input", async () => {
+    render(
+      <GeneratorView
+        language="pl"
+        title="Słownik"
+        generateLearningMaterialAction={async () => ({
+          ok: true,
+          material: {
+            inputType: "phrase",
+            detectedLanguage: "ENGLISH",
+            translations: [],
+            meanings: ["zrozumieć coś"],
+            examples: [{ english: "I need to figure this out.", polish: "Muszę to rozgryźć.", note: null }],
+            notes: null,
+          },
+        })}
+        createFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
+      target: { value: "figure out" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
+
+    expect(await screen.findByText("Znaczenie po polsku")).toBeInTheDocument();
+  });
+
   it("lets user edit one generated example and save it as a flashcard", async () => {
     const createdCards: Array<{ front: string; back: string; notes: string }> = [];
 
@@ -32,6 +102,7 @@ describe("GeneratorView", () => {
           ok: true,
           material: {
             inputType: "phrase",
+            detectedLanguage: "POLISH",
             translations: ["I need to figure this out."],
             meanings: [],
             examples: [
@@ -102,6 +173,7 @@ describe("GeneratorView", () => {
           ok: true,
           material: {
             inputType: "phrase",
+            detectedLanguage: "POLISH",
             translations: ["I need to figure this out."],
             meanings: [],
             examples: [],

@@ -3,6 +3,7 @@ import { AiQuotaError } from "./service";
 
 type MockResponse = {
   inputType?: "word" | "phrase" | "sentence";
+  detectedLanguage?: "POLISH" | "ENGLISH";
   translations?: string[];
   meanings?: string[];
   examples?: Array<{ english: string; polish: string; note?: string | null }>;
@@ -10,12 +11,11 @@ type MockResponse = {
 };
 
 describe("ai generation service", () => {
-  it("returns validated material for polish input and logs success", async () => {
+  it("returns validated material with detectedLanguage from AI output and logs it", async () => {
     const calls: Array<{ userId: string; model: string; inputLanguage: "POLISH" | "ENGLISH"; success: boolean }> = [];
     const result = await generateLearningMaterial(
       {
         userId: "user-1",
-        inputLanguage: "POLISH",
         text: "Jak to powiedzieć?",
       },
       {
@@ -26,6 +26,7 @@ describe("ai generation service", () => {
           async generate() {
             return {
               inputType: "sentence",
+              detectedLanguage: "POLISH",
               translations: [],
               meanings: [],
               examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", note: null }],
@@ -48,6 +49,7 @@ describe("ai generation service", () => {
       ok: true,
       material: {
         inputType: "sentence",
+        detectedLanguage: "POLISH",
         translations: [],
         meanings: [],
         examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", note: null }],
@@ -62,7 +64,6 @@ describe("ai generation service", () => {
     const result = await generateLearningMaterial(
       {
         userId: "user-1",
-        inputLanguage: "ENGLISH",
         text: "figure out",
       },
       {
@@ -73,10 +74,11 @@ describe("ai generation service", () => {
           async generate() {
             attempt += 1;
             if (attempt === 1) {
-              return { meanings: [], examples: [] };
+              return { detectedLanguage: "ENGLISH", meanings: [], examples: [] };
             }
             return {
               inputType: "phrase",
+              detectedLanguage: "ENGLISH",
               translations: [],
               meanings: ["zrozumieć coś"],
               examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", note: null }],
@@ -98,6 +100,7 @@ describe("ai generation service", () => {
       ok: true,
       material: {
         inputType: "phrase",
+        detectedLanguage: "ENGLISH",
         translations: [],
         meanings: ["zrozumieć coś"],
         examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", note: null }],
@@ -111,7 +114,6 @@ describe("ai generation service", () => {
     const result = await generateLearningMaterial(
       {
         userId: "user-1",
-        inputLanguage: "POLISH",
         text: "tekst",
       },
       {
@@ -141,7 +143,6 @@ describe("ai generation service", () => {
     const result = await generateLearningMaterial(
       {
         userId: "user-1",
-        inputLanguage: "POLISH",
         text: "tekst",
       },
       {
@@ -172,7 +173,6 @@ describe("ai generation service", () => {
     const result = await generateLearningMaterial(
       {
         userId: "user-1",
-        inputLanguage: "POLISH",
         text: "tekst",
       },
       {

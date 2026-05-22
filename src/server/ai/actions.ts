@@ -31,7 +31,6 @@ export async function generateLearningMaterialAction(_: GeneratorActionState, fo
   return generateLearningMaterial(
     {
       userId: user.id,
-      inputLanguage: formData.get("inputLanguage"),
       text: formData.get("text"),
     },
     {
