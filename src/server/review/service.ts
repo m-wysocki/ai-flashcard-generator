@@ -60,8 +60,10 @@ export async function reviewFlashcard(
   }
 
   const now = input.now ?? new Date();
-  const dueCards = await dependencies.flashcards.listDueByUser({ userId: parsed.data.userId, now });
-  const current = dueCards.find((card) => card.id === parsed.data.flashcardId);
+  const current = await dependencies.flashcards.findByUser({
+    userId: parsed.data.userId,
+    flashcardId: parsed.data.flashcardId,
+  });
 
   if (!current) {
     return { ok: false as const, error: "Nie znaleziono fiszki do powtórki." };

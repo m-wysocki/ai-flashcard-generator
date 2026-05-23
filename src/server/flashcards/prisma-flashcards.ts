@@ -14,6 +14,12 @@ export const prismaFlashcardsRepository: FlashcardsRepository = {
     });
   },
 
+  async findByUser(input) {
+    return prisma.flashcard.findFirst({
+      where: { id: input.flashcardId, userId: input.userId },
+    });
+  },
+
   async listByUser(userId) {
     return prisma.flashcard.findMany({
       where: { userId },

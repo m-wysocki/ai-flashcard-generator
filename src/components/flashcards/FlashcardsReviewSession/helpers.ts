@@ -67,10 +67,6 @@ export function buildGradeIntervals(card: ReviewCard): Record<ReviewGrade, strin
   };
 }
 
-export function buildInitialSeenCardIds(cards: ReviewCard[]): Set<string> {
-  return new Set(cards[0] ? [cards[0].id] : []);
-}
-
 export function speakEnglish(text: string): void {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return;

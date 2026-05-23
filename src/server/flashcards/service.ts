@@ -41,6 +41,7 @@ export type DeleteFlashcardInput = {
 
 export type FlashcardsRepository = {
   create(input: { userId: string; front: string; back: string; notes: string | null; dueAt: Date }): Promise<FlashcardRecord>;
+  findByUser(input: { userId: string; flashcardId: string }): Promise<FlashcardRecord | null>;
   listByUser(userId: string): Promise<FlashcardRecord[]>;
   listDueByUser(input: { userId: string; now: Date }): Promise<FlashcardRecord[]>;
   updateByUser(input: {
