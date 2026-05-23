@@ -39,7 +39,13 @@ describe("ReviewPage smoke", () => {
       email: "learner@example.com",
     });
     (listUserDueFlashcards as jest.Mock).mockResolvedValue([
-      { id: "f-1", front: "Cześć", back: "Hi", notes: "Common greeting" },
+      {
+        id: "f-1",
+        front: "Cześć",
+        back: "Hi",
+        notes: "Common greeting",
+        dueAt: new Date("2026-05-08T09:00:00.000Z"),
+      },
     ]);
     (getReviewStats as jest.Mock).mockResolvedValue({
       dueToday: 1,
