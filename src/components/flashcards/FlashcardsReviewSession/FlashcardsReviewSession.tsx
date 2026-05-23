@@ -10,11 +10,7 @@ import { Button } from "@/components/ui/Button/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import type { ReviewGrade } from "@/server/review/service";
-import {
-  buildGradeIntervals,
-  buildInitialSeenCardIds,
-  speakEnglish,
-} from "./helpers";
+import { buildGradeIntervals, speakEnglish } from "./helpers";
 import type { ReviewCard } from "./helpers";
 
 type FlashcardsReviewSessionProps = {
@@ -42,7 +38,10 @@ export function FlashcardsReviewSession({
   const { navigate } = useNavigation();
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
-  const [seenCardIds, setSeenCardIds] = useState(() => buildInitialSeenCardIds(initialCards));
+  const [roundSize, setRoundSize] = useState(initialCards.length);
+  const [roundAgain, setRoundAgain] = useState(0);
+  const [roundNonAgain, setRoundNonAgain] = useState(0);
+  const [dueToday, setDueToday] = useState(stats.dueToday);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
   const current = queue[0];
@@ -76,7 +75,7 @@ export function FlashcardsReviewSession({
     >
       <header className="grid grid-cols-3 gap-2">
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          {copy.dueToday}: {stats.dueToday}
+          {copy.dueToday}: {dueToday}
         </ShadowFrame>
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
           {copy.allCards}: {stats.totalCards}
@@ -87,7 +86,7 @@ export function FlashcardsReviewSession({
       </header>
       <div className="flex items-center justify-between">
         <p className="m-0 text-sm text-[var(--color-muted)]">
-          {seenCardIds.size} / {initialCards.length}
+          {roundAgain + 1} / {roundSize - roundNonAgain}
         </p>
         <Button
           type="button"
@@ -163,11 +162,20 @@ export function FlashcardsReviewSession({
                   const nextQueue = queue.slice(1);
                   if (result.shouldRequeue) {
                     nextQueue.push(current);
+                  } else {
+                    setDueToday((prev) => Math.max(0, prev - 1));
                   }
-                  const nextSeen = new Set(seenCardIds);
-                  if (nextQueue[0]) nextSeen.add(nextQueue[0].id);
+                  const nextAgain = roundAgain + (result.shouldRequeue ? 1 : 0);
+                  const nextNonAgain = roundNonAgain + (result.shouldRequeue ? 0 : 1);
+                  if (nextAgain + nextNonAgain === roundSize) {
+                    setRoundSize(nextAgain);
+                    setRoundAgain(0);
+                    setRoundNonAgain(0);
+                  } else {
+                    setRoundAgain(nextAgain);
+                    setRoundNonAgain(nextNonAgain);
+                  }
                   setQueue(nextQueue);
-                  setSeenCardIds(nextSeen);
                   setRevealed(false);
                   setGrading(null);
                 }}

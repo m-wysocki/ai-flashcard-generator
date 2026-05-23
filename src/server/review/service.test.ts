@@ -5,6 +5,11 @@ function createRepository(initialCards: FlashcardRecord[]): FlashcardsRepository
   const cards = new Map(initialCards.map((card) => [card.id, card]));
 
   return {
+    async findByUser(input) {
+      const card = cards.get(input.flashcardId);
+      if (!card || card.userId !== input.userId) return null;
+      return card;
+    },
     async create(input) {
       const createdAt = new Date("2026-05-08T12:00:00.000Z");
       const card: FlashcardRecord = {
@@ -96,6 +101,40 @@ describe("review service", () => {
       dueToday: 0,
       reviewedToday: 1,
     });
+  });
+
+  it("grades a card already reviewed today (re-queued via Again)", async () => {
+    const now = new Date("2026-05-08T10:05:00.000Z");
+    const repository = createRepository([
+      {
+        id: "card-1",
+        userId: "user-1",
+        front: "Nie wiem",
+        back: "I don't know",
+        notes: null,
+        dueAt: new Date("2026-05-08T10:05:00.000Z"),
+        stability: 0,
+        difficulty: 0,
+        elapsedDays: 0,
+        scheduledDays: 0,
+        reps: 1,
+        lapses: 1,
+        state: "LEARNING",
+        lastReviewAt: new Date("2026-05-08T10:00:00.000Z"),
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    const result = await reviewFlashcard(
+      { userId: "user-1", flashcardId: "card-1", grade: "good", now },
+      { flashcards: repository },
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.shouldRequeue).toBe(false);
+    expect(result.card.reps).toBeGreaterThan(1);
   });
 
   it("updates fsrs state and requeues again cards in-session", async () => {

@@ -66,7 +66,49 @@ describe("FlashcardsReviewSession", () => {
     await screen.findByText("To wszystko na teraz.");
   });
 
-  it("progress counter advances only on first encounter of each unique card", async () => {
+  it("counter tracks rounds: resets when all cards are re-queued, shrinks denominator on Good", async () => {
+    const gradeAction = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: true, shouldRequeue: true })
+      .mockResolvedValueOnce({ ok: true, shouldRequeue: true })
+      .mockResolvedValueOnce({ ok: true, shouldRequeue: false })
+      .mockResolvedValueOnce({ ok: true, shouldRequeue: false });
+
+    render(
+      <FlashcardsReviewSession
+        initialCards={[
+          { id: "1", front: "A", back: "B", notes: null },
+          { id: "2", front: "C", back: "D", notes: null },
+        ]}
+        stats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
+        gradeAction={gradeAction}
+      />,
+    );
+
+    // Round 1: card1 shown first
+    expect(screen.getByText("1 / 2")).toBeInTheDocument();
+
+    // Again on card1, card2 shown
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ponownie" }));
+    await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+    expect(screen.getByText("2 / 2")).toBeInTheDocument();
+
+    // Again on card2 — round 1 complete, round 2 starts
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ponownie" }));
+    await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+    // Round 2: card1 shown, counter resets to 1/2
+    expect(screen.getByText("1 / 2")).toBeInTheDocument();
+
+    // Good on card1 — denominator shrinks, card2 shown as 1/1
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+    fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+    await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+    expect(screen.getByText("1 / 1")).toBeInTheDocument();
+  });
+
+  it("dueToday decrements on non-Again grade and stays unchanged on Again", async () => {
     const gradeAction = jest
       .fn()
       .mockResolvedValueOnce({ ok: true, shouldRequeue: true })
@@ -84,18 +126,19 @@ describe("FlashcardsReviewSession", () => {
       />,
     );
 
-    expect(screen.getByText("1 / 2")).toBeInTheDocument();
+    expect(screen.getByText("Do powtórki dzisiaj: 2")).toBeInTheDocument();
 
+    // Again — dueToday should stay 2
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Ponownie" }));
     await screen.findByRole("button", { name: "Pokaż odpowiedź" });
-    expect(screen.getByText("2 / 2")).toBeInTheDocument();
+    expect(screen.getByText("Do powtórki dzisiaj: 2")).toBeInTheDocument();
 
+    // Good — dueToday should drop to 1
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
     await screen.findByRole("button", { name: "Pokaż odpowiedź" });
-    // card 1 returns — already seen, counter stays at 2/2
-    expect(screen.getByText("2 / 2")).toBeInTheDocument();
+    expect(screen.getByText("Do powtórki dzisiaj: 1")).toBeInTheDocument();
   });
 
   it("reviewedToday stays frozen at the initial server count throughout the session", async () => {

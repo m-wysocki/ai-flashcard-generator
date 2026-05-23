@@ -12,6 +12,11 @@ function createFlashcardsRepository(initialCards: FlashcardRecord[] = []): Flash
   const cards = new Map(initialCards.map((card) => [card.id, card]));
 
   return {
+    async findByUser(input) {
+      const card = cards.get(input.flashcardId);
+      if (!card || card.userId !== input.userId) return null;
+      return card;
+    },
     async create(input) {
       const createdAt = new Date("2026-05-08T12:00:00.000Z");
       const flashcard: FlashcardRecord = {
