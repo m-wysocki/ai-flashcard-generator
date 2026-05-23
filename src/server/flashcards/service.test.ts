@@ -35,8 +35,15 @@ function createFlashcardsRepository(initialCards: FlashcardRecord[] = []): Flash
     },
 
     async listDueByUser(input) {
+      const startOfToday = new Date(input.now);
+      startOfToday.setUTCHours(0, 0, 0, 0);
       return [...cards.values()]
-        .filter((card) => card.userId === input.userId && card.dueAt.getTime() <= input.now.getTime())
+        .filter((card) => {
+          if (card.userId !== input.userId) return false;
+          if (card.dueAt.getTime() > input.now.getTime()) return false;
+          if (card.lastReviewAt && card.lastReviewAt.getTime() >= startOfToday.getTime()) return false;
+          return true;
+        })
         .sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime());
     },
 
@@ -150,6 +157,85 @@ describe("flashcard service", () => {
 
     const cards = await listUserFlashcards("user-1", { flashcards: repository });
     expect(cards.map((card) => card.id)).toEqual(["card-1"]);
+  });
+
+  it("excludes cards already reviewed today from the due queue", async () => {
+    const now = new Date("2026-05-08T14:00:00.000Z");
+    const repository = createFlashcardsRepository([
+      {
+        id: "reviewed-today",
+        userId: "user-1",
+        front: "A",
+        back: "B",
+        notes: null,
+        dueAt: new Date("2026-05-08T10:00:00.000Z"),
+        lastReviewAt: new Date("2026-05-08T13:00:00.000Z"),
+        createdAt: new Date("2026-05-07T10:00:00.000Z"),
+        updatedAt: new Date("2026-05-07T10:00:00.000Z"),
+      },
+      {
+        id: "not-reviewed",
+        userId: "user-1",
+        front: "C",
+        back: "D",
+        notes: null,
+        dueAt: new Date("2026-05-08T10:00:00.000Z"),
+        createdAt: new Date("2026-05-07T10:00:00.000Z"),
+        updatedAt: new Date("2026-05-07T10:00:00.000Z"),
+      },
+    ]);
+
+    const cards = await listUserDueFlashcards(
+      { userId: "user-1", now },
+      { flashcards: repository },
+    );
+    expect(cards.map((card) => card.id)).toEqual(["not-reviewed"]);
+  });
+
+  it("includes due cards never reviewed before", async () => {
+    const now = new Date("2026-05-08T14:00:00.000Z");
+    const repository = createFlashcardsRepository([
+      {
+        id: "never-reviewed",
+        userId: "user-1",
+        front: "A",
+        back: "B",
+        notes: null,
+        dueAt: new Date("2026-05-08T10:00:00.000Z"),
+        lastReviewAt: null,
+        createdAt: new Date("2026-05-07T10:00:00.000Z"),
+        updatedAt: new Date("2026-05-07T10:00:00.000Z"),
+      },
+    ]);
+
+    const cards = await listUserDueFlashcards(
+      { userId: "user-1", now },
+      { flashcards: repository },
+    );
+    expect(cards.map((card) => card.id)).toEqual(["never-reviewed"]);
+  });
+
+  it("includes due cards reviewed on a previous day", async () => {
+    const now = new Date("2026-05-08T14:00:00.000Z");
+    const repository = createFlashcardsRepository([
+      {
+        id: "reviewed-yesterday",
+        userId: "user-1",
+        front: "A",
+        back: "B",
+        notes: null,
+        dueAt: new Date("2026-05-08T10:00:00.000Z"),
+        lastReviewAt: new Date("2026-05-07T23:59:59.999Z"),
+        createdAt: new Date("2026-05-07T10:00:00.000Z"),
+        updatedAt: new Date("2026-05-07T10:00:00.000Z"),
+      },
+    ]);
+
+    const cards = await listUserDueFlashcards(
+      { userId: "user-1", now },
+      { flashcards: repository },
+    );
+    expect(cards.map((card) => card.id)).toEqual(["reviewed-yesterday"]);
   });
 
   it("returns only due cards for the user", async () => {

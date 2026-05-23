@@ -24,7 +24,14 @@ function createRepository(initialCards: FlashcardRecord[]): FlashcardsRepository
       return [...cards.values()].filter((card) => card.userId === userId);
     },
     async listDueByUser(input) {
-      return [...cards.values()].filter((card) => card.userId === input.userId && card.dueAt <= input.now);
+      const startOfToday = new Date(input.now);
+      startOfToday.setUTCHours(0, 0, 0, 0);
+      return [...cards.values()].filter((card) => {
+        if (card.userId !== input.userId) return false;
+        if (card.dueAt > input.now) return false;
+        if (card.lastReviewAt && card.lastReviewAt >= startOfToday) return false;
+        return true;
+      });
     },
     async updateByUser() {
       return null;
@@ -86,7 +93,7 @@ describe("review service", () => {
 
     expect(result).toEqual({
       totalCards: 2,
-      dueToday: 1,
+      dueToday: 0,
       reviewedToday: 1,
     });
   });

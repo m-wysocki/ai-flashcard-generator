@@ -22,10 +22,16 @@ export const prismaFlashcardsRepository: FlashcardsRepository = {
   },
 
   async listDueByUser(input) {
+    const startOfToday = new Date(input.now);
+    startOfToday.setUTCHours(0, 0, 0, 0);
     return prisma.flashcard.findMany({
       where: {
         userId: input.userId,
         dueAt: { lte: input.now },
+        OR: [
+          { lastReviewAt: null },
+          { lastReviewAt: { lt: startOfToday } },
+        ],
       },
       orderBy: { dueAt: "asc" },
     });
