@@ -38,9 +38,6 @@ export function FlashcardsReviewSession({
   const { navigate } = useNavigation();
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
-  const [roundSize, setRoundSize] = useState(initialCards.length);
-  const [roundAgain, setRoundAgain] = useState(0);
-  const [roundNonAgain, setRoundNonAgain] = useState(0);
   const [dueToday, setDueToday] = useState(stats.dueToday);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -84,10 +81,7 @@ export function FlashcardsReviewSession({
           {copy.reviewedToday}: {stats.reviewedToday}
         </ShadowFrame>
       </header>
-      <div className="flex items-center justify-between">
-        <p className="m-0 text-sm text-[var(--color-muted)]">
-          {roundAgain + 1} / {roundSize - roundNonAgain}
-        </p>
+      <div className="flex justify-end">
         <Button
           type="button"
           color="ghost"
@@ -164,16 +158,6 @@ export function FlashcardsReviewSession({
                     nextQueue.push(current);
                   } else {
                     setDueToday((prev) => Math.max(0, prev - 1));
-                  }
-                  const nextAgain = roundAgain + (result.shouldRequeue ? 1 : 0);
-                  const nextNonAgain = roundNonAgain + (result.shouldRequeue ? 0 : 1);
-                  if (nextAgain + nextNonAgain === roundSize) {
-                    setRoundSize(nextAgain);
-                    setRoundAgain(0);
-                    setRoundNonAgain(0);
-                  } else {
-                    setRoundAgain(nextAgain);
-                    setRoundNonAgain(nextNonAgain);
                   }
                   setQueue(nextQueue);
                   setRevealed(false);
