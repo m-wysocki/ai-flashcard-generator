@@ -39,6 +39,7 @@ export function FlashcardsReviewSession({
   const [queue, setQueue] = useState(initialCards);
   const [revealed, setRevealed] = useState(false);
   const [dueToday, setDueToday] = useState(stats.dueToday);
+  const [reviewedToday, setReviewedToday] = useState(stats.reviewedToday);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
   const current = queue[0];
@@ -75,10 +76,10 @@ export function FlashcardsReviewSession({
           {copy.dueToday}: {dueToday}
         </ShadowFrame>
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          {copy.allCards}: {stats.totalCards}
+          {copy.reviewedToday}: {reviewedToday}
         </ShadowFrame>
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          {copy.reviewedToday}: {stats.reviewedToday}
+          {copy.allCards}: {stats.totalCards}
         </ShadowFrame>
       </header>
       <div className="flex justify-end">
@@ -158,6 +159,7 @@ export function FlashcardsReviewSession({
                     nextQueue.push(current);
                   } else {
                     setDueToday((prev) => Math.max(0, prev - 1));
+                    setReviewedToday((prev) => prev + 1);
                   }
                   setQueue(nextQueue);
                   setRevealed(false);
