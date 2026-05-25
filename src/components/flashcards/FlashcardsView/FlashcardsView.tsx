@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo } from "react";
+import { Plus } from "lucide-react";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
@@ -43,9 +44,19 @@ export function FlashcardsView(props: FlashcardsViewProps) {
 
   return (
     <div data-ui="FlashcardsView" className="grid gap-4">
-      <Heading as="h1" size="md">
-        {props.title}
-      </Heading>
+      <div className="flex items-center justify-between">
+        <Heading as="h1" size="md">
+          {props.title}
+        </Heading>
+        <Button
+          type="button"
+          color="ghost"
+          icon={<Plus size={16} />}
+          onClick={() => navigate("/app/flashcards?tab=add")}
+        >
+          {copy.tabAdd}
+        </Button>
+      </div>
       <StatList
         items={[
           { label: copy.statsDueToday, value: props.reviewStats?.dueToday ?? dueCards.length },
