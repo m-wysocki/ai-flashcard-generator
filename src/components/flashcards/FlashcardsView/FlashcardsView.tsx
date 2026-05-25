@@ -8,6 +8,8 @@ import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { StatList } from "@/components/ui/StatList";
 import { Button } from "@/components/ui/Button/Button";
+import { StartSessionBanner } from "@/components/ui/StartSessionBanner/StartSessionBanner";
+import { buildSessionSubtitle } from "./helpers";
 import { AddFlashcardForm } from "./AddFlashcardForm";
 import { FlashcardsList } from "./FlashcardsList";
 import { FlashcardsTabs } from "./FlashcardsTabs";
@@ -57,6 +59,15 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           {copy.tabAdd}
         </Button>
       </div>
+
+      {dueCards.length > 0 ? (
+        <StartSessionBanner
+          title={copy.sessionTitle}
+          subtitle={buildSessionSubtitle(dueCards.length, copy)}
+          onStart={() => navigate("/app/review")}
+        />
+      ) : null}
+
       <StatList
         items={[
           { label: copy.statsDueToday, value: props.reviewStats?.dueToday ?? dueCards.length },
@@ -73,12 +84,6 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           pending={createPending}
           state={createState}
         />
-      ) : null}
-
-      {props.activeTab === "due" && dueCards.length > 0 ? (
-        <Button type="button" color="primary" onClick={() => navigate("/app/review")}>
-          {copy.reviewStart}
-        </Button>
       ) : null}
 
       {props.activeTab === "due" ? (

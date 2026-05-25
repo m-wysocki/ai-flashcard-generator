@@ -58,7 +58,7 @@ describe("FlashcardsView", () => {
     );
 
     expect(screen.getByText("Brak fiszek do powtórki.")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Start powtórki" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Rozpocznij sesję/i })).not.toBeInTheDocument();
   });
 
   it("keeps delete dialog open and shows error when delete fails", async () => {
