@@ -3,6 +3,7 @@ import { DropdownButton } from "./DropdownButton/DropdownButton";
 import { Field } from "./Field/Field";
 import { ProgressBar } from "./ProgressBar";
 import { SegmentedSwitch } from "./SegmentedSwitch/SegmentedSwitch";
+import { StatList } from "./StatList";
 import { SubmitButton } from "./SubmitButton";
 
 describe("ui primitives", () => {
@@ -61,6 +62,43 @@ describe("ui primitives", () => {
     );
 
     expect(screen.getByRole("button", { name: "Open panel" })).toBeInTheDocument();
+  });
+
+  it("renders StatList items as compact inline text with · separator", () => {
+    render(
+      <StatList
+        items={[
+          { label: "do powtórki", value: 4 },
+          { label: "wszystkich", value: 7 },
+          { label: "powtórzone", value: 2 },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("4")).toBeInTheDocument();
+    expect(screen.getByText("do powtórki")).toBeInTheDocument();
+    expect(screen.getByText("7")).toBeInTheDocument();
+    expect(screen.getByText("wszystkich")).toBeInTheDocument();
+    expect(screen.getByText("2")).toBeInTheDocument();
+    expect(screen.getByText("powtórzone")).toBeInTheDocument();
+    expect(screen.getAllByText("·")).toHaveLength(2);
+  });
+
+  it("renders StatList first value with highlight class", () => {
+    render(
+      <StatList
+        items={[
+          { label: "do powtórki", value: 4 },
+          { label: "wszystkich", value: 7 },
+        ]}
+      />,
+    );
+
+    const firstValue = screen.getByTestId("stat-value-0");
+    const secondValue = screen.getByTestId("stat-value-1");
+
+    expect(firstValue).toHaveClass("text-[var(--color-primary)]");
+    expect(secondValue).not.toHaveClass("text-[var(--color-primary)]");
   });
 
   it("renders SegmentedSwitch with radiogroup semantics", () => {

@@ -1,18 +1,15 @@
 "use client";
 
 import { useActionState, useMemo } from "react";
-import { Plus } from "lucide-react";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
-import { Heading } from "@/components/ui/Heading/Heading";
-import { StatList } from "@/components/ui/StatList";
-import { Button } from "@/components/ui/Button/Button";
 import { StartSessionBanner } from "@/components/ui/StartSessionBanner/StartSessionBanner";
 import { buildSessionSubtitle } from "./helpers";
 import { AddFlashcardForm } from "./AddFlashcardForm";
 import { FlashcardsList } from "./FlashcardsList";
 import { FlashcardsTabs } from "./FlashcardsTabs";
+import { FlashcardsViewHeader } from "./FlashcardsViewHeader/FlashcardsViewHeader";
 import type {
   CreateFlashcardAction,
   Flashcard,
@@ -46,19 +43,25 @@ export function FlashcardsView(props: FlashcardsViewProps) {
 
   return (
     <div data-ui="FlashcardsView" className="grid gap-4">
-      <div className="flex items-center justify-between">
-        <Heading as="h1" size="md">
-          {props.title}
-        </Heading>
-        <Button
-          type="button"
-          color="ghost"
-          icon={<Plus size={16} />}
-          onClick={() => navigate("/app/flashcards?tab=add")}
-        >
-          {copy.tabAdd}
-        </Button>
-      </div>
+      <FlashcardsViewHeader
+        title={props.title}
+        addLabel={copy.tabAdd}
+        onAddClick={() => navigate("/app/flashcards?tab=add")}
+        statItems={[
+          {
+            label: copy.statsDueToday,
+            value: props.reviewStats?.dueToday ?? dueCards.length,
+          },
+          {
+            label: copy.statsAll,
+            value: props.reviewStats?.totalCards ?? props.flashcards.length,
+          },
+          {
+            label: copy.statsReviewedToday,
+            value: props.reviewStats?.reviewedToday ?? 0,
+          },
+        ]}
+      />
 
       {dueCards.length > 0 ? (
         <StartSessionBanner
@@ -67,14 +70,6 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           onStart={() => navigate("/app/review")}
         />
       ) : null}
-
-      <StatList
-        items={[
-          { label: copy.statsDueToday, value: props.reviewStats?.dueToday ?? dueCards.length },
-          { label: copy.statsAll, value: props.reviewStats?.totalCards ?? props.flashcards.length },
-          { label: copy.statsReviewedToday, value: props.reviewStats?.reviewedToday ?? 0 },
-        ]}
-      />
       <FlashcardsTabs activeTab={props.activeTab} language={language} />
 
       {props.activeTab === "add" ? (

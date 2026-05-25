@@ -41,7 +41,7 @@ describe("FlashcardsView", () => {
     await waitFor(() =>
       expect(screen.getByText("Nie udało się zapisać fiszki.")).toBeInTheDocument(),
     );
-    expect(screen.getByRole("button", { name: "Dodaj" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("textbox", { name: "Front (PL)" })).toBeInTheDocument();
   });
 
   it("shows due empty state when no cards are due", () => {

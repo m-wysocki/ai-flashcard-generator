@@ -1,29 +1,42 @@
-import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
-import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 
 type StatItem = {
   label: string;
   value: string | number;
 };
 
-type StatListProps = HTMLAttributes<HTMLDListElement> & {
+type StatListProps = {
   items: StatItem[];
+  className?: string;
 };
 
-export const StatList = ({ items, className, ...props }: StatListProps) => {
+export const StatList = ({ items, className }: StatListProps) => {
   return (
-    <dl data-ui="StatList" className={cn("grid grid-cols-3 gap-2", className)} {...props}>
-      {items.map((item) => (
-        <ShadowFrame
-          as="article"
-          key={item.label}
-          className="p-3"
-        >
-          <dt className="text-xs text-[var(--color-muted)]">{item.label}</dt>
-          <dd className="text-base font-semibold">{item.value}</dd>
-        </ShadowFrame>
+    <p
+      data-ui="StatList"
+      className={cn(
+        "text-sm font-semibold lowercase text-[var(--color-muted)]",
+        className,
+      )}
+    >
+      {items.map((item, index) => (
+        <span key={item.label}>
+          {index > 0 && <span aria-hidden="true"> · </span>}
+          <span
+            data-testid={`stat-value-${index}`}
+            className={cn(
+              "font-semibold",
+              index === 0
+                ? "text-[var(--color-primary)]"
+                : "text-[var(--color-foreground)]",
+            )}
+          >
+            {item.value}
+          </span>
+          {" "}
+          {item.label}
+        </span>
       ))}
-    </dl>
+    </p>
   );
 };
