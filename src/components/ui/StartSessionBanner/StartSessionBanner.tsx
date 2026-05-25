@@ -18,7 +18,7 @@ export function StartSessionBanner({
   return (
     <div
       data-ui="StartSessionBanner"
-      className={cn("flex items-center gap-4 py-4", "border-y border-black", className)}
+      className={cn("flex items-center gap-4 pb-4", "border-b-2 border-black", className)}
     >
       <Button
         color="primary"
