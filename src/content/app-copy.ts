@@ -47,6 +47,10 @@ type AppCopy = {
     addSave: string;
     addSaving: string;
     reviewStart: string;
+    sessionTitle: string;
+    sessionSubtitleCards: string;
+    sessionSubtitleApprox: string;
+    sessionSubtitleMinutes: string;
     noDueCards: string;
     noCards: string;
     edit: string;
@@ -126,6 +130,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       addSave: "Zapisz fiszkę",
       addSaving: "Zapisywanie...",
       reviewStart: "Start powtórki",
+      sessionTitle: "Rozpocznij sesję",
+      sessionSubtitleCards: "fiszki",
+      sessionSubtitleApprox: "ok.",
+      sessionSubtitleMinutes: "minut",
       noDueCards: "Brak fiszek do powtórki.",
       noCards: "Brak fiszek.",
       edit: "Edytuj",
@@ -203,6 +211,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       addSave: "Save flashcard",
       addSaving: "Saving...",
       reviewStart: "Start review",
+      sessionTitle: "Start session",
+      sessionSubtitleCards: "flashcards",
+      sessionSubtitleApprox: "approx.",
+      sessionSubtitleMinutes: "min",
       noDueCards: "No cards due.",
       noCards: "No flashcards yet.",
       edit: "Edit",

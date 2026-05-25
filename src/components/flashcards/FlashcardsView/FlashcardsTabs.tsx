@@ -5,7 +5,7 @@ import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
 import type { FlashcardsCopyLanguage, FlashcardsTab } from "./types";
 
-const tabs: FlashcardsTab[] = ["due", "all", "add"];
+const tabs: Array<"due" | "all"> = ["due", "all"];
 
 type FlashcardsTabsProps = {
   activeTab: FlashcardsTab;
@@ -15,10 +15,9 @@ type FlashcardsTabsProps = {
 export function FlashcardsTabs({ activeTab, language }: FlashcardsTabsProps) {
   const copy = appCopy[language].flashcards;
   const { navigate } = useNavigation();
-  const tabLabelByKey: Record<FlashcardsTab, string> = {
+  const tabLabelByKey: Record<"due" | "all", string> = {
     due: copy.tabDue,
     all: copy.tabAll,
-    add: copy.tabAdd,
   };
 
   return (
