@@ -23,7 +23,7 @@ export function DropdownButton({
   triggerClassName,
 }: DropdownButtonProps) {
   return (
-    <DropdownMenuPrimitive.Root>
+    <DropdownMenuPrimitive.Root modal={false}>
       <DropdownMenuPrimitive.Trigger
         asChild
         className={cn(
