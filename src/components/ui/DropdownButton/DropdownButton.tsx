@@ -1,7 +1,7 @@
 "use client";
 
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import { cn } from "@/lib/cn";
 
@@ -23,10 +23,12 @@ export function DropdownButton({
   triggerClassName,
 }: DropdownButtonProps) {
   return (
-    <DropdownMenuPrimitive.Root>
+    <DropdownMenuPrimitive.Root modal={false}>
       <DropdownMenuPrimitive.Trigger
         asChild
         className={cn(
+          "cursor-pointer",
+          "outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-text)]",
           "active:translate-x-0 active:translate-y-0",
           "active:shadow-[var(--shadow-offset)]",
           "data-[state=open]:translate-x-0 data-[state=open]:translate-y-0",
@@ -54,5 +56,26 @@ export function DropdownButton({
         </DropdownMenuPrimitive.Content>
       </DropdownMenuPrimitive.Portal>
     </DropdownMenuPrimitive.Root>
+  );
+}
+
+type DropdownMenuItemProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>;
+
+export function DropdownMenuItem({ className, ...props }: DropdownMenuItemProps) {
+  return (
+    <DropdownMenuPrimitive.Item
+      data-ui="DropdownMenuItem"
+      className={cn(
+        [
+          "flex w-full cursor-pointer select-none items-center rounded px-3 py-2",
+          "text-sm font-semibold text-[var(--color-text)]",
+          "outline-none",
+          "focus:bg-[var(--color-surface-soft)]",
+          "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        ],
+        className,
+      )}
+      {...props}
+    />
   );
 }
