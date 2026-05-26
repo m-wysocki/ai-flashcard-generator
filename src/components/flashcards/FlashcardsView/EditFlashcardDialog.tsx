@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { appCopy } from "@/content/app-copy";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
-import { Button } from "@/components/ui/Button/Button";
 import { Field } from "@/components/ui/Field/Field";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
 import { SubmitButton } from "@/components/ui/SubmitButton";
@@ -14,20 +12,23 @@ type EditFlashcardDialogProps = {
   flashcard: Flashcard;
   updateFlashcardAction: MutateFlashcardAction;
   language: FlashcardsCopyLanguage;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
 export function EditFlashcardDialog({
   flashcard,
   updateFlashcardAction,
   language,
+  open,
+  onOpenChange,
 }: EditFlashcardDialogProps) {
   const copy = appCopy[language].flashcards;
   const generatorCopy = appCopy[language].generator;
   const { refresh } = useNavigation();
-  const [open, setOpen] = useState(false);
   const { pending, state, submit } = useAsyncFormAction(updateFlashcardAction, {
     onSuccess: () => {
-      setOpen(false);
+      onOpenChange(false);
       refresh();
     },
   });
@@ -35,8 +36,7 @@ export function EditFlashcardDialog({
   return (
     <ModalDialog
       open={open}
-      onOpenChange={setOpen}
-      trigger={<Button type="button">{copy.edit}</Button>}
+      onOpenChange={onOpenChange}
       title={copy.editTitle}
       description={copy.editDescription}
     >

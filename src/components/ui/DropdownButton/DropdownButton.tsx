@@ -1,7 +1,7 @@
 "use client";
 
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import { cn } from "@/lib/cn";
 
@@ -54,5 +54,26 @@ export function DropdownButton({
         </DropdownMenuPrimitive.Content>
       </DropdownMenuPrimitive.Portal>
     </DropdownMenuPrimitive.Root>
+  );
+}
+
+type DropdownMenuItemProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>;
+
+export function DropdownMenuItem({ className, ...props }: DropdownMenuItemProps) {
+  return (
+    <DropdownMenuPrimitive.Item
+      data-ui="DropdownMenuItem"
+      className={cn(
+        [
+          "flex w-full cursor-pointer select-none items-center rounded px-3 py-2",
+          "text-sm font-semibold text-[var(--color-text)]",
+          "outline-none",
+          "focus:bg-[var(--color-surface-soft)]",
+          "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        ],
+        className,
+      )}
+      {...props}
+    />
   );
 }

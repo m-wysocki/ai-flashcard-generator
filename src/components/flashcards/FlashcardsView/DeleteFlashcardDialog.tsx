@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { appCopy } from "@/content/app-copy";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
@@ -16,19 +15,22 @@ type DeleteFlashcardDialogProps = {
   flashcardId: string;
   deleteFlashcardAction: MutateFlashcardAction;
   language: FlashcardsCopyLanguage;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
 export function DeleteFlashcardDialog({
   flashcardId,
   deleteFlashcardAction,
   language,
+  open,
+  onOpenChange,
 }: DeleteFlashcardDialogProps) {
   const copy = appCopy[language].flashcards;
   const { refresh } = useNavigation();
-  const [open, setOpen] = useState(false);
   const { pending, state, submit } = useAsyncFormAction(deleteFlashcardAction, {
     onSuccess: () => {
-      setOpen(false);
+      onOpenChange(false);
       refresh();
     },
   });
@@ -36,12 +38,7 @@ export function DeleteFlashcardDialog({
   return (
     <ModalDialog
       open={open}
-      onOpenChange={setOpen}
-      trigger={
-        <Button type="button" color="secondary">
-          {copy.delete}
-        </Button>
-      }
+      onOpenChange={onOpenChange}
       title={copy.deleteTitle}
       description={copy.deleteDescription}
       actions={

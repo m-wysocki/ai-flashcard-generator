@@ -25,11 +25,12 @@ export function FlashcardsList({
   }
 
   return (
-    <ul data-ui="FlashcardsView.FlashcardsList" className="grid gap-3">
-      {flashcards.map((flashcard) => (
+    <ul data-ui="FlashcardsView.FlashcardsList" className="border-b border-black/10">
+      {flashcards.map((flashcard, index) => (
         <li key={flashcard.id}>
           <FlashcardItem
             flashcard={flashcard}
+            index={index}
             updateFlashcardAction={updateFlashcardAction}
             deleteFlashcardAction={deleteFlashcardAction}
             language={language}

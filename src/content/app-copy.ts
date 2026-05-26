@@ -63,6 +63,7 @@ type AppCopy = {
     cancel: string;
     deleteConfirm: string;
     deleting: string;
+    cardOptions: string;
   };
   review: {
     done: string;
@@ -146,6 +147,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       cancel: "Anuluj",
       deleteConfirm: "Potwierdź usuń",
       deleting: "Usuwanie...",
+      cardOptions: "Opcje karty",
     },
     review: {
       done: "To wszystko na teraz.",
@@ -227,6 +229,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       cancel: "Cancel",
       deleteConfirm: "Confirm delete",
       deleting: "Deleting...",
+      cardOptions: "Card options",
     },
     review: {
       done: "That's all for now.",
