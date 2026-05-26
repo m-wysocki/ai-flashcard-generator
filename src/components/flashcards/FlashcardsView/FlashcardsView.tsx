@@ -70,7 +70,12 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           onStart={() => navigate("/app/review")}
         />
       ) : null}
-      <FlashcardsTabs activeTab={props.activeTab} language={language} />
+      <FlashcardsTabs
+        activeTab={props.activeTab}
+        language={language}
+        dueCount={props.reviewStats?.dueToday ?? dueCards.length}
+        allCount={props.reviewStats?.totalCards ?? props.flashcards.length}
+      />
 
       {props.activeTab === "add" ? (
         <AddFlashcardForm

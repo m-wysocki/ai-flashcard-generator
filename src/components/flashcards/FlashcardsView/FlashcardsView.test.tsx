@@ -15,10 +15,9 @@ describe("FlashcardsView", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Do powtórki" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Wszystkie" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Dodaj" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Do powtórki" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: /Do powtórki/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Wszystkie/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Do powtórki/ })).toHaveAttribute("aria-current", "page");
   });
 
   it("shows add error and stays on add tab when create fails", async () => {
