@@ -11,7 +11,7 @@ const reviewInputSchema = z.object({
   grade: gradeSchema,
 });
 
-const scheduler = fsrs({ enable_fuzz: false });
+const scheduler = fsrs({ enable_fuzz: false, enable_short_term: false });
 
 function mapGradeToRating(grade: ReviewGrade): Grade {
   if (grade === "again") return Rating.Again as Grade;
