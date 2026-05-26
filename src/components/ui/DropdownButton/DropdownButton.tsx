@@ -27,6 +27,8 @@ export function DropdownButton({
       <DropdownMenuPrimitive.Trigger
         asChild
         className={cn(
+          "cursor-pointer",
+          "outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-text)]",
           "active:translate-x-0 active:translate-y-0",
           "active:shadow-[var(--shadow-offset)]",
           "data-[state=open]:translate-x-0 data-[state=open]:translate-y-0",
