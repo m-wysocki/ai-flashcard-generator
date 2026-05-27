@@ -49,7 +49,7 @@ export function FlashcardsReviewSession({
       <main
         data-ui="FlashcardsReviewSession"
         className={cn(
-          "mx-auto grid min-h-screen w-full max-w-3xl",
+          "mx-auto grid min-h-dvh w-full max-w-3xl",
           "content-start gap-4 bg-[var(--color-background)] p-4",
         )}
       >
@@ -67,7 +67,7 @@ export function FlashcardsReviewSession({
     <main
       data-ui="FlashcardsReviewSession"
       className={cn(
-        "mx-auto grid min-h-screen w-full max-w-3xl",
+        "mx-auto grid min-h-dvh w-full max-w-3xl",
         "content-start gap-4 bg-[var(--color-background)] p-4",
       )}
     >
@@ -93,7 +93,7 @@ export function FlashcardsReviewSession({
           {copy.endSession}
         </Button>
       </div>
-      <ShadowFrame className="rounded-xl p-4">
+      <ShadowFrame key={current.id} className="rounded-xl p-4">
         <p className="m-0 text-xl text-[var(--color-text)]">{current.front}</p>
         {revealed && (
           <>

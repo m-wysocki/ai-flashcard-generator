@@ -53,7 +53,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
@@ -70,7 +70,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="all"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
@@ -89,7 +89,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="all"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
@@ -109,7 +109,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="all"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
@@ -119,7 +119,7 @@ describe("FlashcardsView", () => {
 
     await openCardMenu(user);
     await user.click(await screen.findByRole("menuitem", { name: /Usuń/ }));
-    await user.click(await screen.findByRole("button", { name: "Potwierdź usuń" }));
+    await user.click(await screen.findByRole("button", { name: "Usuń" }));
 
     await waitFor(() =>
       expect(screen.getByText("Nie udało się usunąć fiszki.")).toBeInTheDocument(),
@@ -133,7 +133,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="all"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: false, error: "Nie udało się zaktualizować fiszki." })}

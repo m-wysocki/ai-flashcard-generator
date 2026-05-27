@@ -16,8 +16,8 @@ describe("GeneratorView", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Generuj" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Generate" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Tłumacz" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Translate" })).not.toBeInTheDocument();
     expect(window.localStorage.getItem("ui-language")).toBeNull();
   });
 
@@ -58,7 +58,7 @@ describe("GeneratorView", () => {
     fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
       target: { value: "rozgryźć" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
+    fireEvent.click(screen.getByRole("button", { name: "Tłumacz" }));
 
     expect(await screen.findByText("Naturalny angielski")).toBeInTheDocument();
   });
@@ -86,7 +86,7 @@ describe("GeneratorView", () => {
     fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
       target: { value: "figure out" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
+    fireEvent.click(screen.getByRole("button", { name: "Tłumacz" }));
 
     expect(await screen.findByText("Znaczenie po polsku")).toBeInTheDocument();
   });
@@ -134,7 +134,7 @@ describe("GeneratorView", () => {
     fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
       target: { value: "rozgryźć" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
+    fireEvent.click(screen.getByRole("button", { name: "Tłumacz" }));
 
     const chooseButtons = await screen.findAllByRole("button", { name: "Użyj jako fiszki" });
     fireEvent.click(chooseButtons[0]);
@@ -187,7 +187,7 @@ describe("GeneratorView", () => {
     fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
       target: { value: "rozgryźć" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Generuj" }));
+    fireEvent.click(screen.getByRole("button", { name: "Tłumacz" }));
 
     expect(
       await screen.findByText("Brak przykładów do zapisania jako fiszka."),

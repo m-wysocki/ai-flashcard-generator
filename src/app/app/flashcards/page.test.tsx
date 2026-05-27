@@ -51,7 +51,7 @@ describe("FlashcardsPage smoke", () => {
       email: "learner@example.com",
     });
     (listUserFlashcards as jest.Mock).mockResolvedValue([
-      { id: "f-1", front: "Cześć", back: "Hi", notes: null },
+      { id: "f-1", front: "Cześć", back: "Hi", notes: null, dueAt: new Date(), state: "NEW", scheduledDays: 0 },
     ]);
     (listUserDueFlashcards as jest.Mock).mockResolvedValue([{ id: "f-1" }]);
     (getReviewStats as jest.Mock).mockResolvedValue({
@@ -63,8 +63,8 @@ describe("FlashcardsPage smoke", () => {
     render(await FlashcardsPage({}));
 
     expect(screen.getByRole("heading", { name: "Fiszki" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Generator" })).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "Fiszki" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("radio", { name: "Słownik" })).toHaveAttribute("aria-checked", "false");
+    expect(screen.getByRole("radio", { name: "Fiszki" })).toHaveAttribute("aria-checked", "true");
     expect(screen.getByRole("button", { name: "Otwórz panel konta" })).toBeInTheDocument();
     expect(screen.getByText("do powtórki")).toBeInTheDocument();
     expect(screen.getByText("Rozpocznij sesję")).toBeInTheDocument();

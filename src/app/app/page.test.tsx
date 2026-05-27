@@ -47,10 +47,10 @@ describe("AppPage smoke", () => {
     render(await AppPage());
 
     expect(screen.getByRole("heading", { name: "Słownik" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Generator" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Fiszki" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("radio", { name: "Słownik" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: "Fiszki" })).toHaveAttribute("aria-checked", "false");
     expect(screen.getByRole("button", { name: "Otwórz panel konta" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Generuj" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Tłumacz" })).toBeInTheDocument();
     expect(listUserFlashcards).not.toHaveBeenCalled();
     expect(listUserDueFlashcards).not.toHaveBeenCalled();
     expect(getReviewStats).not.toHaveBeenCalled();

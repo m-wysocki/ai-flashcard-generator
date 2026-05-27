@@ -4,40 +4,47 @@ import { BookOpen, Brain } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
-import { MobileBottomMenu } from "@/components/ui/MobileBottomMenu/MobileBottomMenu";
+import { SegmentedSwitch } from "@/components/ui/SegmentedSwitch/SegmentedSwitch";
+import { cn } from "@/lib/cn";
 import { useNavigation } from "./NavigationContext";
+
+const NAV_LINKS = [
+  { value: "generator", href: "/app", icon: Brain },
+  { value: "flashcards", href: "/app/flashcards", icon: BookOpen },
+] as const;
+
+type NavValue = (typeof NAV_LINKS)[number]["value"];
 
 export function BottomNav() {
   const { language } = useUiLanguage();
   const copy = appCopy[language].common;
   const pathname = usePathname();
   const { navigate } = useNavigation();
-  const links = [
-    { id: "generator", href: "/app", label: copy.tabGenerator, icon: Brain },
-    {
-      id: "flashcards",
-      href: "/app/flashcards",
-      label: copy.tabFlashcards,
-      icon: BookOpen,
-    },
-  ] as const;
-  const items = links.map((link) => ({
-    id: link.id,
-    label: link.label,
-    icon: link.icon,
-    active: pathname === link.href,
-  }));
+
+  const activeValue: NavValue =
+    NAV_LINKS.find((link) => pathname === link.href)?.value ?? "generator";
+
+  const options = [
+    { value: "generator" as const, label: copy.tabGenerator, icon: Brain },
+    { value: "flashcards" as const, label: copy.tabFlashcards, icon: BookOpen },
+  ];
 
   return (
-    <div data-ui="BottomNav">
-      <MobileBottomMenu
+    <div
+      data-ui="BottomNav"
+      className={cn(
+        "fixed inset-x-0 bottom-0 z-30 flex justify-center",
+        "pb-[calc(1.5rem+env(safe-area-inset-bottom))]",
+      )}
+    >
+      <SegmentedSwitch
         ariaLabel={copy.bottomNavLabel}
-        items={items}
-        onItemPress={(id) => {
-          const nextLink = links.find((link) => link.id === id);
-          if (!nextLink) return;
-          navigate(nextLink.href);
+        value={activeValue}
+        onChange={(value) => {
+          const link = NAV_LINKS.find((l) => l.value === value);
+          if (link) navigate(link.href);
         }}
+        options={options}
       />
     </div>
   );

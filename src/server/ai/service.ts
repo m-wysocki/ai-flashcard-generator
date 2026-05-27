@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const generatorUnavailableError = "Generator jest chwilowo niedostępny. Spróbuj ponownie później.";
+const generatorUnavailableError = "Słownik jest chwilowo niedostępny. Spróbuj ponownie później.";
 const generationFailedError = "Nie udało się wygenerować wyniku. Spróbuj ponownie.";
 const dailyLimitError = "Dzisiaj wykorzystano już limit generowania. Spróbuj ponownie jutro.";
 const insufficientQuotaError = "Brak dostępnego limitu API OpenAI. Sprawdź billing i limity konta.";

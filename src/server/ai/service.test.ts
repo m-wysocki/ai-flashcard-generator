@@ -165,7 +165,7 @@ describe("ai generation service", () => {
 
     expect(result).toEqual({
       ok: false,
-      error: "Generator jest chwilowo niedostępny. Spróbuj ponownie później.",
+      error: "Słownik jest chwilowo niedostępny. Spróbuj ponownie później.",
     });
   });
 

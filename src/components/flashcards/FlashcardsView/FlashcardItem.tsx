@@ -1,40 +1,46 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { Info, MoreHorizontal, RefreshCw } from "lucide-react";
 import { appCopy } from "@/content/app-copy";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/Badge/Badge";
 import { DropdownButton, DropdownMenuItem } from "@/components/ui/DropdownButton/DropdownButton";
 import { DeleteFlashcardDialog } from "./DeleteFlashcardDialog";
 import { EditFlashcardDialog } from "./EditFlashcardDialog";
-import type { Flashcard, FlashcardsCopyLanguage, MutateFlashcardAction } from "./types";
+import { formatDueAt } from "./helpers";
+import type { Flashcard, FlashcardsCopyLanguage, FlashcardStatus, MutateFlashcardAction } from "./types";
+
+const STATUS_BADGE_VARIANT = {
+  new: "blue",
+  due: "red",
+  learning: "yellow",
+  mastered: "green",
+} as const satisfies Record<FlashcardStatus, "blue" | "red" | "yellow" | "green">;
 
 type FlashcardItemProps = {
   flashcard: Flashcard;
-  index: number;
   updateFlashcardAction: MutateFlashcardAction;
   deleteFlashcardAction: MutateFlashcardAction;
   language: FlashcardsCopyLanguage;
 };
 
-const MOCK_BADGE_CYCLE = [
-  { variant: "due", label: "Do powtórki" },
-  { variant: "mastered", label: "Opanowane" },
-  { variant: "new", label: "Nowa" },
-  { variant: "neutral", label: "Neutralny" },
-] as const;
-
 export function FlashcardItem({
   flashcard,
-  index,
   updateFlashcardAction,
   deleteFlashcardAction,
   language,
 }: FlashcardItemProps) {
   const copy = appCopy[language].flashcards;
   const [openDialog, setOpenDialog] = useState<"edit" | "delete" | null>(null);
-  const mockBadge = MOCK_BADGE_CYCLE[index % MOCK_BADGE_CYCLE.length];
+  const statusLabel: Record<FlashcardStatus, string> = {
+    new: copy.statusNew,
+    due: copy.statusDue,
+    learning: copy.statusLearning,
+    mastered: copy.statusMastered,
+  };
+
+  const dueLabel = formatDueAt(new Date(flashcard.dueAt), new Date());
 
   const openEdit = useCallback(() => setOpenDialog("edit"), []);
   const openDelete = useCallback(() => setOpenDialog("delete"), []);
@@ -50,13 +56,22 @@ export function FlashcardItem({
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <Badge variant={mockBadge.variant} className="mb-2">
-              {mockBadge.label}
+            <Badge variant={STATUS_BADGE_VARIANT[flashcard.status]} className="mb-2">
+              {statusLabel[flashcard.status]}
             </Badge>
             <p className="font-semibold leading-snug">{flashcard.front}</p>
             <p className="mt-0.5 text-sm text-[var(--color-muted)]">{flashcard.back}</p>
             {flashcard.notes ? (
-              <p className="mt-1 text-xs text-[var(--color-muted)]">{flashcard.notes}</p>
+              <p className="mt-1 flex items-start gap-1 text-xs text-[var(--color-muted)]">
+                <Info size={12} className="mt-0.5 shrink-0" />
+                {flashcard.notes}
+              </p>
+            ) : null}
+            {dueLabel !== "teraz" ? (
+              <p className="mt-1 flex items-center gap-1 text-xs text-[var(--color-muted)]">
+                <RefreshCw size={12} className="shrink-0" />
+                {dueLabel}
+              </p>
             ) : null}
           </div>
 

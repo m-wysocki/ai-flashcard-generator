@@ -64,6 +64,10 @@ type AppCopy = {
     deleteConfirm: string;
     deleting: string;
     cardOptions: string;
+    statusNew: string;
+    statusDue: string;
+    statusLearning: string;
+    statusMastered: string;
   };
   review: {
     done: string;
@@ -89,7 +93,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       appTitleGenerator: "Słownik",
       appTitleFlashcards: "Fiszki",
       bottomNavLabel: "Główna nawigacja",
-      tabGenerator: "Generator",
+      tabGenerator: "Słownik",
       tabFlashcards: "Fiszki",
       openAccountPanel: "Otwórz panel konta",
       logout: "Wyloguj",
@@ -100,10 +104,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     generator: {
       textLabel: "Tekst",
-      generate: "Generuj",
-      generating: "Generowanie...",
+      generate: "Tłumacz",
+      generating: "Tłumaczenie...",
       ready: "Gotowe",
-      placeholderPrompt: "Wpisz tekst i kliknij Generuj.",
+      placeholderPrompt: "Wpisz tekst i kliknij Tłumacz.",
       naturalEnglish: "Naturalny angielski",
       polishMeaning: "Znaczenie po polsku",
       examples: "Przykłady",
@@ -145,9 +149,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       deleteTitle: "Usunąć fiszkę?",
       deleteDescription: "Tej operacji nie można cofnąć.",
       cancel: "Anuluj",
-      deleteConfirm: "Potwierdź usuń",
+      deleteConfirm: "Usuń",
       deleting: "Usuwanie...",
       cardOptions: "Opcje karty",
+      statusNew: "Nowa",
+      statusDue: "Do powtórki",
+      statusLearning: "W trakcie nauki",
+      statusMastered: "Opanowane",
     },
     review: {
       done: "To wszystko na teraz.",
@@ -171,7 +179,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       appTitleGenerator: "Dictionary",
       appTitleFlashcards: "Flashcards",
       bottomNavLabel: "Main navigation",
-      tabGenerator: "Generator",
+      tabGenerator: "Vocabulary",
       tabFlashcards: "Flashcards",
       openAccountPanel: "Open account panel",
       logout: "Log out",
@@ -182,10 +190,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     generator: {
       textLabel: "Text",
-      generate: "Generate",
-      generating: "Generating...",
+      generate: "Translate",
+      generating: "Translating...",
       ready: "Ready",
-      placeholderPrompt: "Type text and click Generate.",
+      placeholderPrompt: "Type text and click Translate.",
       naturalEnglish: "Natural English",
       polishMeaning: "Meaning in Polish",
       examples: "Examples",
@@ -227,9 +235,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       deleteTitle: "Delete flashcard?",
       deleteDescription: "This action cannot be undone.",
       cancel: "Cancel",
-      deleteConfirm: "Confirm delete",
+      deleteConfirm: "Delete",
       deleting: "Deleting...",
       cardOptions: "Card options",
+      statusNew: "New",
+      statusDue: "Due",
+      statusLearning: "Learning",
+      statusMastered: "Mastered",
     },
     review: {
       done: "That's all for now.",
