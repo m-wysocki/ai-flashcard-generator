@@ -48,7 +48,7 @@ export function DeleteFlashcardDialog({
           </ModalDialogClose>
           <form action={submit}>
             <input type="hidden" name="flashcardId" value={flashcardId} />
-            <SubmitButton pending={pending} pendingLabel={copy.deleting} color="secondary">
+            <SubmitButton pending={pending} pendingLabel={copy.deleting} color="primary">
               {copy.deleteConfirm}
             </SubmitButton>
           </form>

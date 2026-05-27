@@ -119,7 +119,7 @@ describe("FlashcardsView", () => {
 
     await openCardMenu(user);
     await user.click(await screen.findByRole("menuitem", { name: /Usuń/ }));
-    await user.click(await screen.findByRole("button", { name: "Potwierdź usuń" }));
+    await user.click(await screen.findByRole("button", { name: "Usuń" }));
 
     await waitFor(() =>
       expect(screen.getByText("Nie udało się usunąć fiszki.")).toBeInTheDocument(),
