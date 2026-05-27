@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { Brain, BookOpen } from "lucide-react";
 import { SegmentedSwitch } from "./SegmentedSwitch";
 
 function LanguageSegmentedSwitch(props: {
@@ -41,6 +42,29 @@ export const Language: Story = {
         ariaLabel="UI language"
         value={value}
         onChange={setValue}
+      />
+    );
+  },
+};
+
+export const WithIcons: Story = {
+  args: {
+    value: "pl",
+    onChange: () => {},
+    ariaLabel: "Main navigation",
+  },
+  render: () => {
+    const [value, setValue] = useState<"generator" | "flashcards">("generator");
+
+    return (
+      <SegmentedSwitch
+        ariaLabel="Main navigation"
+        value={value}
+        onChange={setValue}
+        options={[
+          { value: "generator", label: "Słownik", icon: Brain },
+          { value: "flashcards", label: "Fiszki", icon: BookOpen },
+        ]}
       />
     );
   },

@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { Brain, BookOpen } from "lucide-react";
 import { DropdownButton } from "./DropdownButton/DropdownButton";
 import { Field } from "./Field/Field";
 import { ProgressBar } from "./ProgressBar";
@@ -117,5 +118,25 @@ describe("ui primitives", () => {
     expect(screen.getByRole("radiogroup", { name: "UI language" })).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "PL" })).toHaveAttribute("aria-checked", "true");
     expect(screen.getByRole("radio", { name: "EN" })).toHaveAttribute("aria-checked", "false");
+  });
+
+  it("renders SegmentedSwitch icons inside buttons when icon is provided in options", () => {
+    render(
+      <SegmentedSwitch
+        ariaLabel="Main navigation"
+        value="generator"
+        onChange={() => {}}
+        options={[
+          { value: "generator", label: "Słownik", icon: Brain },
+          { value: "flashcards", label: "Fiszki", icon: BookOpen },
+        ]}
+      />,
+    );
+
+    const generatorButton = screen.getByRole("radio", { name: "Słownik" });
+    const flashcardsButton = screen.getByRole("radio", { name: "Fiszki" });
+
+    expect(generatorButton.querySelector("svg")).toBeInTheDocument();
+    expect(flashcardsButton.querySelector("svg")).toBeInTheDocument();
   });
 });

@@ -1,10 +1,12 @@
 "use client";
 
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 type SegmentedOption<T extends string> = {
   value: T;
   label: string;
+  icon?: LucideIcon;
 };
 
 type SegmentedSwitchProps<T extends string> = {
@@ -37,6 +39,7 @@ export function SegmentedSwitch<T extends string>({
     >
       {options.map((option) => {
         const isActive = option.value === value;
+        const Icon = option.icon;
 
         return (
           <button
@@ -51,6 +54,7 @@ export function SegmentedSwitch<T extends string>({
             }}
             className={cn(
               "min-w-10 cursor-pointer rounded-full px-3 py-1.5 text-sm font-semibold",
+              "inline-flex items-center gap-2",
               "transition-colors focus-visible:outline-none",
               "focus-visible:ring-2 focus-visible:ring-[var(--color-text)]",
               isActive
@@ -58,6 +62,7 @@ export function SegmentedSwitch<T extends string>({
                 : "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-surface-soft)]",
             )}
           >
+            {Icon ? <Icon size={16} aria-hidden /> : null}
             {option.label}
           </button>
         );
