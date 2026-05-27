@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 
 const buttonStyles = cva(
   [
-    "inline-flex cursor-pointer items-center justify-center whitespace-nowrap",
+    "inline-flex cursor-pointer items-center justify-center whitespace-nowrap overflow-visible",
     "border-(length:--border-strong) border-black font-(family-name:--font-sans) text-sm font-semibold text-[var(--color-text)]",
     "shadow-[var(--shadow-offset)] transition-all focus-visible:outline-none",
     "focus-visible:ring-2 focus-visible:ring-[var(--color-text)]",
