@@ -51,7 +51,7 @@ describe("FlashcardsPage smoke", () => {
       email: "learner@example.com",
     });
     (listUserFlashcards as jest.Mock).mockResolvedValue([
-      { id: "f-1", front: "Cześć", back: "Hi", notes: null },
+      { id: "f-1", front: "Cześć", back: "Hi", notes: null, dueAt: new Date(), state: "NEW", scheduledDays: 0 },
     ]);
     (listUserDueFlashcards as jest.Mock).mockResolvedValue([{ id: "f-1" }]);
     (getReviewStats as jest.Mock).mockResolvedValue({

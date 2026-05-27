@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { FlashcardsPageClient } from "@/components/flashcards/FlashcardsPageClient";
+import { getFlashcardStatus } from "@/components/flashcards/FlashcardsView/helpers";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import {
   createManualFlashcardAction,
@@ -36,6 +37,8 @@ export default async function FlashcardsPage({
       ])
     : [[], [], undefined];
 
+  const dueIds = new Set(dueFlashcards.map((f) => f.id));
+
   return (
     <FlashcardsPageClient
       email={session?.user?.email ?? undefined}
@@ -45,6 +48,12 @@ export default async function FlashcardsPage({
         front: flashcard.front,
         back: flashcard.back,
         notes: flashcard.notes,
+        status: getFlashcardStatus(
+          flashcard.state ?? "NEW",
+          dueIds.has(flashcard.id),
+          flashcard.scheduledDays ?? 0,
+        ),
+        dueAt: flashcard.dueAt.toISOString(),
       }))}
       dueFlashcardIds={dueFlashcards.map((flashcard) => flashcard.id)}
       reviewStats={reviewStats}

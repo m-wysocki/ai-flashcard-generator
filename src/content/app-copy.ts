@@ -64,6 +64,10 @@ type AppCopy = {
     deleteConfirm: string;
     deleting: string;
     cardOptions: string;
+    statusNew: string;
+    statusDue: string;
+    statusLearning: string;
+    statusMastered: string;
   };
   review: {
     done: string;
@@ -148,6 +152,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       deleteConfirm: "Potwierdź usuń",
       deleting: "Usuwanie...",
       cardOptions: "Opcje karty",
+      statusNew: "Nowa",
+      statusDue: "Do powtórki",
+      statusLearning: "W trakcie nauki",
+      statusMastered: "Opanowane",
     },
     review: {
       done: "To wszystko na teraz.",
@@ -230,6 +238,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       deleteConfirm: "Confirm delete",
       deleting: "Deleting...",
       cardOptions: "Card options",
+      statusNew: "New",
+      statusDue: "Due",
+      statusLearning: "Learning",
+      statusMastered: "Mastered",
     },
     review: {
       done: "That's all for now.",

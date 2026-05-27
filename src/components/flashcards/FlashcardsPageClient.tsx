@@ -10,7 +10,14 @@ import type { FlashcardActionState } from "@/server/flashcards/actions";
 type FlashcardsPageClientProps = {
   email?: string;
   activeTab: "due" | "all" | "add";
-  flashcards: Array<{ id: string; front: string; back: string; notes: string | null }>;
+  flashcards: Array<{
+    id: string;
+    front: string;
+    back: string;
+    notes: string | null;
+    status: "new" | "due" | "learning" | "mastered";
+    dueAt: string;
+  }>;
   dueFlashcardIds: string[];
   reviewStats?: { dueToday: number; totalCards: number; reviewedToday: number };
   createFlashcardAction: (
