@@ -1,17 +1,18 @@
 "use client";
 
-import { useActionState, useMemo } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
+import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
 import { StartSessionBanner } from "@/components/ui/StartSessionBanner/StartSessionBanner";
+import { createFlashcardFromGeneratorAction } from "@/server/flashcards/actions";
 import { buildSessionSubtitle } from "./helpers";
 import { AddFlashcardForm } from "./AddFlashcardForm";
 import { FlashcardsList } from "./FlashcardsList";
 import { FlashcardsTabs } from "./FlashcardsTabs";
 import { FlashcardsViewHeader } from "./FlashcardsViewHeader/FlashcardsViewHeader";
 import type {
-  CreateFlashcardAction,
   Flashcard,
   FlashcardsTab,
   MutateFlashcardAction,
@@ -24,7 +25,6 @@ type FlashcardsViewProps = {
   dueFlashcardIds: string[];
   activeTab: FlashcardsTab;
   reviewStats?: ReviewStats;
-  createFlashcardAction: CreateFlashcardAction;
   updateFlashcardAction: MutateFlashcardAction;
   deleteFlashcardAction: MutateFlashcardAction;
 };
@@ -36,17 +36,32 @@ export function FlashcardsView(props: FlashcardsViewProps) {
   const dueSet = useMemo(() => new Set(props.dueFlashcardIds), [props.dueFlashcardIds]);
   const dueCards = props.flashcards.filter((flashcard) => dueSet.has(flashcard.id));
 
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+
   const [createState, createFormAction, createPending] = useActionState(
-    props.createFlashcardAction,
+    (_state: { ok: true } | { ok: false; error: string } | null, formData: FormData) =>
+      createFlashcardFromGeneratorAction(formData),
     null,
   );
+
+  useEffect(() => {
+    if (createState?.ok) {
+      setAddDialogOpen(false);
+    }
+  }, [createState]);
+
+  const handleAddClick = () => {
+    setFormKey((k) => k + 1);
+    setAddDialogOpen(true);
+  };
 
   return (
     <div data-ui="FlashcardsView" className="grid gap-4">
       <FlashcardsViewHeader
         title={props.title}
         addLabel={copy.tabAdd}
-        onAddClick={() => navigate("/app/flashcards?tab=add")}
+        onAddClick={handleAddClick}
         statItems={[
           {
             label: copy.statsDueToday,
@@ -63,6 +78,20 @@ export function FlashcardsView(props: FlashcardsViewProps) {
         ]}
       />
 
+      <ModalDialog
+        title={copy.tabAdd}
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+      >
+        <AddFlashcardForm
+          key={formKey}
+          language={language}
+          action={createFormAction}
+          pending={createPending}
+          state={createState}
+        />
+      </ModalDialog>
+
       {dueCards.length > 0 ? (
         <StartSessionBanner
           title={copy.sessionTitle}
@@ -76,15 +105,6 @@ export function FlashcardsView(props: FlashcardsViewProps) {
         dueCount={props.reviewStats?.dueToday ?? dueCards.length}
         allCount={props.reviewStats?.totalCards ?? props.flashcards.length}
       />
-
-      {props.activeTab === "add" ? (
-        <AddFlashcardForm
-          language={language}
-          action={createFormAction}
-          pending={createPending}
-          state={createState}
-        />
-      ) : null}
 
       {props.activeTab === "due" ? (
         <FlashcardsList

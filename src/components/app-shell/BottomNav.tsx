@@ -33,7 +33,8 @@ export function BottomNav() {
     <div
       data-ui="BottomNav"
       className={cn(
-        "fixed inset-x-0 bottom-0 z-30 flex justify-center",
+        "fixed bottom-0 left-1/2 z-30",
+        "-translate-x-1/2 w-full max-w-sm px-4",
         "pb-[calc(1.5rem+env(safe-area-inset-bottom))]",
       )}
     >
@@ -45,6 +46,9 @@ export function BottomNav() {
           if (link) navigate(link.href);
         }}
         options={options}
+        variant="tile"
+        size="big"
+        className="w-full"
       />
     </div>
   );

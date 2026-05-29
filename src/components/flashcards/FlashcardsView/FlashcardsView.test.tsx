@@ -2,6 +2,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FlashcardsView } from "./FlashcardsView";
 
+jest.mock("@/server/flashcards/actions", () => ({
+  createFlashcardFromGeneratorAction: jest.fn().mockResolvedValue({ ok: true }),
+}));
+
 async function openCardMenu(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: /Opcje karty/ }));
 }
@@ -14,7 +18,6 @@ describe("FlashcardsView", () => {
         activeTab="due"
         flashcards={[]}
         dueFlashcardIds={[]}
-        createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -25,18 +28,73 @@ describe("FlashcardsView", () => {
     expect(screen.getByRole("button", { name: /Do powtórki/ })).toHaveAttribute("aria-current", "page");
   });
 
-  it("shows add error and stays on add tab when create fails", async () => {
+  it("clicking Dodaj opens the add dialog", async () => {
+    const user = userEvent.setup();
     render(
       <FlashcardsView
         title="Fiszki"
-        activeTab="add"
+        activeTab="due"
         flashcards={[]}
         dueFlashcardIds={[]}
-        createFlashcardAction={async () => ({ ok: false, error: "Nie udało się zapisać fiszki." })}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
     );
+
+    expect(screen.queryByRole("textbox", { name: "Front (PL)" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Dodaj/ }));
+    expect(await screen.findByRole("textbox", { name: "Front (PL)" })).toBeInTheDocument();
+  });
+
+  it("closes the add dialog after successful save", async () => {
+    const { createFlashcardFromGeneratorAction } = jest.requireMock("@/server/flashcards/actions");
+    createFlashcardFromGeneratorAction.mockResolvedValueOnce({ ok: true });
+
+    const user = userEvent.setup();
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[]}
+        dueFlashcardIds={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Dodaj/ }));
+    await screen.findByRole("textbox", { name: "Front (PL)" });
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Front (PL)" }), { target: { value: "A" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Back (EN)" }), { target: { value: "B" } });
+    fireEvent.click(screen.getByRole("button", { name: "Zapisz fiszkę" }));
+
+    await waitFor(() =>
+      expect(screen.queryByRole("textbox", { name: "Front (PL)" })).not.toBeInTheDocument(),
+    );
+  });
+
+  it("keeps the add dialog open and shows error when save fails", async () => {
+    const { createFlashcardFromGeneratorAction } = jest.requireMock("@/server/flashcards/actions");
+    createFlashcardFromGeneratorAction.mockResolvedValueOnce({
+      ok: false,
+      error: "Nie udało się zapisać fiszki.",
+    });
+
+    const user = userEvent.setup();
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[]}
+        dueFlashcardIds={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Dodaj/ }));
+    await screen.findByRole("textbox", { name: "Front (PL)" });
 
     fireEvent.change(screen.getByRole("textbox", { name: "Front (PL)" }), { target: { value: "A" } });
     fireEvent.change(screen.getByRole("textbox", { name: "Back (EN)" }), { target: { value: "B" } });
@@ -55,7 +113,6 @@ describe("FlashcardsView", () => {
         activeTab="due"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
-        createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -72,7 +129,6 @@ describe("FlashcardsView", () => {
         activeTab="all"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
-        createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -91,7 +147,6 @@ describe("FlashcardsView", () => {
         activeTab="all"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
-        createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -111,7 +166,6 @@ describe("FlashcardsView", () => {
         activeTab="all"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
-        createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: false, error: "Nie udało się usunąć fiszki." })}
       />,
@@ -135,7 +189,6 @@ describe("FlashcardsView", () => {
         activeTab="all"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
-        createFlashcardAction={async () => ({ ok: true })}
         updateFlashcardAction={async () => ({ ok: false, error: "Nie udało się zaktualizować fiszki." })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,

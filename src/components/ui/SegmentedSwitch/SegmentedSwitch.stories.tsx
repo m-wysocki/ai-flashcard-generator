@@ -69,3 +69,55 @@ export const WithIcons: Story = {
     );
   },
 };
+
+export const TileVariant: Story = {
+  args: {
+    value: "pl",
+    onChange: () => {},
+    ariaLabel: "Main navigation tile",
+  },
+  render: () => {
+    const [value, setValue] = useState<"generator" | "flashcards">("generator");
+
+    return (
+      <SegmentedSwitch
+        ariaLabel="Main navigation tile"
+        value={value}
+        onChange={setValue}
+        variant="tile"
+        options={[
+          { value: "generator", label: "Słownik", icon: Brain },
+          { value: "flashcards", label: "Fiszki", icon: BookOpen },
+        ]}
+      />
+    );
+  },
+};
+
+export const TileBig: Story = {
+  args: {
+    value: "pl",
+    onChange: () => {},
+    ariaLabel: "Bottom navigation",
+  },
+  render: () => {
+    const [value, setValue] = useState<"generator" | "flashcards">("generator");
+
+    return (
+      <div className="w-[384px]">
+        <SegmentedSwitch
+          ariaLabel="Bottom navigation"
+          value={value}
+          onChange={setValue}
+          variant="tile"
+          size="big"
+          className="w-full"
+          options={[
+            { value: "generator", label: "Słownik", icon: Brain },
+            { value: "flashcards", label: "Fiszki", icon: BookOpen },
+          ]}
+        />
+      </div>
+    );
+  },
+};
