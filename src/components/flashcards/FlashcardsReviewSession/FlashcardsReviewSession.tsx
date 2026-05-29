@@ -130,7 +130,7 @@ export function FlashcardsReviewSession({
       </ShadowFrame>
       {revealed ? (
         <>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 pb-1 pr-1">
             {GRADE_CONFIG.map(({ grade, Icon, color }) => (
               <Button
                 key={grade}
