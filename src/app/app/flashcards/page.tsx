@@ -3,7 +3,6 @@ import { FlashcardsPageClient } from "@/components/flashcards/FlashcardsPageClie
 import { getFlashcardStatus } from "@/components/flashcards/FlashcardsView/helpers";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import {
-  createManualFlashcardAction,
   deleteManualFlashcardAction,
   updateManualFlashcardAction,
 } from "@/server/flashcards/actions";
@@ -11,8 +10,8 @@ import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcard
 import { listUserDueFlashcards, listUserFlashcards } from "@/server/flashcards/service";
 import { getReviewStats } from "@/server/review/service";
 
-function parseTab(value?: string): "due" | "all" | "add" {
-  if (value === "all" || value === "add" || value === "due") {
+function parseTab(value?: string): "due" | "all" {
+  if (value === "all" || value === "due") {
     return value;
   }
   return "due";
@@ -57,7 +56,6 @@ export default async function FlashcardsPage({
       }))}
       dueFlashcardIds={dueFlashcards.map((flashcard) => flashcard.id)}
       reviewStats={reviewStats}
-      createFlashcardAction={createManualFlashcardAction}
       updateFlashcardAction={updateManualFlashcardAction}
       deleteFlashcardAction={deleteManualFlashcardAction}
     />

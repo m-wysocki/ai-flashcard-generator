@@ -5,11 +5,11 @@ import { useUiLanguage } from "@/hooks/use-ui-language";
 import { AppFrame } from "@/components/app-shell/AppFrame";
 import { HeaderControls } from "@/components/app-shell/HeaderControls";
 import { FlashcardsView } from "./FlashcardsView/FlashcardsView";
-import type { FlashcardActionState } from "@/server/flashcards/actions";
+import type { MutateFlashcardAction } from "./FlashcardsView/types";
 
 type FlashcardsPageClientProps = {
   email?: string;
-  activeTab: "due" | "all" | "add";
+  activeTab: "due" | "all";
   flashcards: Array<{
     id: string;
     front: string;
@@ -20,12 +20,8 @@ type FlashcardsPageClientProps = {
   }>;
   dueFlashcardIds: string[];
   reviewStats?: { dueToday: number; totalCards: number; reviewedToday: number };
-  createFlashcardAction: (
-    state: FlashcardActionState | null,
-    formData: FormData,
-  ) => Promise<FlashcardActionState>;
-  updateFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
-  deleteFlashcardAction: (formData: FormData) => Promise<FlashcardActionState>;
+  updateFlashcardAction: MutateFlashcardAction;
+  deleteFlashcardAction: MutateFlashcardAction;
 };
 
 export function FlashcardsPageClient({
@@ -34,7 +30,6 @@ export function FlashcardsPageClient({
   flashcards,
   dueFlashcardIds,
   reviewStats,
-  createFlashcardAction,
   updateFlashcardAction,
   deleteFlashcardAction,
 }: FlashcardsPageClientProps) {
@@ -49,7 +44,6 @@ export function FlashcardsPageClient({
         flashcards={flashcards}
         dueFlashcardIds={dueFlashcardIds}
         reviewStats={reviewStats}
-        createFlashcardAction={createFlashcardAction}
         updateFlashcardAction={updateFlashcardAction}
         deleteFlashcardAction={deleteFlashcardAction}
       />
