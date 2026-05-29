@@ -175,7 +175,7 @@ export function FlashcardsReviewSession({
                       aria-hidden="true"
                       className={cn(
                         "text-xs font-light italic",
-                        "opacity-60",
+                        "px-1 opacity-60",
                       )}
                     >
                       {gradeIntervals[grade]}
