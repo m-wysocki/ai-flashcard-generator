@@ -26,10 +26,7 @@ export function Logo({ className }: LogoProps) {
       >
         <Brain size={16} />
       </span>
-      <span className="text-sm font-semibold tracking-wide sm:hidden">AI Flashcards</span>
-      <span className="hidden text-sm font-semibold tracking-wide sm:inline">
-        AI Flashcard Generator
-      </span>
+      <span className="text-sm font-semibold tracking-wide">Flashcards AI</span>
     </Link>
   );
 }

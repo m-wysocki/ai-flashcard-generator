@@ -10,8 +10,12 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
-  title: "AI Flashcard Generator",
+  title: "Flashcards AI",
   description: "Private app for AI-assisted English learning.",
+  appleWebApp: {
+    title: "Flashcards AI",
+    capable: true,
+  },
 };
 
 export const viewport: Viewport = {
