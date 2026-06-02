@@ -5,7 +5,7 @@ import type { FlashcardActionState } from "@/server/flashcards/actions";
 import type { MutateFlashcardAction } from "./types";
 
 type UseAsyncFormActionOptions = {
-  onSuccess?: (result: FlashcardActionState) => void;
+  onSuccess?: (result: FlashcardActionState, formData: FormData) => void;
 };
 
 export function useAsyncFormAction(
@@ -20,7 +20,7 @@ export function useAsyncFormAction(
       const result = await action(formData);
       setState(result);
       if (result.ok) {
-        options?.onSuccess?.(result);
+        options?.onSuccess?.(result, formData);
       }
     });
   }

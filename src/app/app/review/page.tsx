@@ -4,6 +4,7 @@ import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
 import { listUserDueFlashcards } from "@/server/flashcards/service";
 import { gradeReviewFlashcardAction } from "@/server/review/actions";
+import { updateManualFlashcardAction } from "@/server/flashcards/actions";
 import { getReviewStats } from "@/server/review/service";
 
 export default async function ReviewPage() {
@@ -38,6 +39,7 @@ export default async function ReviewPage() {
       }))}
       stats={stats}
       gradeAction={gradeReviewFlashcardAction}
+      updateAction={updateManualFlashcardAction}
     />
   );
 }

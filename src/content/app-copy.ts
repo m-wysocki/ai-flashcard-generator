@@ -84,6 +84,7 @@ type AppCopy = {
     revealAnswer: string;
     endSession: string;
     playback: string;
+    editCard: string;
   };
 };
 
@@ -172,6 +173,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       revealAnswer: "Pokaż odpowiedź",
       endSession: "Zakończ sesję",
       playback: "Odtwórz wymowę",
+      editCard: "Edytuj fiszkę",
     },
   },
   en: {
@@ -258,6 +260,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       revealAnswer: "Reveal answer",
       endSession: "End session",
       playback: "Play pronunciation",
+      editCard: "Edit flashcard",
     },
   },
 };

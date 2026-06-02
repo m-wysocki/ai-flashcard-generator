@@ -27,6 +27,10 @@ jest.mock("@/server/review/actions", () => ({
   gradeReviewFlashcardAction: jest.fn(),
 }));
 
+jest.mock("@/server/flashcards/actions", () => ({
+  updateManualFlashcardAction: jest.fn(),
+}));
+
 jest.mock("@/server/flashcards/prisma-flashcards", () => ({
   prismaFlashcardsRepository: {},
 }));

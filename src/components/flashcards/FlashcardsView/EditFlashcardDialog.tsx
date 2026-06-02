@@ -6,14 +6,15 @@ import { Field } from "@/components/ui/Field/Field";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { useAsyncFormAction } from "./useAsyncFormAction";
-import type { Flashcard, FlashcardsCopyLanguage, MutateFlashcardAction } from "./types";
+import type { FlashcardsCopyLanguage, MutateFlashcardAction } from "./types";
 
 type EditFlashcardDialogProps = {
-  flashcard: Flashcard;
+  flashcard: { id: string; front: string; back: string; notes: string | null };
   updateFlashcardAction: MutateFlashcardAction;
   language: FlashcardsCopyLanguage;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSaved?: (updated: { front: string; back: string; notes: string | null }) => void;
 };
 
 export function EditFlashcardDialog({
@@ -22,14 +23,23 @@ export function EditFlashcardDialog({
   language,
   open,
   onOpenChange,
+  onSaved,
 }: EditFlashcardDialogProps) {
   const copy = appCopy[language].flashcards;
   const generatorCopy = appCopy[language].generator;
   const { refresh } = useNavigation();
   const { pending, state, submit } = useAsyncFormAction(updateFlashcardAction, {
-    onSuccess: () => {
+    onSuccess: (_, formData) => {
       onOpenChange(false);
-      refresh();
+      if (onSaved) {
+        onSaved({
+          front: formData.get("front") as string,
+          back: formData.get("back") as string,
+          notes: (formData.get("notes") as string) || null,
+        });
+      } else {
+        refresh();
+      }
     },
   });
 
