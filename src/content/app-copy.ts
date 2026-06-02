@@ -16,6 +16,7 @@ type AppCopy = {
   };
   generator: {
     textLabel: string;
+    textPlaceholder: string;
     generate: string;
     generating: string;
     ready: string;
@@ -84,6 +85,7 @@ type AppCopy = {
     revealAnswer: string;
     endSession: string;
     playback: string;
+    editCard: string;
   };
 };
 
@@ -104,6 +106,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     generator: {
       textLabel: "Tekst",
+      textPlaceholder: "Wpisz słowo lub zdanie...",
       generate: "Tłumacz",
       generating: "Tłumaczenie...",
       ready: "Gotowe",
@@ -172,6 +175,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       revealAnswer: "Pokaż odpowiedź",
       endSession: "Zakończ sesję",
       playback: "Odtwórz wymowę",
+      editCard: "Edytuj fiszkę",
     },
   },
   en: {
@@ -190,6 +194,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     generator: {
       textLabel: "Text",
+      textPlaceholder: "Enter a word or phrase...",
       generate: "Translate",
       generating: "Translating...",
       ready: "Ready",
@@ -258,6 +263,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       revealAnswer: "Reveal answer",
       endSession: "End session",
       playback: "Play pronunciation",
+      editCard: "Edit flashcard",
     },
   },
 };

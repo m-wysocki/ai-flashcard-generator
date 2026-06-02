@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { FlashcardsReviewSession } from "./FlashcardsReviewSession";
 
+const updateAction = jest.fn().mockResolvedValue({ ok: true });
+
 beforeEach(() => {
   global.SpeechSynthesisUtterance = jest.fn().mockImplementation((text: string) => ({ text })) as never;
   Object.defineProperty(window, "speechSynthesis", {
@@ -22,6 +24,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
+        updateAction={updateAction}
       />,
     );
 
@@ -51,6 +54,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
+        updateAction={updateAction}
       />,
     );
 
@@ -81,6 +85,7 @@ describe("FlashcardsReviewSession", () => {
         ]}
         stats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
         gradeAction={gradeAction}
+        updateAction={updateAction}
       />,
     );
 
@@ -110,6 +115,7 @@ describe("FlashcardsReviewSession", () => {
         ]}
         stats={{ dueToday: 2, totalCards: 10, reviewedToday: 3 }}
         gradeAction={gradeAction}
+        updateAction={updateAction}
       />,
     );
 
@@ -140,6 +146,7 @@ describe("FlashcardsReviewSession", () => {
         ]}
         stats={{ dueToday: 2, totalCards: 5, reviewedToday: 2 }}
         gradeAction={gradeAction}
+        updateAction={updateAction}
       />,
     );
 
@@ -164,6 +171,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
+        updateAction={updateAction}
       />,
     );
 
@@ -180,6 +188,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
+        updateAction={updateAction}
       />,
     );
 
@@ -197,6 +206,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
+        updateAction={updateAction}
       />,
     );
 

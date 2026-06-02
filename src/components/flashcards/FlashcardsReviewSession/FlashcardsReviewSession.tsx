@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine } from "lucide-react";
+import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine, Pencil } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
@@ -9,7 +9,9 @@ import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
+import { EditFlashcardDialog } from "@/components/flashcards/FlashcardsView/EditFlashcardDialog";
 import type { ReviewGrade } from "@/server/review/service";
+import type { MutateFlashcardAction } from "@/components/flashcards/FlashcardsView/types";
 import { buildGradeIntervals, speakEnglish } from "./helpers";
 import type { ReviewCard } from "./helpers";
 
@@ -19,6 +21,7 @@ type FlashcardsReviewSessionProps = {
   gradeAction: (
     input: { flashcardId: string; grade: ReviewGrade },
   ) => Promise<{ ok: boolean; shouldRequeue?: boolean }>;
+  updateAction: MutateFlashcardAction;
 };
 
 const GRADE_CONFIG = [
@@ -32,6 +35,7 @@ export function FlashcardsReviewSession({
   initialCards,
   stats,
   gradeAction,
+  updateAction,
 }: FlashcardsReviewSessionProps) {
   const { language } = useUiLanguage();
   const copy = appCopy[language].review;
@@ -42,6 +46,7 @@ export function FlashcardsReviewSession({
   const [reviewedToday, setReviewedToday] = useState(stats.reviewedToday);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
   const current = queue[0];
 
   if (!current) {
@@ -94,7 +99,20 @@ export function FlashcardsReviewSession({
         </Button>
       </div>
       <ShadowFrame key={current.id} className="rounded-xl p-4">
-        <p className="m-0 text-xl text-[var(--color-text)]">{current.front}</p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="m-0 text-xl text-[var(--color-text)]">{current.front}</p>
+          <Button
+            type="button"
+            color="ghost"
+            size="sm"
+            shape="pill"
+            className="size-8 shrink-0 p-0"
+            onClick={() => setEditOpen(true)}
+            disabled={grading !== null}
+            aria-label={copy.editCard}
+            icon={<Pencil size={14} />}
+          />
+        </div>
         {revealed && (
           <>
             <div className="my-3 h-px bg-black/15" />
@@ -206,6 +224,19 @@ export function FlashcardsReviewSession({
           </Button>
         </div>
       )}
+      <EditFlashcardDialog
+        flashcard={current}
+        updateFlashcardAction={updateAction}
+        language={language}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSaved={(updated) => {
+          setQueue((prev) => {
+            const [head, ...rest] = prev;
+            return [{ ...head, ...updated }, ...rest];
+          });
+        }}
+      />
     </main>
   );
 }

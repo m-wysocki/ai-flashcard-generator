@@ -84,6 +84,7 @@ export function GeneratorView({
       <GeneratorForm
         action={handleGenerateAction}
         textLabel={copy.textLabel}
+        textPlaceholder={copy.textPlaceholder}
         generateLabel={copy.generate}
         generatingLabel={copy.generating}
         pending={pending}
