@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { ArrowUpDown } from "lucide-react";
 import { Field } from "./Field";
 
 const meta = {
@@ -34,5 +35,14 @@ export const WithError: Story = {
     name: "password",
     type: "password",
     error: "Hasło musi mieć co najmniej 8 znaków.",
+  },
+};
+
+export const WithRightAdornment: Story = {
+  args: {
+    label: "Tekst",
+    name: "text",
+    placeholder: "Wpisz słowo lub zdanie...",
+    rightAdornment: <ArrowUpDown size={16} />,
   },
 };

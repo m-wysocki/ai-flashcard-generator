@@ -16,6 +16,7 @@ type AppCopy = {
   };
   generator: {
     textLabel: string;
+    textPlaceholder: string;
     generate: string;
     generating: string;
     ready: string;
@@ -105,6 +106,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     generator: {
       textLabel: "Tekst",
+      textPlaceholder: "Wpisz słowo lub zdanie...",
       generate: "Tłumacz",
       generating: "Tłumaczenie...",
       ready: "Gotowe",
@@ -192,6 +194,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     generator: {
       textLabel: "Text",
+      textPlaceholder: "Enter a word or phrase...",
       generate: "Translate",
       generating: "Translating...",
       ready: "Ready",
