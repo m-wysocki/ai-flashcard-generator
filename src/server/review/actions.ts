@@ -7,14 +7,34 @@ import { reviewFlashcard, type ReviewGrade } from "./service";
 
 export async function gradeReviewFlashcardAction(input: { flashcardId: string; grade: ReviewGrade }) {
   const userId = await getAuthenticatedUserId();
-  return reviewFlashcard(
-    {
-      userId,
-      flashcardId: input.flashcardId,
-      grade: input.grade,
-    },
+  const result = await reviewFlashcard(
+    { userId, flashcardId: input.flashcardId, grade: input.grade },
     { flashcards: prismaFlashcardsRepository },
   );
+
+  if (!result.ok || !result.card) {
+    return result;
+  }
+
+  const { card } = result;
+  return {
+    ...result,
+    updatedCard: {
+      id: card.id,
+      front: card.front,
+      back: card.back,
+      notes: card.notes,
+      dueAtMs: card.dueAt.getTime(),
+      stability: card.stability ?? undefined,
+      difficulty: card.difficulty ?? undefined,
+      elapsedDays: card.elapsedDays,
+      scheduledDays: card.scheduledDays,
+      reps: card.reps,
+      lapses: card.lapses,
+      state: card.state,
+      lastReviewAtMs: card.lastReviewAt?.getTime() ?? null,
+    },
+  };
 }
 
 async function getAuthenticatedUserId() {
