@@ -7,6 +7,7 @@ export const prismaAiGenerationLogsRepository: AiGenerationLogsRepository = {
       where: {
         userId: input.userId,
         success: true,
+        generationType: input.generationType,
         createdAt: {
           gte: input.from,
           lte: input.to,
@@ -22,6 +23,7 @@ export const prismaAiGenerationLogsRepository: AiGenerationLogsRepository = {
         inputLanguage: entry.inputLanguage,
         model: entry.model,
         success: entry.success,
+        generationType: entry.generationType,
       },
     });
   },

@@ -7,6 +7,8 @@ import { HeaderControls } from "@/components/app-shell/HeaderControls";
 import { GeneratorView } from "./GeneratorView";
 import type { Material } from "./types";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
+import type { DailyPhraseData } from "@/server/daily-phrase/service";
+import type { RefreshDailyPhraseAction } from "@/server/daily-phrase/actions";
 
 type GeneratorActionState = { ok: true; material: Material } | { ok: false; error: string } | null;
 
@@ -19,14 +21,18 @@ type CreateFlashcardAction = (formData: FormData) => Promise<FlashcardActionStat
 
 type GeneratorPageClientProps = {
   email?: string;
+  dailyPhrase: DailyPhraseData | null;
   generateLearningMaterialAction: GeneratorAction;
   createFlashcardAction: CreateFlashcardAction;
+  refreshDailyPhraseAction: RefreshDailyPhraseAction;
 };
 
 export function GeneratorPageClient({
   email,
+  dailyPhrase,
   generateLearningMaterialAction,
   createFlashcardAction,
+  refreshDailyPhraseAction,
 }: GeneratorPageClientProps) {
   const { language, setLanguage } = useUiLanguage();
   const commonCopy = appCopy[language].common;
@@ -36,8 +42,10 @@ export function GeneratorPageClient({
       <GeneratorView
         language={language}
         title={commonCopy.appTitleGenerator}
+        dailyPhrase={dailyPhrase}
         generateLearningMaterialAction={generateLearningMaterialAction}
         createFlashcardAction={createFlashcardAction}
+        refreshDailyPhraseAction={refreshDailyPhraseAction}
       />
     </AppFrame>
   );

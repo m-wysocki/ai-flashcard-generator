@@ -4,12 +4,15 @@ import { useActionState, useRef, useState, useTransition } from "react";
 import { appCopy } from "@/content/app-copy";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
+import { DailyPhraseCard } from "./DailyPhraseCard/DailyPhraseCard";
 import { GeneratorForm } from "./GeneratorForm";
 import { GeneratedExamplesList } from "./GeneratedExamplesList";
 import { GeneratedFlashcardForm } from "./GeneratedFlashcardForm";
 import type { Material } from "./types";
 import type { UiLanguage } from "@/content/app-copy";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
+import type { DailyPhraseData } from "@/server/daily-phrase/service";
+import type { RefreshDailyPhraseAction } from "@/server/daily-phrase/actions";
 
 type Example = { english: string; polish: string; note: string | null };
 
@@ -25,15 +28,19 @@ type CreateFlashcardAction = (formData: FormData) => Promise<FlashcardActionStat
 type GeneratorViewProps = {
   language: UiLanguage;
   title: string;
+  dailyPhrase: DailyPhraseData | null;
   generateLearningMaterialAction: GeneratorAction;
   createFlashcardAction: CreateFlashcardAction;
+  refreshDailyPhraseAction: RefreshDailyPhraseAction;
 };
 
 export function GeneratorView({
   language,
   title,
+  dailyPhrase,
   generateLearningMaterialAction,
   createFlashcardAction,
+  refreshDailyPhraseAction,
 }: GeneratorViewProps) {
   const copy = appCopy[language].generator;
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -74,6 +81,7 @@ export function GeneratorView({
 
   const material = state?.ok ? state.material : null;
   const showTranslations = material && material.inputType !== "sentence";
+  const showDailyPhrase = dailyPhrase !== null && !material;
 
   return (
     <div data-ui="GeneratorView" className="grid gap-4">
@@ -94,6 +102,15 @@ export function GeneratorView({
         <p role="alert" className="text-sm text-[var(--color-danger)]">
           {state.error}
         </p>
+      ) : null}
+
+      {showDailyPhrase ? (
+        <DailyPhraseCard
+          phrase={dailyPhrase}
+          language={language}
+          refreshAction={refreshDailyPhraseAction}
+          createFlashcardAction={createFlashcardAction}
+        />
       ) : null}
 
       {showTranslations ? (

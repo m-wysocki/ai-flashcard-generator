@@ -12,6 +12,8 @@ describe("GeneratorView", () => {
         language="pl"
         title="Słownik"
         generateLearningMaterialAction={async () => null}
+        dailyPhrase={null}
+        refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -27,6 +29,8 @@ describe("GeneratorView", () => {
         language="pl"
         title="Słownik"
         generateLearningMaterialAction={async () => null}
+        dailyPhrase={null}
+        refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -51,6 +55,8 @@ describe("GeneratorView", () => {
             notes: null,
           },
         })}
+        dailyPhrase={null}
+        refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -79,6 +85,8 @@ describe("GeneratorView", () => {
             notes: null,
           },
         })}
+        dailyPhrase={null}
+        refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -120,6 +128,8 @@ describe("GeneratorView", () => {
             notes: "Often used for solving problems.",
           },
         })}
+        dailyPhrase={null}
+        refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async (formData) => {
           createdCards.push({
             front: String(formData.get("front") ?? ""),
@@ -180,6 +190,8 @@ describe("GeneratorView", () => {
             notes: null,
           },
         })}
+        dailyPhrase={null}
+        refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );

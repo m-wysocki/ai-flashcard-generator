@@ -34,9 +34,22 @@ export type LearningMaterial = {
   notes: string | null;
 };
 
+export type AiGenerationType = "FLASHCARD" | "DAILY_PHRASE";
+
 export type AiGenerationLogsRepository = {
-  countSuccessfulSince(input: { userId: string; from: Date; to: Date }): Promise<number>;
-  create(entry: { userId: string; inputLanguage: "POLISH" | "ENGLISH"; model: string; success: boolean }): Promise<void>;
+  countSuccessfulSince(input: {
+    userId: string;
+    from: Date;
+    to: Date;
+    generationType: AiGenerationType;
+  }): Promise<number>;
+  create(entry: {
+    userId: string;
+    inputLanguage: "POLISH" | "ENGLISH";
+    model: string;
+    success: boolean;
+    generationType: AiGenerationType;
+  }): Promise<void>;
 };
 
 export type AiClient = {
@@ -74,6 +87,7 @@ export async function generateLearningMaterial(
     userId: parsedInput.data.userId,
     from,
     to,
+    generationType: "FLASHCARD",
   });
 
   if (successCount >= dependencies.limitPerDay) {
@@ -103,6 +117,7 @@ export async function generateLearningMaterial(
         inputLanguage: parsedOutput.data.detectedLanguage,
         model: dependencies.openai.model,
         success: true,
+        generationType: "FLASHCARD",
       });
 
       return { ok: true, material: normalized };
@@ -113,6 +128,7 @@ export async function generateLearningMaterial(
           inputLanguage: "POLISH",
           model: dependencies.openai.model,
           success: false,
+          generationType: "FLASHCARD",
         });
         return { ok: false, error: insufficientQuotaError };
       }
@@ -125,6 +141,7 @@ export async function generateLearningMaterial(
     inputLanguage: "POLISH",
     model: dependencies.openai.model,
     success: false,
+    generationType: "FLASHCARD",
   });
   return { ok: false, error: generationFailedError };
 }
