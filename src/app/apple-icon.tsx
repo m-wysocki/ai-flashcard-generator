@@ -28,18 +28,18 @@ export default function AppleIcon() {
       >
         <g transform={`translate(${OFFSET}, ${OFFSET}) scale(${SCALE})`}>
           {/* Drop shadow */}
-          <rect x="3" y="3" width="28" height="28" rx="6" fill="#1A1A1A" />
+          {/*<rect x="3" y="3" width="28" height="28" rx="6" fill="#1A1A1A" />*/}
           {/* Main card */}
-          <rect
-            x="1"
-            y="1"
-            width="28"
-            height="28"
-            rx="6"
-            fill="#F3EFE0"
-            stroke="#1A1A1A"
-            strokeWidth="2"
-          />
+          {/*<rect*/}
+          {/*  x="1"*/}
+          {/*  y="1"*/}
+          {/*  width="28"*/}
+          {/*  height="28"*/}
+          {/*  rx="6"*/}
+          {/*  fill="#F3EFE0"*/}
+          {/*  stroke="#1A1A1A"*/}
+          {/*  strokeWidth="2"*/}
+          {/*/>*/}
           {/* Brain icon — lucide Brain, 18×18, centered in 30×30 */}
           <g
             transform="translate(6 6) scale(0.75)"
