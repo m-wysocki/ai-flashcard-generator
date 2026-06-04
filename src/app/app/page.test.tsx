@@ -40,6 +40,35 @@ jest.mock("@/server/flashcards/prisma-flashcards", () => ({
   prismaFlashcardsRepository: {},
 }));
 
+jest.mock("@/server/daily-phrase/actions", () => ({
+  refreshDailyPhraseAction: jest.fn(),
+}));
+
+jest.mock("@/server/daily-phrase/service", () => ({
+  getDailyPhrase: jest.fn().mockResolvedValue({ ok: false, error: "unavailable" }),
+  toDateKey: jest.fn().mockReturnValue("2026-06-04"),
+}));
+
+jest.mock("@/server/daily-phrase/ai-client", () => ({
+  openaiDailyPhraseClient: {},
+}));
+
+jest.mock("@/server/daily-phrase/prisma-daily-phrase", () => ({
+  prismaDailyPhraseRepository: {},
+}));
+
+jest.mock("@/server/auth/prisma-users", () => ({
+  prismaUserCredentialsRepository: {
+    findByEmail: jest.fn().mockResolvedValue({ id: "user-1", email: "learner@example.com" }),
+  },
+}));
+
+jest.mock("@/server/config/app-env", () => ({
+  getAppEnv: jest.fn().mockReturnValue({
+    openai: { generationEnabled: false, model: "gpt-4.1-mini", apiKey: null },
+  }),
+}));
+
 describe("AppPage smoke", () => {
   it("renders generator route for authenticated user and does not fetch flashcards", async () => {
     (auth as jest.Mock).mockResolvedValue({ user: { email: "learner@example.com" } });

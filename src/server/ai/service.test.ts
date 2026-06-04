@@ -12,7 +12,7 @@ type MockResponse = {
 
 describe("ai generation service", () => {
   it("returns validated material with detectedLanguage from AI output and logs it", async () => {
-    const calls: Array<{ userId: string; model: string; inputLanguage: "POLISH" | "ENGLISH"; success: boolean }> = [];
+    const calls: Array<{ userId: string; model: string; inputLanguage: "POLISH" | "ENGLISH"; success: boolean; generationType: "FLASHCARD" | "DAILY_PHRASE" }> = [];
     const result = await generateLearningMaterial(
       {
         userId: "user-1",
@@ -56,7 +56,7 @@ describe("ai generation service", () => {
         notes: null,
       },
     });
-    expect(calls).toEqual([{ userId: "user-1", inputLanguage: "POLISH", model: "gpt-4.1-mini", success: true }]);
+    expect(calls).toEqual([{ userId: "user-1", inputLanguage: "POLISH", model: "gpt-4.1-mini", success: true, generationType: "FLASHCARD" }]);
   });
 
   it("retries once when first structured output is invalid", async () => {

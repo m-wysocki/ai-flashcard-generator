@@ -70,6 +70,11 @@ type AppCopy = {
     statusLearning: string;
     statusMastered: string;
   };
+  dailyPhrase: {
+    title: string;
+    refresh: string;
+    useAsFlashcard: string;
+  };
   review: {
     done: string;
     backToFlashcards: string;
@@ -160,6 +165,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       statusLearning: "W trakcie nauki",
       statusMastered: "Opanowane",
     },
+    dailyPhrase: {
+      title: "Zdanie Dnia",
+      refresh: "Odśwież zdanie dnia",
+      useAsFlashcard: "Dodaj jako fiszkę",
+    },
     review: {
       done: "To wszystko na teraz.",
       backToFlashcards: "Wróć do Fiszek",
@@ -247,6 +257,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       statusDue: "Due",
       statusLearning: "Learning",
       statusMastered: "Mastered",
+    },
+    dailyPhrase: {
+      title: "Phrase of the Day",
+      refresh: "Refresh phrase of the day",
+      useAsFlashcard: "Add as flashcard",
     },
     review: {
       done: "That's all for now.",
