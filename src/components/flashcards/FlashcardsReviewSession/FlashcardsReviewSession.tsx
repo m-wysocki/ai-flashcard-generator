@@ -20,7 +20,7 @@ type FlashcardsReviewSessionProps = {
   stats: { dueToday: number; totalCards: number; reviewedToday: number };
   gradeAction: (
     input: { flashcardId: string; grade: ReviewGrade },
-  ) => Promise<{ ok: boolean; shouldRequeue?: boolean }>;
+  ) => Promise<{ ok: boolean; shouldRequeue?: boolean; updatedCard?: ReviewCard }>;
   updateAction: MutateFlashcardAction;
 };
 
@@ -172,14 +172,17 @@ export function FlashcardsReviewSession({
                     setGrading(null);
                     return;
                   }
-                  const nextQueue = queue.slice(1);
-                  if (result.shouldRequeue) {
-                    nextQueue.push(current);
-                  } else {
+                  if (!result.shouldRequeue) {
                     setDueToday((prev) => Math.max(0, prev - 1));
                     setReviewedToday((prev) => prev + 1);
                   }
-                  setQueue(nextQueue);
+                  setQueue((prev) => {
+                    const next = prev.slice(1);
+                    if (result.shouldRequeue) {
+                      next.push(result.updatedCard ?? current);
+                    }
+                    return next;
+                  });
                   setRevealed(false);
                   setGrading(null);
                 }}

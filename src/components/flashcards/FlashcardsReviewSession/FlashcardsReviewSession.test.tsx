@@ -198,6 +198,63 @@ describe("FlashcardsReviewSession", () => {
     expect(intervals).toHaveLength(4);
   });
 
+  it("recalculates interval labels from updatedCard after Again re-queue", async () => {
+    const newCard = {
+      id: "1",
+      front: "A",
+      back: "B",
+      notes: null,
+      stability: 0,
+      difficulty: 0,
+      reps: 0,
+      lapses: 0,
+      state: "NEW" as const,
+      elapsedDays: 0,
+      scheduledDays: 0,
+    };
+
+    // updatedCard reflects a mature REVIEW-state card — produces day-range intervals
+    // (vs. new card which produces minute-range intervals), so the difference is visible
+    const updatedCard = {
+      ...newCard,
+      stability: 10,
+      difficulty: 5,
+      reps: 5,
+      lapses: 0,
+      state: "REVIEW" as const,
+      scheduledDays: 10,
+    };
+
+    const gradeAction = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: true, shouldRequeue: true, updatedCard })
+      .mockResolvedValueOnce({ ok: true, shouldRequeue: false });
+
+    render(
+      <FlashcardsReviewSession
+        initialCards={[newCard]}
+        stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+        gradeAction={gradeAction}
+        updateAction={updateAction}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+    const firstIntervals = screen
+      .getAllByText(/^\d+ (min|h|d)$/)
+      .map((el) => el.textContent);
+
+    fireEvent.click(screen.getByRole("button", { name: "Ponownie" }));
+    await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+
+    const secondIntervals = screen
+      .getAllByText(/^\d+ (min|h|d)$/)
+      .map((el) => el.textContent);
+
+    expect(secondIntervals).not.toEqual(firstIntervals);
+  });
+
   it("keeps current card when grading fails and shows error", async () => {
     const gradeAction = jest.fn().mockResolvedValue({ ok: false });
 
