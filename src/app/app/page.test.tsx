@@ -63,6 +63,12 @@ jest.mock("@/server/auth/prisma-users", () => ({
   },
 }));
 
+jest.mock("@/server/review/prisma-streak", () => ({
+  prismaUserStreakRepository: {
+    findById: jest.fn().mockResolvedValue({ id: "user-1", currentStreak: 0, lastReviewDate: null }),
+  },
+}));
+
 jest.mock("@/server/config/app-env", () => ({
   getAppEnv: jest.fn().mockReturnValue({
     openai: { generationEnabled: false, model: "gpt-4.1-mini", apiKey: null },

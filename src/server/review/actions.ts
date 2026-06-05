@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
 import { reviewFlashcard, type ReviewGrade } from "./service";
+import { updateStreakAfterReview } from "./streak-service";
+import { prismaUserStreakRepository } from "./prisma-streak";
 
 export async function gradeReviewFlashcardAction(input: { flashcardId: string; grade: ReviewGrade }) {
   const userId = await getAuthenticatedUserId();
@@ -15,6 +17,10 @@ export async function gradeReviewFlashcardAction(input: { flashcardId: string; g
   if (!result.ok || !result.card) {
     return result;
   }
+
+  await updateStreakAfterReview(userId, result.card.lastReviewAt ?? new Date(), {
+    users: prismaUserStreakRepository,
+  });
 
   const { card } = result;
   return {
