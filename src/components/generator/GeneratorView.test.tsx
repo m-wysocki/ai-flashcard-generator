@@ -13,6 +13,8 @@ describe("GeneratorView", () => {
         title="Słownik"
         generateLearningMaterialAction={async () => null}
         dailyPhrase={null}
+        streak={0}
+        reviewedToday={false}
         refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
@@ -30,6 +32,8 @@ describe("GeneratorView", () => {
         title="Słownik"
         generateLearningMaterialAction={async () => null}
         dailyPhrase={null}
+        streak={0}
+        reviewedToday={false}
         refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
@@ -56,6 +60,8 @@ describe("GeneratorView", () => {
           },
         })}
         dailyPhrase={null}
+        streak={0}
+        reviewedToday={false}
         refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
@@ -86,6 +92,8 @@ describe("GeneratorView", () => {
           },
         })}
         dailyPhrase={null}
+        streak={0}
+        reviewedToday={false}
         refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,
@@ -129,6 +137,8 @@ describe("GeneratorView", () => {
           },
         })}
         dailyPhrase={null}
+        streak={0}
+        reviewedToday={false}
         refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async (formData) => {
           createdCards.push({
@@ -191,6 +201,8 @@ describe("GeneratorView", () => {
           },
         })}
         dailyPhrase={null}
+        streak={0}
+        reviewedToday={false}
         refreshDailyPhraseAction={async () => ({ ok: true })}
         createFlashcardAction={async () => ({ ok: true })}
       />,

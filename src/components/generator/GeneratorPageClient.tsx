@@ -22,6 +22,8 @@ type CreateFlashcardAction = (formData: FormData) => Promise<FlashcardActionStat
 type GeneratorPageClientProps = {
   email?: string;
   dailyPhrase: DailyPhraseData | null;
+  streak: number;
+  reviewedToday: boolean;
   generateLearningMaterialAction: GeneratorAction;
   createFlashcardAction: CreateFlashcardAction;
   refreshDailyPhraseAction: RefreshDailyPhraseAction;
@@ -30,6 +32,8 @@ type GeneratorPageClientProps = {
 export function GeneratorPageClient({
   email,
   dailyPhrase,
+  streak,
+  reviewedToday,
   generateLearningMaterialAction,
   createFlashcardAction,
   refreshDailyPhraseAction,
@@ -43,6 +47,8 @@ export function GeneratorPageClient({
         language={language}
         title={commonCopy.appTitleGenerator}
         dailyPhrase={dailyPhrase}
+        streak={streak}
+        reviewedToday={reviewedToday}
         generateLearningMaterialAction={generateLearningMaterialAction}
         createFlashcardAction={createFlashcardAction}
         refreshDailyPhraseAction={refreshDailyPhraseAction}

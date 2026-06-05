@@ -5,6 +5,7 @@ import { appCopy } from "@/content/app-copy";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
 import { DailyPhraseCard } from "./DailyPhraseCard/DailyPhraseCard";
+import { StreakWidget } from "./StreakWidget/StreakWidget";
 import { GeneratorForm } from "./GeneratorForm";
 import { GeneratedExamplesList } from "./GeneratedExamplesList";
 import { GeneratedFlashcardForm } from "./GeneratedFlashcardForm";
@@ -29,6 +30,8 @@ type GeneratorViewProps = {
   language: UiLanguage;
   title: string;
   dailyPhrase: DailyPhraseData | null;
+  streak: number;
+  reviewedToday: boolean;
   generateLearningMaterialAction: GeneratorAction;
   createFlashcardAction: CreateFlashcardAction;
   refreshDailyPhraseAction: RefreshDailyPhraseAction;
@@ -38,6 +41,8 @@ export function GeneratorView({
   language,
   title,
   dailyPhrase,
+  streak,
+  reviewedToday,
   generateLearningMaterialAction,
   createFlashcardAction,
   refreshDailyPhraseAction,
@@ -81,7 +86,6 @@ export function GeneratorView({
 
   const material = state?.ok ? state.material : null;
   const showTranslations = material && material.inputType !== "sentence";
-  const showDailyPhrase = dailyPhrase !== null && !material;
 
   return (
     <div data-ui="GeneratorView" className="grid gap-4">
@@ -104,13 +108,18 @@ export function GeneratorView({
         </p>
       ) : null}
 
-      {showDailyPhrase ? (
-        <DailyPhraseCard
-          phrase={dailyPhrase}
-          language={language}
-          refreshAction={refreshDailyPhraseAction}
-          createFlashcardAction={createFlashcardAction}
-        />
+      {!material ? (
+        <>
+          {dailyPhrase ? (
+            <DailyPhraseCard
+              phrase={dailyPhrase}
+              language={language}
+              refreshAction={refreshDailyPhraseAction}
+              createFlashcardAction={createFlashcardAction}
+            />
+          ) : null}
+          <StreakWidget streak={streak} reviewedToday={reviewedToday} />
+        </>
       ) : null}
 
       {showTranslations ? (
