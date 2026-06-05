@@ -42,7 +42,7 @@ export default function AppleIcon() {
           {/*/>*/}
           {/* Brain icon — lucide Brain, 18×18, centered in 30×30 */}
           <g
-            transform="translate(6 6) scale(0.75)"
+            transform="translate(5 4) scale(1)"
             stroke="#1A1A1A"
             strokeWidth="2"
             fill="none"
