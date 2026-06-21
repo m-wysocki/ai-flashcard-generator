@@ -36,6 +36,17 @@ export const ManyCards: Story = {
   },
 };
 
+export const WithBatchLink: Story = {
+  args: {
+    title: "Rozpocznij sesję",
+    subtitle: "56 fiszki · ok. 28 minut",
+    batchLink: {
+      label: "Zrób tylko 10 kart",
+      onClick: () => {},
+    },
+  },
+};
+
 export const EnglishUI: Story = {
   args: {
     title: "Start session",

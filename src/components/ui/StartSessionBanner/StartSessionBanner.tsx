@@ -2,10 +2,16 @@ import { Play, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
 
+type BatchLink = {
+  label: string;
+  onClick: () => void;
+};
+
 type StartSessionBannerProps = {
   title: string;
   subtitle: string;
   onStart: () => void;
+  batchLink?: BatchLink;
   className?: string;
 };
 
@@ -13,6 +19,7 @@ export function StartSessionBanner({
   title,
   subtitle,
   onStart,
+  batchLink,
   className,
 }: StartSessionBannerProps) {
   return (
@@ -33,6 +40,19 @@ export function StartSessionBanner({
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-base font-bold leading-tight text-[var(--color-text)]">{title}</span>
         <span className="text-sm font-medium text-[var(--color-muted)]">{subtitle}</span>
+        {batchLink ? (
+          <button
+            type="button"
+            onClick={batchLink.onClick}
+            className={cn(
+              "w-fit cursor-pointer text-xs font-medium",
+              "text-[var(--color-muted)] underline underline-offset-2",
+              "hover:text-[var(--color-text)] transition-colors",
+            )}
+          >
+            {batchLink.label}
+          </button>
+        ) : null}
       </div>
 
       <Button

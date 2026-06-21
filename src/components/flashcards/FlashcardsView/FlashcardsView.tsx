@@ -97,6 +97,10 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           title={copy.sessionTitle}
           subtitle={buildSessionSubtitle(dueCards.length, copy)}
           onStart={() => navigate("/app/review")}
+          batchLink={dueCards.length > 10 ? {
+            label: copy.sessionBatchLink,
+            onClick: () => navigate(`/app/review?limit=10&total=${dueCards.length}`),
+          } : undefined}
         />
       ) : null}
       <FlashcardsTabs

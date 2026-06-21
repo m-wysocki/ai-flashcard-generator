@@ -15,9 +15,15 @@ import type { MutateFlashcardAction } from "@/components/flashcards/FlashcardsVi
 import { buildGradeIntervals, speakEnglish } from "./helpers";
 import type { ReviewCard } from "./helpers";
 
+type BatchMode = {
+  batchSize: number;
+  totalDueCount: number;
+};
+
 type FlashcardsReviewSessionProps = {
   initialCards: ReviewCard[];
   stats: { dueToday: number; totalCards: number; reviewedToday: number };
+  batchMode?: BatchMode;
   gradeAction: (
     input: { flashcardId: string; grade: ReviewGrade },
   ) => Promise<{ ok: boolean; shouldRequeue?: boolean; updatedCard?: ReviewCard }>;
@@ -31,9 +37,12 @@ const GRADE_CONFIG = [
   { grade: "easy" as const, Icon: Star, color: "tertiary" as const },
 ];
 
+const BATCH_SIZE = 10;
+
 export function FlashcardsReviewSession({
   initialCards,
   stats,
+  batchMode,
   gradeAction,
   updateAction,
 }: FlashcardsReviewSessionProps) {
@@ -44,12 +53,52 @@ export function FlashcardsReviewSession({
   const [revealed, setRevealed] = useState(false);
   const [dueToday, setDueToday] = useState(stats.dueToday);
   const [reviewedToday, setReviewedToday] = useState(stats.reviewedToday);
+  const [batchCompleted, setBatchCompleted] = useState(0);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const current = queue[0];
 
   if (!current) {
+    if (batchMode) {
+      const remaining = Math.max(0, batchMode.totalDueCount - batchMode.batchSize);
+      const nextBatchSize = Math.min(BATCH_SIZE, remaining);
+
+      return (
+        <main
+          data-ui="FlashcardsReviewSession"
+          className={cn(
+            "mx-auto grid min-h-dvh w-full max-w-3xl",
+            "content-start gap-4 bg-[var(--color-background)] p-4",
+          )}
+        >
+          <p className="m-0 text-2xl font-bold text-[var(--color-text)]">
+            {copy.batchDoneTitle}
+          </p>
+          <p className="m-0 text-lg text-[var(--color-text)]">
+            {copy.batchCompletedPrefix} {batchMode.batchSize} {copy.batchCompletedCards}
+          </p>
+          {remaining > 0 ? (
+            <p className="m-0 text-sm text-[var(--color-muted)]">
+              {copy.batchRemainingPrefix} {remaining} {copy.batchRemainingCards}
+            </p>
+          ) : null}
+          {remaining > 0 ? (
+            <Button
+              type="button"
+              color="primary"
+              onClick={() => navigate(`/app/review?limit=${nextBatchSize}`)}
+            >
+              {copy.batchContinue} {nextBatchSize}
+            </Button>
+          ) : null}
+          <Button type="button" color="ghost" onClick={() => navigate("/app/flashcards")}>
+            {copy.backToFlashcards}
+          </Button>
+        </main>
+      );
+    }
+
     return (
       <main
         data-ui="FlashcardsReviewSession"
@@ -59,7 +108,7 @@ export function FlashcardsReviewSession({
         )}
       >
         <p className="m-0 text-lg text-[var(--color-text)]">{copy.done}</p>
-        <Button type="button" color="primary" onClick={() => navigate("/app")}>
+        <Button type="button" color="primary" onClick={() => navigate("/app/flashcards")}>
           {copy.backToFlashcards}
         </Button>
       </main>
@@ -83,9 +132,15 @@ export function FlashcardsReviewSession({
         <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
           {copy.reviewedToday}: {reviewedToday}
         </ShadowFrame>
-        <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
-          {copy.allCards}: {stats.totalCards}
-        </ShadowFrame>
+        {batchMode ? (
+          <ShadowFrame className="p-2 text-center text-xs font-semibold text-[var(--color-text)]">
+            {copy.batchProgress}: {batchCompleted} / {batchMode.batchSize}
+          </ShadowFrame>
+        ) : (
+          <ShadowFrame className="p-2 text-center text-xs text-[var(--color-muted)]">
+            {copy.allCards}: {stats.totalCards}
+          </ShadowFrame>
+        )}
       </header>
       <div className="flex justify-end">
         <Button
@@ -175,6 +230,7 @@ export function FlashcardsReviewSession({
                   if (!result.shouldRequeue) {
                     setDueToday((prev) => Math.max(0, prev - 1));
                     setReviewedToday((prev) => prev + 1);
+                    setBatchCompleted((prev) => prev + 1);
                   }
                   setQueue((prev) => {
                     const next = prev.slice(1);

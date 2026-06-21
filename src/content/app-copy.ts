@@ -52,6 +52,7 @@ type AppCopy = {
     sessionSubtitleCards: string;
     sessionSubtitleApprox: string;
     sessionSubtitleMinutes: string;
+    sessionBatchLink: string;
     noDueCards: string;
     noCards: string;
     edit: string;
@@ -91,6 +92,13 @@ type AppCopy = {
     endSession: string;
     playback: string;
     editCard: string;
+    batchDoneTitle: string;
+    batchCompletedPrefix: string;
+    batchCompletedCards: string;
+    batchRemainingPrefix: string;
+    batchRemainingCards: string;
+    batchContinue: string;
+    batchProgress: string;
   };
 };
 
@@ -147,6 +155,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionSubtitleCards: "fiszki",
       sessionSubtitleApprox: "ok.",
       sessionSubtitleMinutes: "minut",
+      sessionBatchLink: "Zrób tylko 10 kart",
       noDueCards: "Brak fiszek do powtórki.",
       noCards: "Brak fiszek.",
       edit: "Edytuj",
@@ -186,6 +195,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       endSession: "Zakończ sesję",
       playback: "Odtwórz wymowę",
       editCard: "Edytuj fiszkę",
+      batchDoneTitle: "Gotowe!",
+      batchCompletedPrefix: "Zrobiłeś",
+      batchCompletedCards: "fiszek",
+      batchRemainingPrefix: "Zostało jeszcze",
+      batchRemainingCards: "kart do powtórki",
+      batchContinue: "Zrób kolejne",
+      batchProgress: "Partia",
     },
   },
   en: {
@@ -240,6 +256,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionSubtitleCards: "flashcards",
       sessionSubtitleApprox: "approx.",
       sessionSubtitleMinutes: "min",
+      sessionBatchLink: "Do only 10 cards",
       noDueCards: "No cards due.",
       noCards: "No flashcards yet.",
       edit: "Edit",
@@ -279,6 +296,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       endSession: "End session",
       playback: "Play pronunciation",
       editCard: "Edit flashcard",
+      batchDoneTitle: "Done!",
+      batchCompletedPrefix: "You completed",
+      batchCompletedCards: "flashcards",
+      batchRemainingPrefix: "Still",
+      batchRemainingCards: "cards left",
+      batchContinue: "Do next",
+      batchProgress: "Batch",
     },
   },
 };
