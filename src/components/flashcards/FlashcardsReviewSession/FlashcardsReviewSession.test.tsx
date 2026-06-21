@@ -275,4 +275,207 @@ describe("FlashcardsReviewSession", () => {
     expect(screen.getByText("A")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Dobrze" })).toBeInTheDocument();
   });
+
+  describe("batch mode", () => {
+    it("shows batch done screen instead of regular done screen when queue empties", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Gotowe!");
+      expect(screen.queryByText("To wszystko na teraz.")).not.toBeInTheDocument();
+    });
+
+    it("shows completed count and remaining count on batch done screen", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      // "Zrobiłeś 10 fiszek"
+      await screen.findByText(/Zrobiłeś 10 fiszek/);
+      // "Zostało jeszcze 46 kart do powtórki"
+      expect(screen.getByText(/Zostało jeszcze 46 kart do powtórki/)).toBeInTheDocument();
+    });
+
+    it("shows Zrób kolejne 10 button when remaining >= 10", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByRole("button", { name: "Zrób kolejne 10" });
+    });
+
+    it("adapts Zrób kolejne button label when remaining < 10", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 14 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      // 14 total - 10 batch = 4 remaining
+      await screen.findByRole("button", { name: "Zrób kolejne 4" });
+    });
+
+    it("hides Zrób kolejne button when no cards remain", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 10, totalCards: 10, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 10 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Gotowe!");
+      expect(screen.queryByRole("button", { name: /Zrób kolejne/i })).not.toBeInTheDocument();
+    });
+
+    it("shows batch progress counter starting at 0/batchSize", () => {
+      const gradeAction = jest.fn();
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[
+            { id: "1", front: "A", back: "B", notes: null },
+            { id: "2", front: "C", back: "D", notes: null },
+          ]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      expect(screen.getByText("Partia: 0 / 10")).toBeInTheDocument();
+    });
+
+    it("increments batch progress counter after non-Again grade", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[
+            { id: "1", front: "A", back: "B", notes: null },
+            { id: "2", front: "C", back: "D", notes: null },
+          ]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+      expect(screen.getByText("Partia: 1 / 10")).toBeInTheDocument();
+    });
+
+    it("does not increment batch progress counter on Again grade", async () => {
+      const gradeAction = jest
+        .fn()
+        .mockResolvedValueOnce({ ok: true, shouldRequeue: true })
+        .mockResolvedValueOnce({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[
+            { id: "1", front: "A", back: "B", notes: null },
+            { id: "2", front: "C", back: "D", notes: null },
+          ]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Ponownie" }));
+
+      await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+      expect(screen.getByText("Partia: 0 / 10")).toBeInTheDocument();
+    });
+
+    it("does not show batch progress counter in non-batch mode", () => {
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 1, totalCards: 5, reviewedToday: 0 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction}
+        />,
+      );
+
+      expect(screen.queryByText(/Partia:/)).not.toBeInTheDocument();
+    });
+
+    it("shows Wróć do fiszek button on batch done screen", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByRole("button", { name: "Wróć do Fiszek" });
+    });
+  });
 });

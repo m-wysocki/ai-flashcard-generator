@@ -7,22 +7,44 @@ import { gradeReviewFlashcardAction } from "@/server/review/actions";
 import { updateManualFlashcardAction } from "@/server/flashcards/actions";
 import { getReviewStats } from "@/server/review/service";
 
-export default async function ReviewPage() {
+export default async function ReviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ limit?: string; total?: string }>;
+}) {
   const session = await auth();
-  const user = session?.user?.email ? await prismaUserCredentialsRepository.findByEmail(session.user.email) : null;
+  const user = session?.user?.email
+    ? await prismaUserCredentialsRepository.findByEmail(session.user.email)
+    : null;
 
   if (!user) {
     return null;
   }
 
-  const [dueFlashcards, stats] = await Promise.all([
+  const params = await searchParams;
+  const limit = params.limit ? parseInt(params.limit, 10) : undefined;
+  const totalFromParam = params.total ? parseInt(params.total, 10) : undefined;
+
+  const [allDueFlashcards, stats] = await Promise.all([
     listUserDueFlashcards({ userId: user.id }, { flashcards: prismaFlashcardsRepository }),
     getReviewStats(user.id, { flashcards: prismaFlashcardsRepository }),
   ]);
 
+  const actualDueCount = allDueFlashcards.length;
+  const flashcardsToReview =
+    limit != null ? allDueFlashcards.slice(0, limit) : allDueFlashcards;
+
+  const batchMode =
+    limit != null
+      ? {
+          batchSize: Math.min(limit, actualDueCount),
+          totalDueCount: totalFromParam ?? actualDueCount,
+        }
+      : undefined;
+
   return (
     <FlashcardsReviewSession
-      initialCards={dueFlashcards.map((card) => ({
+      initialCards={flashcardsToReview.map((card) => ({
         id: card.id,
         front: card.front,
         back: card.back,
@@ -38,6 +60,7 @@ export default async function ReviewPage() {
         lastReviewAtMs: card.lastReviewAt?.getTime() ?? null,
       }))}
       stats={stats}
+      batchMode={batchMode}
       gradeAction={gradeReviewFlashcardAction}
       updateAction={updateManualFlashcardAction}
     />

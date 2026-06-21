@@ -57,7 +57,7 @@ describe("ReviewPage smoke", () => {
       reviewedToday: 2,
     });
 
-    render(await ReviewPage());
+    render(await ReviewPage({ searchParams: Promise.resolve({}) }));
 
     expect(screen.getByText("Do powtórki dzisiaj: 1")).toBeInTheDocument();
     expect(screen.getByText("Cześć")).toBeInTheDocument();
