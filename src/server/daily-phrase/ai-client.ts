@@ -26,20 +26,29 @@ function buildPrompt(avoidPhrase?: { english: string; polish: string }): string 
     ? `\nCRITICAL: The user has already seen this phrase today: "${avoidPhrase.english}" (${avoidPhrase.polish}). You MUST generate something COMPLETELY DIFFERENT — a different topic, different word root, different grammatical structure, and different register. Do not paraphrase or reuse any word from that phrase.`
     : "";
 
-  return `You are an English language learning assistant for Polish speakers.
+  return `You are an English fluency coach for a Polish speaker who wants to sound natural talking to native English speakers.
 
-Generate a single natural English phrase or sentence that:
-- Is commonly used by native English speakers in everyday conversation
-- Uses vocabulary at B2+ level (rich and nuanced, but not obscure or archaic)
-- Can be an idiom, collocation, conversational expression, or short practical sentence
-- Should feel genuinely useful and interesting to a language learner
+Generate a single English phrase or sentence that:
+- Is something a native speaker would actually say in real life — not textbook English
+- Comes from any real-life situation (e.g. home, social life, casual chat, office small talk, online meetings, shopping, travel — these are just examples, not an exhaustive list)
+- Sounds conversational and natural, not formal or literary
+- Is memorable and easy to reuse in spoken conversation
+- Does NOT have to use a phrasal verb — prioritize usefulness over grammatical category
+
+Good examples of the kind of phrases to generate:
+- "Can you grab me a Coke from the fridge?"
+- "Let me jump on a quick call with you."
+- "I'll loop you in on that thread."
+- "Does that work for you?"
+- "I totally blanked on his name."
+- "We're good to go."
 ${avoidSection}
-Return exactly:
-- "english": the English phrase or sentence (up to 15 words)
-- "polish": a natural Polish translation or equivalent
-- "note": a brief usage note if it adds value (e.g. register, context, common pairings) — set to null if nothing useful to add
+Vary the situation each time — do not repeat the same type of phrase back to back.
 
-Avoid overused clichés. Generate something fresh that a learner would genuinely encounter.`;
+Return exactly:
+- "english": the phrase or sentence
+- "polish": a natural Polish equivalent (how a Polish speaker would actually say it)
+- "note": one short sentence on when/how to use it — or null if obvious`;
 }
 
 export const openaiDailyPhraseClient: DailyPhraseAiClient = {
