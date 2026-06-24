@@ -1,4 +1,4 @@
-import { updateStreakAfterReview, isReviewedToday } from "./streak-service";
+import { updateStreakAfterReview, isReviewedToday, getEffectiveStreak } from "./streak-service";
 import type { UserStreakRepository, UserStreakRecord } from "./streak-service";
 
 function createRepo(initial: UserStreakRecord): UserStreakRepository & { record: UserStreakRecord } {
@@ -88,6 +88,56 @@ describe("updateStreakAfterReview", () => {
     await expect(
       updateStreakAfterReview("missing", new Date(), { users: repo }),
     ).resolves.not.toThrow();
+  });
+});
+
+describe("getEffectiveStreak", () => {
+  it("returns 0 when no review date", () => {
+    expect(getEffectiveStreak({ currentStreak: 5, lastReviewDate: null })).toBe(0);
+  });
+
+  it("returns 0 when currentStreak is 0", () => {
+    expect(
+      getEffectiveStreak({ currentStreak: 0, lastReviewDate: new Date("2026-06-24T10:00:00Z") }),
+    ).toBe(0);
+  });
+
+  it("returns streak when last review was today in Warsaw timezone", () => {
+    expect(
+      getEffectiveStreak(
+        { currentStreak: 7, lastReviewDate: new Date("2026-06-24T08:00:00Z") },
+        new Date("2026-06-24T18:00:00Z"),
+      ),
+    ).toBe(7);
+  });
+
+  it("returns streak when last review was yesterday in Warsaw timezone", () => {
+    expect(
+      getEffectiveStreak(
+        { currentStreak: 7, lastReviewDate: new Date("2026-06-23T10:00:00Z") },
+        new Date("2026-06-24T10:00:00Z"),
+      ),
+    ).toBe(7);
+  });
+
+  it("returns 0 when last review was two days ago (streak broken)", () => {
+    expect(
+      getEffectiveStreak(
+        { currentStreak: 7, lastReviewDate: new Date("2026-06-22T10:00:00Z") },
+        new Date("2026-06-24T10:00:00Z"),
+      ),
+    ).toBe(0);
+  });
+
+  it("handles Warsaw timezone boundary: review at 23:59 Warsaw still counts as yesterday", () => {
+    // 23:59 Warsaw June 23 = 21:59 UTC June 23
+    // now = 10:00 Warsaw June 24 = 08:00 UTC June 24
+    expect(
+      getEffectiveStreak(
+        { currentStreak: 3, lastReviewDate: new Date("2026-06-23T21:59:00Z") },
+        new Date("2026-06-24T08:00:00Z"),
+      ),
+    ).toBe(3);
   });
 });
 
