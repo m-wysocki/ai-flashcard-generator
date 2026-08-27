@@ -47,3 +47,14 @@ export function isReviewedToday(lastReviewDate: Date | null, now: Date = new Dat
   if (!lastReviewDate) return false;
   return toDateKey(lastReviewDate) === toDateKey(now);
 }
+
+export function getEffectiveStreak(
+  record: { currentStreak: number; lastReviewDate: Date | null },
+  now: Date = new Date(),
+): number {
+  if (!record.lastReviewDate || record.currentStreak === 0) return 0;
+  const lastKey = toDateKey(record.lastReviewDate);
+  const todayKey = toDateKey(now);
+  if (lastKey === todayKey || lastKey === previousDateKey(todayKey)) return record.currentStreak;
+  return 0;
+}

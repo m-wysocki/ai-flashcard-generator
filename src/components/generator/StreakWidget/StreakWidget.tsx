@@ -1,4 +1,4 @@
-import { Flame, Target } from "lucide-react";
+import { Flame, ThumbsDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 
@@ -8,7 +8,7 @@ type StreakWidgetProps = {
 };
 
 function getSubtext(streak: number, reviewedToday: boolean): string {
-  if (streak === 0) return "Zacznij swoją serię dziś!";
+  if (streak === 0) return "Powtórz fiszki i wypracuj nową serię!";
   if (reviewedToday) return "Dzisiaj powtórki zrobione!";
   return "Powtórz fiszki, by utrzymać serię";
 }
@@ -27,7 +27,7 @@ export function StreakWidget({ streak, reviewedToday }: StreakWidgetProps) {
         )}
       >
         {streak === 0 ? (
-          <Target size={20} className="text-[var(--color-danger)]" />
+          <ThumbsDown size={20} className="text-[var(--color-danger)]" />
         ) : (
           <Flame size={20} className="fill-[var(--color-primary)] text-[var(--color-primary)]" />
         )}

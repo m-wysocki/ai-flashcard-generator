@@ -11,7 +11,7 @@ const appEnvSchema = z.object({
   AUTH_SECRET: optionalNonEmptyString,
   INVITE_CODE: optionalNonEmptyString,
   OPENAI_API_KEY: optionalNonEmptyString,
-  OPENAI_MODEL: optionalNonEmptyString.default("gpt-4.1-mini"),
+  OPENAI_MODEL: optionalNonEmptyString.default("gpt-5.6-luna"),
 });
 
 export type AppEnv = ReturnType<typeof getAppEnv>;

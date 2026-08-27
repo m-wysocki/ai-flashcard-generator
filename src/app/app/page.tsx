@@ -9,7 +9,7 @@ import { prismaDailyPhraseRepository } from "@/server/daily-phrase/prisma-daily-
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { getAppEnv } from "@/server/config/app-env";
 import { prismaUserStreakRepository } from "@/server/review/prisma-streak";
-import { isReviewedToday } from "@/server/review/streak-service";
+import { getEffectiveStreak, isReviewedToday } from "@/server/review/streak-service";
 import type { DailyPhraseData } from "@/server/daily-phrase/service";
 
 export default async function AppPage() {
@@ -36,7 +36,7 @@ export default async function AppPage() {
         prismaUserStreakRepository.findById(user.id),
       ]);
       dailyPhrase = dailyPhraseResult.ok ? dailyPhraseResult.phrase : null;
-      streak = streakData?.currentStreak ?? 0;
+      streak = getEffectiveStreak(streakData ?? { currentStreak: 0, lastReviewDate: null });
       reviewedToday = isReviewedToday(streakData?.lastReviewDate ?? null);
     }
   }
