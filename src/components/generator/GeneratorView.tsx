@@ -1,19 +1,16 @@
 "use client";
 
 import { useActionState, useRef, useState, useTransition } from "react";
+import type { ReactNode } from "react";
 import { appCopy } from "@/content/app-copy";
 import { Heading } from "@/components/ui/Heading/Heading";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
-import { DailyPhraseCard } from "./DailyPhraseCard/DailyPhraseCard";
-import { StreakWidget } from "./StreakWidget/StreakWidget";
 import { GeneratorForm } from "./GeneratorForm";
 import { GeneratedExamplesList } from "./GeneratedExamplesList";
 import { GeneratedFlashcardForm } from "./GeneratedFlashcardForm";
 import type { Material } from "./types";
 import type { UiLanguage } from "@/content/app-copy";
 import type { FlashcardActionState } from "@/server/flashcards/actions";
-import type { DailyPhraseData } from "@/server/daily-phrase/service";
-import type { RefreshDailyPhraseAction } from "@/server/daily-phrase/actions";
 
 type Example = { english: string; polish: string; note: string | null };
 
@@ -29,23 +26,17 @@ type CreateFlashcardAction = (formData: FormData) => Promise<FlashcardActionStat
 type GeneratorViewProps = {
   language: UiLanguage;
   title: string;
-  dailyPhrase: DailyPhraseData | null;
-  streak: number;
-  reviewedToday: boolean;
+  dailySection: ReactNode;
   generateLearningMaterialAction: GeneratorAction;
   createFlashcardAction: CreateFlashcardAction;
-  refreshDailyPhraseAction: RefreshDailyPhraseAction;
 };
 
 export function GeneratorView({
   language,
   title,
-  dailyPhrase,
-  streak,
-  reviewedToday,
+  dailySection,
   generateLearningMaterialAction,
   createFlashcardAction,
-  refreshDailyPhraseAction,
 }: GeneratorViewProps) {
   const copy = appCopy[language].generator;
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -108,19 +99,7 @@ export function GeneratorView({
         </p>
       ) : null}
 
-      {!material ? (
-        <>
-          {dailyPhrase ? (
-            <DailyPhraseCard
-              phrase={dailyPhrase}
-              language={language}
-              refreshAction={refreshDailyPhraseAction}
-              createFlashcardAction={createFlashcardAction}
-            />
-          ) : null}
-          <StreakWidget streak={streak} reviewedToday={reviewedToday} />
-        </>
-      ) : null}
+      {!material ? dailySection : null}
 
       {showTranslations ? (
         <div

@@ -12,10 +12,7 @@ describe("GeneratorView", () => {
         language="pl"
         title="Słownik"
         generateLearningMaterialAction={async () => null}
-        dailyPhrase={null}
-        streak={0}
-        reviewedToday={false}
-        refreshDailyPhraseAction={async () => ({ ok: true })}
+        dailySection={null}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -31,10 +28,7 @@ describe("GeneratorView", () => {
         language="pl"
         title="Słownik"
         generateLearningMaterialAction={async () => null}
-        dailyPhrase={null}
-        streak={0}
-        reviewedToday={false}
-        refreshDailyPhraseAction={async () => ({ ok: true })}
+        dailySection={null}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -59,10 +53,7 @@ describe("GeneratorView", () => {
             notes: null,
           },
         })}
-        dailyPhrase={null}
-        streak={0}
-        reviewedToday={false}
-        refreshDailyPhraseAction={async () => ({ ok: true })}
+        dailySection={null}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -91,10 +82,7 @@ describe("GeneratorView", () => {
             notes: null,
           },
         })}
-        dailyPhrase={null}
-        streak={0}
-        reviewedToday={false}
-        refreshDailyPhraseAction={async () => ({ ok: true })}
+        dailySection={null}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );
@@ -136,10 +124,7 @@ describe("GeneratorView", () => {
             notes: "Often used for solving problems.",
           },
         })}
-        dailyPhrase={null}
-        streak={0}
-        reviewedToday={false}
-        refreshDailyPhraseAction={async () => ({ ok: true })}
+        dailySection={null}
         createFlashcardAction={async (formData) => {
           createdCards.push({
             front: String(formData.get("front") ?? ""),
@@ -200,10 +185,7 @@ describe("GeneratorView", () => {
             notes: null,
           },
         })}
-        dailyPhrase={null}
-        streak={0}
-        reviewedToday={false}
-        refreshDailyPhraseAction={async () => ({ ok: true })}
+        dailySection={null}
         createFlashcardAction={async () => ({ ok: true })}
       />,
     );

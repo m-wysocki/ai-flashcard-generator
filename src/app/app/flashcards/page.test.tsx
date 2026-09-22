@@ -7,7 +7,7 @@ import { getReviewStats } from "@/server/review/service";
 
 jest.mock("next/navigation", () => ({
   usePathname: () => "/app/flashcards",
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), prefetch: jest.fn(), refresh: jest.fn() }),
 }));
 
 jest.mock("@/auth", () => ({
