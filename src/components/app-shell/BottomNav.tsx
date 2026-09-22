@@ -1,7 +1,8 @@
 "use client";
 
 import { BookOpen, Brain } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { appCopy } from "@/content/app-copy";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { SegmentedSwitch } from "@/components/ui/SegmentedSwitch/SegmentedSwitch";
@@ -19,7 +20,13 @@ export function BottomNav() {
   const { language } = useUiLanguage();
   const copy = appCopy[language].common;
   const pathname = usePathname();
+  const router = useRouter();
   const { navigate } = useNavigation();
+
+  useEffect(() => {
+    router.prefetch("/app");
+    router.prefetch("/app/flashcards");
+  }, [router]);
 
   const activeValue: NavValue =
     NAV_LINKS.find((link) => pathname === link.href)?.value ?? "generator";

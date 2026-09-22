@@ -12,16 +12,19 @@ const quicksand = Quicksand({
 export const metadata: Metadata = {
   title: "Flashcards AI",
   description: "Private app for AI-assisted English learning.",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     title: "Flashcards AI",
     capable: true,
+    statusBarStyle: "default",
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#fef9ea",
 };
 
 export default function RootLayout({
