@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine, Pencil } from "lucide-react";
+import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
 import { isMasteredSchedule } from "@/lib/mastered-threshold";
@@ -11,6 +11,7 @@ import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
+import { DeleteFlashcardDialog } from "@/components/flashcards/FlashcardsView/DeleteFlashcardDialog";
 import { EditFlashcardDialog } from "@/components/flashcards/FlashcardsView/EditFlashcardDialog";
 import type { ReviewGrade } from "@/server/review/service";
 import type { MutateFlashcardAction } from "@/components/flashcards/FlashcardsView/types";
@@ -39,6 +40,7 @@ type FlashcardsReviewSessionProps = {
     refilled?: number;
   }>;
   updateAction: MutateFlashcardAction;
+  deleteAction: MutateFlashcardAction;
   /** Ticket 05 top-up count at session start; consumed by the ticket 07 success screen. */
   sessionStartRefilled?: number;
 };
@@ -148,6 +150,7 @@ export function FlashcardsReviewSession({
   batchMode,
   gradeAction,
   updateAction,
+  deleteAction,
   sessionStartRefilled,
 }: FlashcardsReviewSessionProps) {
   // Ticket 05 contract: session-start refill count + per-grade `refilled`
@@ -165,6 +168,7 @@ export function FlashcardsReviewSession({
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   // Ticket 08: wall-clock stopwatch from first card to the success screen.
   const [sessionStart] = useState(() => Date.now());
   const sessionRecordedRef = useRef(false);
@@ -262,7 +266,7 @@ export function FlashcardsReviewSession({
           </ShadowFrame>
         )}
       </header>
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-2">
         <Button
           type="button"
           color="ghost"
@@ -272,10 +276,7 @@ export function FlashcardsReviewSession({
         >
           {copy.endSession}
         </Button>
-      </div>
-      <ShadowFrame key={current.id} className="rounded-xl p-4">
-        <div className="flex items-start justify-between gap-2">
-          <p className="m-0 text-xl text-[var(--color-text)]">{current.front}</p>
+        <div className="flex gap-1">
           <Button
             type="button"
             color="ghost"
@@ -283,11 +284,25 @@ export function FlashcardsReviewSession({
             shape="pill"
             className="size-8 shrink-0 p-0"
             onClick={() => setEditOpen(true)}
-            disabled={grading !== null}
+            disabled={grading !== null || deleteOpen}
             aria-label={copy.editCard}
             icon={<Pencil size={14} />}
           />
+          <Button
+            type="button"
+            color="ghost"
+            size="sm"
+            shape="pill"
+            className="size-8 shrink-0 p-0"
+            onClick={() => setDeleteOpen(true)}
+            disabled={grading !== null || editOpen}
+            aria-label={copy.deleteCard}
+            icon={<Trash2 size={14} />}
+          />
         </div>
+      </div>
+      <ShadowFrame key={current.id} className="rounded-xl p-4">
+        <p className="m-0 w-full text-xl text-[var(--color-text)]">{current.front}</p>
         {revealed && (
           <>
             <div className="my-3 h-px bg-black/15" />
@@ -302,7 +317,7 @@ export function FlashcardsReviewSession({
                 shape="pill"
                 className="size-9 shrink-0 p-0"
                 onClick={() => speakEnglish(current.back)}
-                disabled={grading !== null}
+                disabled={grading !== null || editOpen || deleteOpen}
                 aria-label={copy.playback}
                 icon={<Volume2 size={16} />}
               />
@@ -333,7 +348,7 @@ export function FlashcardsReviewSession({
                 shape="tile"
                 iconPosition="top"
                 className="h-auto w-full py-4"
-                disabled={grading !== null}
+                disabled={grading !== null || editOpen || deleteOpen}
                 icon={grading === grade ? <Spinner /> : <Icon size={20} />}
                 onClick={async () => {
                   setGrading(grade);
@@ -409,13 +424,28 @@ export function FlashcardsReviewSession({
               setRevealed(true);
               speakEnglish(current.back);
             }}
-            disabled={grading !== null}
+            disabled={grading !== null || editOpen || deleteOpen}
           >
             {copy.revealAnswer}
             <ArrowDownToLine className="h-4 w-4" />
           </Button>
         </div>
       )}
+      <DeleteFlashcardDialog
+        flashcardId={current.id}
+        deleteFlashcardAction={deleteAction}
+        language={language}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onDeleted={() => {
+          setQueue((prev) => prev.slice(1));
+          setRevealed(false);
+          setEditOpen(false);
+          setError(null);
+          setDueToday((prev) => Math.max(0, prev - 1));
+          setBatchCompleted((prev) => prev + 1);
+        }}
+      />
       <EditFlashcardDialog
         flashcard={current}
         updateFlashcardAction={updateAction}

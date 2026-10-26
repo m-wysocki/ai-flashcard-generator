@@ -13,7 +13,7 @@ describe("getAppEnv", () => {
     });
     expect(config.openai).toEqual({
       generationEnabled: false,
-      model: "gpt-5.6-luna",
+      model: "gpt-6.1-sol",
       apiKey: null,
     });
     expect(config.auth).toEqual({
@@ -41,7 +41,7 @@ describe("getAppEnv", () => {
     });
     expect(config.openai).toEqual({
       generationEnabled: false,
-      model: "gpt-5.6-luna",
+      model: "gpt-6.1-sol",
       apiKey: null,
     });
     expect(config.auth).toEqual({

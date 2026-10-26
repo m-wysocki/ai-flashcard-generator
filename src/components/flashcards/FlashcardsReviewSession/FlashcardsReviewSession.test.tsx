@@ -1,7 +1,9 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { FlashcardsReviewSession } from "./FlashcardsReviewSession";
 
 const updateAction = jest.fn().mockResolvedValue({ ok: true });
+const deleteAction = jest.fn().mockResolvedValue({ ok: true });
 
 beforeEach(() => {
   global.SpeechSynthesisUtterance = jest.fn().mockImplementation((text: string) => ({ text })) as never;
@@ -24,7 +26,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -54,7 +56,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -85,7 +87,7 @@ describe("FlashcardsReviewSession", () => {
         ]}
         stats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -115,7 +117,7 @@ describe("FlashcardsReviewSession", () => {
         ]}
         stats={{ dueToday: 2, totalCards: 10, reviewedToday: 3 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -146,7 +148,7 @@ describe("FlashcardsReviewSession", () => {
         ]}
         stats={{ dueToday: 2, totalCards: 5, reviewedToday: 2 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -171,7 +173,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -188,7 +190,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -235,7 +237,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[newCard]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -263,7 +265,7 @@ describe("FlashcardsReviewSession", () => {
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -286,7 +288,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -306,7 +308,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -328,7 +330,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -347,7 +349,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 14 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -367,7 +369,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 5, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 5, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -387,7 +389,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 5, totalCards: 8, reviewedToday: 0 }}
           batchMode={{ batchSize: 5, totalDueCount: 8 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -407,7 +409,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 10, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 10 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -430,7 +432,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -449,7 +451,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -475,7 +477,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -492,7 +494,7 @@ describe("FlashcardsReviewSession", () => {
           initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
           stats={{ dueToday: 1, totalCards: 5, reviewedToday: 0 }}
           gradeAction={jest.fn()}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -508,7 +510,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -537,7 +539,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 5, totalCards: 20, reviewedToday: 0 }}
           batchMode={batchMode}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
           sessionStartRefilled={sessionStartRefilled}
         />,
       );
@@ -640,7 +642,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
-          updateAction={updateAction}
+          updateAction={updateAction} deleteAction={deleteAction}
         />,
       );
 
@@ -652,6 +654,149 @@ describe("FlashcardsReviewSession", () => {
         screen.getByRole("button", { name: "Wróć do Fiszek" }),
       ).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Zrób kolejne 10" })).toBeInTheDocument();
+    });
+  });
+
+  describe("delete card", () => {
+    it("shows a delete button next to the edit button", () => {
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction} deleteAction={deleteAction}
+        />,
+      );
+
+      expect(screen.getByRole("button", { name: "Usuń fiszkę" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Edytuj fiszkę" })).toBeInTheDocument();
+    });
+
+    it("removes the current card and updates counters after successful delete", async () => {
+      const user = userEvent.setup();
+      const localDeleteAction = jest.fn().mockResolvedValue({ ok: true });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[
+            { id: "1", front: "A", back: "B", notes: null },
+            { id: "2", front: "C", back: "D", notes: null },
+          ]}
+          stats={{ dueToday: 2, totalCards: 10, reviewedToday: 3 }}
+          batchMode={{ batchSize: 2, totalDueCount: 2 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction} deleteAction={localDeleteAction}
+        />,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Usuń fiszkę" }));
+      expect(await screen.findByRole("heading", { name: "Usunąć fiszkę?" })).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "Usuń" }));
+
+      // First card is gone, second card becomes current
+      await waitFor(() => expect(screen.getByText("C")).toBeInTheDocument());
+      expect(screen.queryByText("A")).not.toBeInTheDocument();
+      // dueToday decremented, reviewedToday untouched, batch progressed
+      expect(screen.getByText("Do powtórki dzisiaj: 1")).toBeInTheDocument();
+      expect(screen.getByText("Powtórzone dzisiaj: 3")).toBeInTheDocument();
+      expect(screen.getByText("Partia: 1 / 2")).toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Usunąć fiszkę?" })).not.toBeInTheDocument();
+    });
+
+    it("shows the success screen when deleting the last card of the queue", async () => {
+      const user = userEvent.setup();
+      const localDeleteAction = jest.fn().mockResolvedValue({ ok: true });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction} deleteAction={localDeleteAction}
+        />,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Usuń fiszkę" }));
+      await user.click(await screen.findByRole("button", { name: "Usuń" }));
+
+      await screen.findByText("To wszystko na teraz.");
+    });
+
+    it("keeps the card and shows an error when delete fails", async () => {
+      const user = userEvent.setup();
+      const failingDeleteAction = jest.fn().mockResolvedValue({ ok: false, error: "Nie udało się usunąć." });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction} deleteAction={failingDeleteAction}
+        />,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Usuń fiszkę" }));
+      await user.click(await screen.findByRole("button", { name: "Usuń" }));
+
+      await waitFor(() =>
+        expect(screen.getByText("Nie udało się usunąć.")).toBeInTheDocument(),
+      );
+      // Card stays in the queue and the dialog stays open
+      expect(screen.getByText("A")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Usunąć fiszkę?" })).toBeInTheDocument();
+      expect(screen.getByText("Do powtórki dzisiaj: 1")).toBeInTheDocument();
+    });
+
+    it("blocks edit and reveal while the delete dialog is open", async () => {
+      const user = userEvent.setup();
+
+      const { container } = render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction} deleteAction={deleteAction}
+        />,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Usuń fiszkę" }));
+      await screen.findByRole("heading", { name: "Usunąć fiszkę?" });
+
+      // Radix modal hides background from the a11y tree, so query the DOM directly.
+      const editBtn = container.querySelector('button[aria-label="Edytuj fiszkę"]');
+      expect(editBtn).not.toBeNull();
+      expect(editBtn).toBeDisabled();
+      const revealBtn = Array.from(container.querySelectorAll("button")).find((b) =>
+        b.textContent?.includes("Pokaż odpowiedź"),
+      );
+      expect(revealBtn).not.toBeUndefined();
+      expect(revealBtn).toBeDisabled();
+    });
+
+    it("blocks delete and reveal while the edit dialog is open", async () => {
+      const user = userEvent.setup();
+
+      const { container } = render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction} deleteAction={deleteAction}
+        />,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Edytuj fiszkę" }));
+      await screen.findByRole("heading", { name: "Edytuj fiszkę" });
+
+      const deleteBtn = container.querySelector('button[aria-label="Usuń fiszkę"]');
+      expect(deleteBtn).not.toBeNull();
+      expect(deleteBtn).toBeDisabled();
+      const revealBtn = Array.from(container.querySelectorAll("button")).find((b) =>
+        b.textContent?.includes("Pokaż odpowiedź"),
+      );
+      expect(revealBtn).not.toBeUndefined();
+      expect(revealBtn).toBeDisabled();
     });
   });
 });

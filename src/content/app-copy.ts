@@ -109,6 +109,7 @@ type AppCopy = {
     endSession: string;
     playback: string;
     editCard: string;
+    deleteCard: string;
     batchDoneTitle: string;
     batchCompletedPrefix: string;
     batchCompletedCards: string;
@@ -239,6 +240,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       endSession: "Zakończ sesję",
       playback: "Odtwórz wymowę",
       editCard: "Edytuj fiszkę",
+      deleteCard: "Usuń fiszkę",
       batchDoneTitle: "Gotowe!",
       batchCompletedPrefix: "Zrobiłeś",
       batchCompletedCards: "fiszek",
@@ -367,6 +369,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       endSession: "End session",
       playback: "Play pronunciation",
       editCard: "Edit flashcard",
+      deleteCard: "Delete flashcard",
       batchDoneTitle: "Done!",
       batchCompletedPrefix: "You completed",
       batchCompletedCards: "flashcards",

@@ -4,7 +4,7 @@ import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
 import { listUserDueFlashcards, topUpActiveFromInbox } from "@/server/flashcards/service";
 import { gradeReviewFlashcardAction } from "@/server/review/actions";
-import { updateManualFlashcardAction } from "@/server/flashcards/actions";
+import { updateManualFlashcardAction, deleteManualFlashcardAction } from "@/server/flashcards/actions";
 import { getReviewStats } from "@/server/review/service";
 import { DEFAULT_SESSION_MODE, SESSION_MODES } from "@/lib/session-modes";
 
@@ -81,6 +81,7 @@ export default async function ReviewPage({
       batchMode={batchMode}
       gradeAction={gradeReviewFlashcardAction}
       updateAction={updateManualFlashcardAction}
+      deleteAction={deleteManualFlashcardAction}
       sessionStartRefilled={sessionStartRefilled}
     />
   );

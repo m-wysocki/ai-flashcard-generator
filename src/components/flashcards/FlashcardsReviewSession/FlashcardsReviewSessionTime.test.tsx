@@ -3,6 +3,7 @@ import { FlashcardsReviewSession } from "./FlashcardsReviewSession";
 import { SESSION_TIME_STORAGE_KEY } from "./session-time-stats";
 
 const updateAction = jest.fn().mockResolvedValue({ ok: true });
+const deleteAction = jest.fn().mockResolvedValue({ ok: true });
 
 const oneCard = [{ id: "1", front: "A", back: "B", notes: null }];
 
@@ -36,7 +37,7 @@ async function completeOneCard({
       stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
       batchMode={batchMode}
       gradeAction={gradeAction}
-      updateAction={updateAction}
+      updateAction={updateAction} deleteAction={deleteAction}
     />,
   );
   fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -83,7 +84,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         batchMode={{ batchSize: 5, totalDueCount: 5 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -108,7 +109,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         batchMode={{ batchSize: 5, totalDueCount: 5 }}
         gradeAction={firstGrade}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
     nowSpy.mockReturnValue(start + 60_000);
@@ -126,7 +127,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         batchMode={{ batchSize: 5, totalDueCount: 5 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
     nowSpy.mockReturnValue(start + 180_000);
@@ -148,7 +149,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         batchMode={{ batchSize: 5, totalDueCount: 5 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 
@@ -169,7 +170,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         initialCards={oneCard}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
-        updateAction={updateAction}
+        updateAction={updateAction} deleteAction={deleteAction}
       />,
     );
 

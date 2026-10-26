@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { DailyPhraseAiClient } from "./service";
+import { pickDailySeed } from "./seeds";
 
 const responseSchema = z
   .object({
@@ -21,29 +22,22 @@ const responseSchema = z
   })
   .passthrough();
 
-function buildPrompt(avoidPhrase?: { english: string; polish: string }): string {
+export function buildPrompt(seedTerm: string, avoidPhrase?: { english: string; polish: string }): string {
   const avoidSection = avoidPhrase
-    ? `\nCRITICAL: The user has already seen this phrase today: "${avoidPhrase.english}" (${avoidPhrase.polish}). You MUST generate something COMPLETELY DIFFERENT — a different topic, different word root, different grammatical structure, and different register. Do not paraphrase or reuse any word from that phrase.`
+    ? `\nCRITICAL: The user has already seen this phrase today: "${avoidPhrase.english}" (${avoidPhrase.polish}). You MUST generate something COMPLETELY DIFFERENT — a different grammatical structure and a different situation. Do not paraphrase or reuse it.`
     : "";
 
   return `You are an English fluency coach for a Polish speaker who wants to sound natural talking to native English speakers.
 
+Today's seed expression is: "${seedTerm}".
+
 Generate a single English phrase or sentence that:
+- MUST naturally include the seed expression (an inflected or contracted form is fine, e.g. past tense, -ing form, negation)
 - Is something a native speaker would actually say in real life — not textbook English
-- Comes from any real-life situation (e.g. home, social life, casual chat, office small talk, online meetings, shopping, travel — these are just examples, not an exhaustive list)
+- Fits a B2-C1 learner: useful in everyday life, on holiday as a tourist, or in remote work in an international IT team
 - Sounds conversational and natural, not formal or literary
 - Is memorable and easy to reuse in spoken conversation
-- Does NOT have to use a phrasal verb — prioritize usefulness over grammatical category
-
-Good examples of the kind of phrases to generate:
-- "Can you grab me a Coke from the fridge?"
-- "Let me jump on a quick call with you."
-- "I'll loop you in on that thread."
-- "Does that work for you?"
-- "I totally blanked on his name."
-- "We're good to go."
 ${avoidSection}
-Vary the situation each time — do not repeat the same type of phrase back to back.
 
 Return exactly:
 - "english": the phrase or sentence
@@ -53,6 +47,7 @@ Return exactly:
 
 export const openaiDailyPhraseClient: DailyPhraseAiClient = {
   async generate(input) {
+    const seed = pickDailySeed().term;
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
@@ -61,7 +56,8 @@ export const openaiDailyPhraseClient: DailyPhraseAiClient = {
       },
       body: JSON.stringify({
         model: input.model,
-        input: buildPrompt(input.avoidPhrase),
+        input: buildPrompt(seed, input.avoidPhrase),
+        temperature: 1,
         text: {
           format: {
             type: "json_schema",
