@@ -20,8 +20,19 @@ type FlashcardsPageClientProps = {
   }>;
   dueFlashcardIds: string[];
   reviewStats?: { dueToday: number; totalCards: number; reviewedToday: number };
+  inboxFlashcards?: Array<{
+    id: string;
+    front: string;
+    back: string;
+    notes: string | null;
+    status: "new" | "due" | "learning" | "mastered";
+    dueAt: string;
+  }>;
+  isInboxFull?: boolean;
   updateFlashcardAction: MutateFlashcardAction;
   deleteFlashcardAction: MutateFlashcardAction;
+  activateFlashcardAction?: MutateFlashcardAction | null;
+  activateAllAction?: MutateFlashcardAction | null;
 };
 
 export function FlashcardsPageClient({
@@ -30,8 +41,12 @@ export function FlashcardsPageClient({
   flashcards,
   dueFlashcardIds,
   reviewStats,
+  inboxFlashcards,
+  isInboxFull,
   updateFlashcardAction,
   deleteFlashcardAction,
+  activateFlashcardAction,
+  activateAllAction,
 }: FlashcardsPageClientProps) {
   const { language } = useUiLanguage();
   const commonCopy = appCopy[language].common;
@@ -44,8 +59,12 @@ export function FlashcardsPageClient({
         flashcards={flashcards}
         dueFlashcardIds={dueFlashcardIds}
         reviewStats={reviewStats}
+        inboxFlashcards={inboxFlashcards}
+        isInboxFull={isInboxFull}
         updateFlashcardAction={updateFlashcardAction}
         deleteFlashcardAction={deleteFlashcardAction}
+        activateFlashcardAction={activateFlashcardAction}
+        activateAllAction={activateAllAction}
       />
     </AppFrame>
   );

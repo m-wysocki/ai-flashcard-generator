@@ -1,6 +1,5 @@
 node_modules/
 .next/
-.codex/
 .claude/
 .idea/
 .scratch/
@@ -21,3 +20,5 @@ CLAUDE.md
 storybook-static
 .vercel
 .env*
+next-env.d.ts
+.DS_Store

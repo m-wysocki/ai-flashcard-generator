@@ -1,6 +1,11 @@
 import { Rating, State, fsrs, type Grade } from "ts-fsrs";
 import { z } from "zod";
-import type { FlashcardRecord, FlashcardsRepository } from "@/server/flashcards/service";
+import {
+  isMasteredCard,
+  topUpActiveFromInbox,
+  type FlashcardRecord,
+  type FlashcardsRepository,
+} from "@/server/flashcards/service";
 
 export type ReviewGrade = "again" | "hard" | "good" | "easy";
 
@@ -88,10 +93,23 @@ export async function reviewFlashcard(
     return { ok: false as const, error: "Nie udało się zapisać oceny." };
   }
 
+  // Ticket 05: a mastering grade (REVIEW + interval ≥21d) refills the active
+  // pool from the Inbox (FIFO, up to 100). Activated cards are dueAt=now,
+  // i.e. due from the next session — the ongoing frozen queue is untouched.
+  let refilled = 0;
+  if (isMasteredCard(updated)) {
+    const topUp = await topUpActiveFromInbox(parsed.data.userId, {
+      flashcards: dependencies.flashcards,
+      now,
+    });
+    refilled = topUp.refilled;
+  }
+
   return {
     ok: true as const,
     card: updated,
     shouldRequeue: parsed.data.grade === "again",
+    refilled,
   };
 }
 
@@ -107,11 +125,20 @@ export async function getReviewStats(userId: string, dependencies: { flashcards:
   ]);
 
   const reviewedToday = allCards.filter(
-    (card) => card.lastReviewAt && card.lastReviewAt >= startOfDay && card.lastReviewAt <= endOfDay,
+    (card) =>
+      card.isActive !== false &&
+      card.lastReviewAt &&
+      card.lastReviewAt >= startOfDay &&
+      card.lastReviewAt <= endOfDay,
   ).length;
 
+  // Inbox cards (isActive === false) are parked outside the learning loop:
+  // excluded from dueToday (listDueByUser), reviewedToday, and totalCards.
+  // Note isActive is optional — undefined means an active card.
+  const totalCards = allCards.filter((card) => card.isActive !== false).length;
+
   return {
-    totalCards: allCards.length,
+    totalCards,
     dueToday: dueCards.length,
     reviewedToday,
   };

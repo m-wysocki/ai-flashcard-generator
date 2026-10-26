@@ -8,6 +8,8 @@ type FlashcardsListProps = {
   emptyMessage?: string;
   updateFlashcardAction: MutateFlashcardAction;
   deleteFlashcardAction: MutateFlashcardAction;
+  activateFlashcardAction?: MutateFlashcardAction | null;
+  activationDisabled?: boolean;
   language: FlashcardsCopyLanguage;
 };
 
@@ -16,6 +18,8 @@ export function FlashcardsList({
   emptyMessage,
   updateFlashcardAction,
   deleteFlashcardAction,
+  activateFlashcardAction,
+  activationDisabled,
   language,
 }: FlashcardsListProps) {
   const copy = appCopy[language].flashcards;
@@ -32,6 +36,8 @@ export function FlashcardsList({
             flashcard={flashcard}
             updateFlashcardAction={updateFlashcardAction}
             deleteFlashcardAction={deleteFlashcardAction}
+            activateFlashcardAction={activateFlashcardAction}
+            activationDisabled={activationDisabled}
             language={language}
           />
         </li>

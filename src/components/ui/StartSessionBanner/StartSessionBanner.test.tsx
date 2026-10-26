@@ -2,32 +2,43 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { StartSessionBanner } from "./StartSessionBanner";
 
 describe("StartSessionBanner", () => {
-  it("renders batch link when batchLink prop is provided", () => {
-    const onClick = jest.fn();
+  it("renders two session mode buttons without the full due count", () => {
+    const onShort = jest.fn();
+    const onStandard = jest.fn();
     render(
       <StartSessionBanner
         title="Rozpocznij sesję"
-        subtitle="12 fiszek · ok. 6 minut"
-        onStart={() => {}}
-        batchLink={{ label: "Zrób tylko 10 kart", onClick }}
+        options={[
+          { label: "5 fiszek (~2–3 min)", onClick: onShort },
+          { label: "10 fiszek (~5 min)", onClick: onStandard },
+        ]}
       />,
     );
 
-    const link = screen.getByRole("button", { name: "Zrób tylko 10 kart" });
-    expect(link).toBeInTheDocument();
-    fireEvent.click(link);
-    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Rozpocznij sesję")).toBeInTheDocument();
+    const shortButton = screen.getByRole("button", { name: "5 fiszek (~2–3 min)" });
+    const standardButton = screen.getByRole("button", { name: "10 fiszek (~5 min)" });
+    expect(shortButton).toBeInTheDocument();
+    expect(standardButton).toBeInTheDocument();
+
+    fireEvent.click(shortButton);
+    expect(onShort).toHaveBeenCalledTimes(1);
+    fireEvent.click(standardButton);
+    expect(onStandard).toHaveBeenCalledTimes(1);
   });
 
-  it("does not render batch link when batchLink prop is not provided", () => {
+  it("does not expose the full due count in the banner", () => {
     render(
       <StartSessionBanner
         title="Rozpocznij sesję"
-        subtitle="12 fiszek · ok. 6 minut"
-        onStart={() => {}}
+        options={[
+          { label: "5 fiszek (~2–3 min)", onClick: () => {} },
+          { label: "10 fiszek (~5 min)", onClick: () => {} },
+        ]}
       />,
     );
 
-    expect(screen.queryByRole("button", { name: /Zrób tylko/i })).not.toBeInTheDocument();
+    // Full due counts (e.g. 56) must not leak into the banner text.
+    expect(screen.queryByText(/56/)).not.toBeInTheDocument();
   });
 });

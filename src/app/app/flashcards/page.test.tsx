@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import FlashcardsPage from "./page";
 import { auth } from "@/auth";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
-import { listUserDueFlashcards, listUserFlashcards } from "@/server/flashcards/service";
+import { listUserDueFlashcards, listUserFlashcards, listUserInboxFlashcards } from "@/server/flashcards/service";
 import { getReviewStats } from "@/server/review/service";
 
 jest.mock("next/navigation", () => ({
@@ -23,6 +23,7 @@ jest.mock("@/server/auth/prisma-users", () => ({
 jest.mock("@/server/flashcards/service", () => ({
   listUserDueFlashcards: jest.fn(),
   listUserFlashcards: jest.fn(),
+  listUserInboxFlashcards: jest.fn(),
 }));
 
 jest.mock("@/server/review/service", () => ({
@@ -54,6 +55,7 @@ describe("FlashcardsPage smoke", () => {
       { id: "f-1", front: "Cześć", back: "Hi", notes: null, dueAt: new Date(), state: "NEW", scheduledDays: 0 },
     ]);
     (listUserDueFlashcards as jest.Mock).mockResolvedValue([{ id: "f-1" }]);
+    (listUserInboxFlashcards as jest.Mock).mockResolvedValue([]);
     (getReviewStats as jest.Mock).mockResolvedValue({
       dueToday: 1,
       totalCards: 1,

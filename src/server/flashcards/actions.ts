@@ -5,7 +5,14 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "./prisma-flashcards";
-import { createManualFlashcard, deleteManualFlashcard, updateManualFlashcard } from "./service";
+import {
+  activateInboxCardsToLimit,
+  activateManualInboxCard,
+  createManualFlashcard,
+  deleteManualFlashcard,
+  updateManualFlashcard,
+} from "./service";
+import type { UiLanguage } from "@/content/app-copy";
 
 export type FlashcardActionState = { ok: true } | { ok: false; error: string };
 
@@ -100,6 +107,50 @@ export async function deleteManualFlashcardAction(formData: FormData): Promise<F
     },
     { flashcards: prismaFlashcardsRepository },
   );
+
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/app/flashcards");
+  return { ok: true };
+}
+
+function parseActionLanguage(value: FormDataEntryValue | null): UiLanguage {
+  return value === "en" ? "en" : "pl";
+}
+
+export async function activateManualFlashcardAction(
+  formData: FormData,
+): Promise<FlashcardActionState> {
+  const userId = await getAuthenticatedUserId();
+
+  const result = await activateManualInboxCard(
+    userId,
+    { flashcardId: formData.get("flashcardId") },
+    {
+      flashcards: prismaFlashcardsRepository,
+      language: parseActionLanguage(formData.get("language")),
+    },
+  );
+
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/app/flashcards");
+  return { ok: true };
+}
+
+export async function activateInboxToLimitAction(
+  formData: FormData,
+): Promise<FlashcardActionState> {
+  const userId = await getAuthenticatedUserId();
+
+  const result = await activateInboxCardsToLimit(userId, {
+    flashcards: prismaFlashcardsRepository,
+    language: parseActionLanguage(formData.get("language")),
+  });
 
   if (!result.ok) {
     return { ok: false, error: result.error };

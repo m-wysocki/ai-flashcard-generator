@@ -2,15 +2,16 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { appCopy } from "@/content/app-copy";
+import { SESSION_MODES } from "@/lib/session-modes";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
 import { StartSessionBanner } from "@/components/ui/StartSessionBanner/StartSessionBanner";
 import { createFlashcardFromGeneratorAction } from "@/server/flashcards/actions";
-import { buildSessionSubtitle } from "./helpers";
 import { AddFlashcardForm } from "./AddFlashcardForm";
 import { FlashcardsList } from "./FlashcardsList";
 import { FlashcardsTabs } from "./FlashcardsTabs";
+import { InboxSection } from "./InboxSection";
 import { FlashcardsViewHeader } from "./FlashcardsViewHeader/FlashcardsViewHeader";
 import type {
   Flashcard,
@@ -25,8 +26,12 @@ type FlashcardsViewProps = {
   dueFlashcardIds: string[];
   activeTab: FlashcardsTab;
   reviewStats?: ReviewStats;
+  inboxFlashcards?: Flashcard[];
+  isInboxFull?: boolean;
   updateFlashcardAction: MutateFlashcardAction;
   deleteFlashcardAction: MutateFlashcardAction;
+  activateFlashcardAction?: MutateFlashcardAction | null;
+  activateAllAction?: MutateFlashcardAction | null;
 };
 
 export function FlashcardsView(props: FlashcardsViewProps) {
@@ -95,12 +100,10 @@ export function FlashcardsView(props: FlashcardsViewProps) {
       {dueCards.length > 0 ? (
         <StartSessionBanner
           title={copy.sessionTitle}
-          subtitle={buildSessionSubtitle(dueCards.length, copy)}
-          onStart={() => navigate("/app/review")}
-          batchLink={dueCards.length > 10 ? {
-            label: copy.sessionBatchLink,
-            onClick: () => navigate(`/app/review?limit=10&total=${dueCards.length}`),
-          } : undefined}
+          options={SESSION_MODES.map((mode, index) => ({
+            label: [copy.sessionModeShort, copy.sessionModeStandard][index] ?? `${mode}`,
+            onClick: () => navigate(`/app/review?limit=${mode}`),
+          }))}
         />
       ) : null}
       <FlashcardsTabs
@@ -127,6 +130,16 @@ export function FlashcardsView(props: FlashcardsViewProps) {
           language={language}
         />
       ) : null}
+
+      <InboxSection
+        flashcards={props.inboxFlashcards ?? []}
+        updateFlashcardAction={props.updateFlashcardAction}
+        deleteFlashcardAction={props.deleteFlashcardAction}
+        activateFlashcardAction={props.activateFlashcardAction}
+        activateAllAction={props.activateAllAction}
+        isInboxFull={props.isInboxFull}
+        language={language}
+      />
     </div>
   );
 }

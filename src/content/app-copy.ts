@@ -49,10 +49,8 @@ type AppCopy = {
     addSaving: string;
     reviewStart: string;
     sessionTitle: string;
-    sessionSubtitleCards: string;
-    sessionSubtitleApprox: string;
-    sessionSubtitleMinutes: string;
-    sessionBatchLink: string;
+    sessionModeShort: string;
+    sessionModeStandard: string;
     noDueCards: string;
     noCards: string;
     edit: string;
@@ -70,6 +68,14 @@ type AppCopy = {
     statusDue: string;
     statusLearning: string;
     statusMastered: string;
+    inboxTitle: string;
+    inboxCount: string;
+    inboxEmptyTitle: string;
+    inboxEmptyDescription: string;
+    inboxActivate: string;
+    inboxActivateAll: string;
+    inboxActivating: string;
+    inboxLimitReached: string;
   };
   dailyPhrase: {
     title: string;
@@ -99,6 +105,14 @@ type AppCopy = {
     batchRemainingCards: string;
     batchContinue: string;
     batchProgress: string;
+    sessionMasteredPrefix: string;
+    sessionMasteredCards: string;
+    sessionCelebration: string;
+    sessionTimeToday: string;
+    sessionTimeAverage: string;
+    sessionRefilledPrefix: string;
+    sessionRefilledCards: string;
+    sessionRefilledZero: string;
   };
 };
 
@@ -152,10 +166,8 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       addSaving: "Zapisywanie...",
       reviewStart: "Start powtórki",
       sessionTitle: "Rozpocznij sesję",
-      sessionSubtitleCards: "fiszki",
-      sessionSubtitleApprox: "ok.",
-      sessionSubtitleMinutes: "minut",
-      sessionBatchLink: "Zrób tylko 10 kart",
+      sessionModeShort: "5 fiszek (~2–3 min)",
+      sessionModeStandard: "10 fiszek (~5 min)",
       noDueCards: "Brak fiszek do powtórki.",
       noCards: "Brak fiszek.",
       edit: "Edytuj",
@@ -173,6 +185,15 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       statusDue: "Do powtórki",
       statusLearning: "W trakcie nauki",
       statusMastered: "Opanowane",
+      inboxTitle: "Inbox",
+      inboxCount: "W Inboxie",
+      inboxEmptyTitle: "Inbox jest pusty",
+      inboxEmptyDescription:
+        "Tu czekają nowe fiszki, zanim zaczniesz je powtarzać. Nic nie musisz robić — nie liczą się do powtórek.",
+      inboxActivate: "Dodaj do nauki",
+      inboxActivateAll: "Dodaj wszystkie do limitu",
+      inboxActivating: "Dodawanie...",
+      inboxLimitReached: "Masz już 100 aktywnych fiszek — najpierw coś opanuj.",
     },
     dailyPhrase: {
       title: "Zdanie Dnia",
@@ -202,6 +223,14 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       batchRemainingCards: "kart do powtórki",
       batchContinue: "Zrób kolejne",
       batchProgress: "Partia",
+      sessionMasteredPrefix: "Opanowałeś",
+      sessionMasteredCards: "fiszek",
+      sessionCelebration: "Dobra robota — każda powtórka się liczy!",
+      sessionTimeToday: "Dziś",
+      sessionTimeAverage: "Średnio",
+      sessionRefilledPrefix: "Nowe z Inboxa:",
+      sessionRefilledCards: "fiszki",
+      sessionRefilledZero: "Brak nowych fiszek z Inboxa.",
     },
   },
   en: {
@@ -253,10 +282,8 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       addSaving: "Saving...",
       reviewStart: "Start review",
       sessionTitle: "Start session",
-      sessionSubtitleCards: "flashcards",
-      sessionSubtitleApprox: "approx.",
-      sessionSubtitleMinutes: "min",
-      sessionBatchLink: "Do only 10 cards",
+      sessionModeShort: "5 flashcards (~2–3 min)",
+      sessionModeStandard: "10 flashcards (~5 min)",
       noDueCards: "No cards due.",
       noCards: "No flashcards yet.",
       edit: "Edit",
@@ -274,6 +301,15 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       statusDue: "Due",
       statusLearning: "Learning",
       statusMastered: "Mastered",
+      inboxTitle: "Inbox",
+      inboxCount: "In inbox",
+      inboxEmptyTitle: "Inbox is empty",
+      inboxEmptyDescription:
+        "New flashcards wait here before you start reviewing them. Nothing to do — they don't count toward reviews.",
+      inboxActivate: "Add to study",
+      inboxActivateAll: "Add all up to the limit",
+      inboxActivating: "Adding...",
+      inboxLimitReached: "You already have 100 active flashcards — master something first.",
     },
     dailyPhrase: {
       title: "Phrase of the Day",
@@ -303,6 +339,14 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       batchRemainingCards: "cards left",
       batchContinue: "Do next",
       batchProgress: "Batch",
+      sessionMasteredPrefix: "You mastered",
+      sessionMasteredCards: "flashcards",
+      sessionCelebration: "Well done — every review counts!",
+      sessionTimeToday: "Today",
+      sessionTimeAverage: "Average",
+      sessionRefilledPrefix: "New from Inbox:",
+      sessionRefilledCards: "flashcards",
+      sessionRefilledZero: "No new flashcards from Inbox.",
     },
   },
 };
