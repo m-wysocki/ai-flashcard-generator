@@ -202,4 +202,20 @@ describe("FlashcardsView", () => {
       expect(screen.getByText("Nie udało się zaktualizować fiszki.")).toBeInTheDocument(),
     );
   });
+
+  it("inflects singular subtitle when exactly one card is due", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        dueFlashcardIds={["f-1"]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("Do powtórki: 1")).toBeInTheDocument();
+    expect(screen.getByText("1 fiszka · ok. 1 minutę")).toBeInTheDocument();
+  });
 });

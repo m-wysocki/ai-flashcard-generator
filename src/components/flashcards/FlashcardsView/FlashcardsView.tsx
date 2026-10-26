@@ -11,6 +11,7 @@ import { createFlashcardFromGeneratorAction } from "@/server/flashcards/actions"
 import { AddFlashcardForm } from "./AddFlashcardForm";
 import { FlashcardsList } from "./FlashcardsList";
 import { FlashcardsTabs } from "./FlashcardsTabs";
+import { formatFlashcardCount, formatSessionMinutes } from "./helpers";
 import { InboxSection } from "./InboxSection";
 import { FlashcardsViewHeader } from "./FlashcardsViewHeader/FlashcardsViewHeader";
 import type {
@@ -100,6 +101,14 @@ export function FlashcardsView(props: FlashcardsViewProps) {
       {dueCards.length > 0 ? (
         <StartSessionBanner
           title={copy.sessionTitle}
+          badge={
+            language === "pl" ? `Do powtórki: ${dueCards.length}` : `Due: ${dueCards.length}`
+          }
+          subtitle={
+            language === "pl"
+              ? `${formatFlashcardCount(dueCards.length, language)} · ok. ${formatSessionMinutes(Math.max(1, Math.round(dueCards.length * 0.5)), language)}`
+              : `${formatFlashcardCount(dueCards.length, language)} · approx. ${formatSessionMinutes(Math.max(1, Math.round(dueCards.length * 0.5)), language)}`
+          }
           options={SESSION_MODES.map((mode, index) => ({
             label: [copy.sessionModeShort, copy.sessionModeStandard][index] ?? `${mode}`,
             onClick: () => navigate(`/app/review?limit=${mode}`),

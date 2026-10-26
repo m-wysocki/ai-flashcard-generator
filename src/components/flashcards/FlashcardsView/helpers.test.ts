@@ -1,4 +1,4 @@
-import { formatDueAt, getFlashcardStatus } from "./helpers";
+import { formatDueAt, formatFlashcardCount, formatSessionMinutes, getFlashcardStatus } from "./helpers";
 
 describe("getFlashcardStatus", () => {
   it("returns 'new' for NEW state regardless of due flag", () => {
@@ -66,5 +66,37 @@ describe("formatDueAt", () => {
   it("returns years when due in 365 days or more", () => {
     expect(formatDueAt(new Date("2027-05-27T12:00:00Z"), now)).toBe("1r");
     expect(formatDueAt(new Date("2028-05-27T12:00:00Z"), now)).toBe("2r");
+  });
+});
+
+describe("formatFlashcardCount", () => {
+  it("inflects Polish fiszka/fiszki/fiszek", () => {
+    expect(formatFlashcardCount(1, "pl")).toBe("1 fiszka");
+    expect(formatFlashcardCount(2, "pl")).toBe("2 fiszki");
+    expect(formatFlashcardCount(4, "pl")).toBe("4 fiszki");
+    expect(formatFlashcardCount(0, "pl")).toBe("0 fiszek");
+    expect(formatFlashcardCount(5, "pl")).toBe("5 fiszek");
+    expect(formatFlashcardCount(12, "pl")).toBe("12 fiszek");
+  });
+
+  it("inflects English flashcard/flashcards", () => {
+    expect(formatFlashcardCount(1, "en")).toBe("1 flashcard");
+    expect(formatFlashcardCount(0, "en")).toBe("0 flashcards");
+    expect(formatFlashcardCount(5, "en")).toBe("5 flashcards");
+  });
+});
+
+describe("formatSessionMinutes", () => {
+  it("inflects Polish minutę/minuty/minut", () => {
+    expect(formatSessionMinutes(1, "pl")).toBe("1 minutę");
+    expect(formatSessionMinutes(2, "pl")).toBe("2 minuty");
+    expect(formatSessionMinutes(4, "pl")).toBe("4 minuty");
+    expect(formatSessionMinutes(5, "pl")).toBe("5 minut");
+    expect(formatSessionMinutes(6, "pl")).toBe("6 minut");
+  });
+
+  it("uses min for all English counts", () => {
+    expect(formatSessionMinutes(1, "en")).toBe("1 min");
+    expect(formatSessionMinutes(5, "en")).toBe("5 min");
   });
 });

@@ -2,12 +2,14 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { StartSessionBanner } from "./StartSessionBanner";
 
 describe("StartSessionBanner", () => {
-  it("renders two session mode buttons without the full due count", () => {
+  it("renders badge, subtitle and two clickable session mode buttons", () => {
     const onShort = jest.fn();
     const onStandard = jest.fn();
     render(
       <StartSessionBanner
         title="Rozpocznij sesję"
+        badge="Do powtórki: 12"
+        subtitle="12 fiszek · ok. 6 minut"
         options={[
           { label: "5 fiszek (~2–3 min)", onClick: onShort },
           { label: "10 fiszek (~5 min)", onClick: onStandard },
@@ -16,8 +18,15 @@ describe("StartSessionBanner", () => {
     );
 
     expect(screen.getByText("Rozpocznij sesję")).toBeInTheDocument();
-    const shortButton = screen.getByRole("button", { name: "5 fiszek (~2–3 min)" });
-    const standardButton = screen.getByRole("button", { name: "10 fiszek (~5 min)" });
+    expect(screen.getByText("Do powtórki: 12")).toBeInTheDocument();
+    expect(screen.getByText("12 fiszek · ok. 6 minut")).toBeInTheDocument();
+
+    const shortButton = screen.getByRole("button", {
+      name: "Rozpocznij sesję — 5 fiszek (~2–3 min)",
+    });
+    const standardButton = screen.getByRole("button", {
+      name: "Rozpocznij sesję — 10 fiszek (~5 min)",
+    });
     expect(shortButton).toBeInTheDocument();
     expect(standardButton).toBeInTheDocument();
 
@@ -27,7 +36,7 @@ describe("StartSessionBanner", () => {
     expect(onStandard).toHaveBeenCalledTimes(1);
   });
 
-  it("does not expose the full due count in the banner", () => {
+  it("renders without badge and subtitle", () => {
     render(
       <StartSessionBanner
         title="Rozpocznij sesję"
@@ -38,7 +47,7 @@ describe("StartSessionBanner", () => {
       />,
     );
 
-    // Full due counts (e.g. 56) must not leak into the banner text.
-    expect(screen.queryByText(/56/)).not.toBeInTheDocument();
+    expect(screen.getByText("Rozpocznij sesję")).toBeInTheDocument();
+    expect(screen.getAllByRole("button")).toHaveLength(2);
   });
 });

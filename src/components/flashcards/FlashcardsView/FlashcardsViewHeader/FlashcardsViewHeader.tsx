@@ -24,7 +24,7 @@ export function FlashcardsViewHeader({
   statItems,
 }: FlashcardsViewHeaderProps) {
   return (
-    <div data-ui="FlashcardsViewHeader" className="grid gap-1 border-b-2 border-[var(--color-border)] pb-4">
+    <div data-ui="FlashcardsViewHeader" className="grid gap-1">
       <div className="flex items-center justify-between">
         <Heading as="h1" size="md">
           {title}
