@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine, Pencil } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
+import { isMasteredSchedule } from "@/lib/mastered-threshold";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
@@ -13,6 +15,10 @@ import { EditFlashcardDialog } from "@/components/flashcards/FlashcardsView/Edit
 import type { ReviewGrade } from "@/server/review/service";
 import type { MutateFlashcardAction } from "@/components/flashcards/FlashcardsView/types";
 import { buildGradeIntervals, speakEnglish } from "./helpers";
+import {
+  formatSessionDuration,
+  recordCompletedSession,
+} from "./session-time-stats";
 import type { ReviewCard } from "./helpers";
 
 type BatchMode = {
@@ -26,8 +32,15 @@ type FlashcardsReviewSessionProps = {
   batchMode?: BatchMode;
   gradeAction: (
     input: { flashcardId: string; grade: ReviewGrade },
-  ) => Promise<{ ok: boolean; shouldRequeue?: boolean; updatedCard?: ReviewCard }>;
+  ) => Promise<{
+    ok: boolean;
+    shouldRequeue?: boolean;
+    updatedCard?: ReviewCard;
+    refilled?: number;
+  }>;
   updateAction: MutateFlashcardAction;
+  /** Ticket 05 top-up count at session start; consumed by the ticket 07 success screen. */
+  sessionStartRefilled?: number;
 };
 
 const GRADE_CONFIG = [
@@ -37,7 +50,97 @@ const GRADE_CONFIG = [
   { grade: "easy" as const, Icon: Star, color: "tertiary" as const },
 ];
 
-const BATCH_SIZE = 10;
+type ReviewCopy = (typeof appCopy)["pl"]["review"];
+
+/**
+ * Single success screen for both batch and non-batch session endings.
+ * The mastered / refill / time-stats blocks render identically; only the
+ * title, the batch progress line, and the continuation button vary.
+ * Non-batch renders through the same component so both branches stay in
+ * sync (and a non-batch ending with remaining cards would offer the same
+ * next-session button instead of a dead end).
+ */
+function SessionSuccessScreen({
+  title,
+  titleLarge,
+  completedLine,
+  masteredCount,
+  sessionRefilled,
+  timeStatsLine,
+  copy,
+  remaining,
+  nextBatchSize,
+  onContinue,
+  onBack,
+}: {
+  title: string;
+  titleLarge?: boolean;
+  completedLine?: ReactNode;
+  masteredCount: number;
+  sessionRefilled: number;
+  timeStatsLine: ReactNode;
+  copy: ReviewCopy;
+  remaining?: number;
+  nextBatchSize?: number;
+  onContinue?: () => void;
+  onBack: () => void;
+}) {
+  const hasMore = remaining != null && remaining > 0 && nextBatchSize != null;
+  return (
+    <main
+      data-ui="FlashcardsReviewSession"
+      className={cn(
+        "mx-auto grid min-h-dvh w-full max-w-3xl",
+        "content-start gap-4 bg-[var(--color-background)] p-4",
+      )}
+    >
+      <p
+        className={
+          titleLarge
+            ? "m-0 text-2xl font-bold text-[var(--color-text)]"
+            : "m-0 text-lg text-[var(--color-text)]"
+        }
+      >
+        {title}
+      </p>
+      {completedLine}
+      {masteredCount > 0 ? (
+        <p className="m-0 text-lg text-[var(--color-text)]">
+          {copy.sessionMasteredPrefix} {masteredCount} {copy.sessionMasteredCards}
+        </p>
+      ) : (
+        <p className="m-0 text-lg text-[var(--color-text)]">{copy.sessionCelebration}</p>
+      )}
+      {sessionRefilled > 0 ? (
+        <p className="m-0 text-sm text-[var(--color-muted)]">
+          {copy.sessionRefilledPrefix} {sessionRefilled} {copy.sessionRefilledCards}
+        </p>
+      ) : (
+        <p className="m-0 text-sm text-[var(--color-muted)]">
+          {copy.sessionRefilledZero}
+        </p>
+      )}
+      {timeStatsLine}
+      {remaining != null && remaining > 0 ? (
+        <p className="m-0 text-sm text-[var(--color-muted)]">
+          {copy.batchRemainingPrefix} {remaining} {copy.batchRemainingCards}
+        </p>
+      ) : null}
+      {hasMore ? (
+        <Button type="button" color="primary" onClick={onContinue}>
+          {copy.batchContinue} {nextBatchSize}
+        </Button>
+      ) : null}
+      <Button
+        type="button"
+        color={hasMore ? "ghost" : "primary"}
+        onClick={onBack}
+      >
+        {copy.backToFlashcards}
+      </Button>
+    </main>
+  );
+}
 
 export function FlashcardsReviewSession({
   initialCards,
@@ -45,7 +148,10 @@ export function FlashcardsReviewSession({
   batchMode,
   gradeAction,
   updateAction,
+  sessionStartRefilled,
 }: FlashcardsReviewSessionProps) {
+  // Ticket 05 contract: session-start refill count + per-grade `refilled`
+  // from gradeAction feed the ticket 07 success screen.
   const { language } = useUiLanguage();
   const copy = appCopy[language].review;
   const { navigate } = useNavigation();
@@ -54,64 +160,78 @@ export function FlashcardsReviewSession({
   const [dueToday, setDueToday] = useState(stats.dueToday);
   const [reviewedToday, setReviewedToday] = useState(stats.reviewedToday);
   const [batchCompleted, setBatchCompleted] = useState(0);
+  const [masteredCount, setMasteredCount] = useState(0);
+  const [sessionRefilled, setSessionRefilled] = useState(sessionStartRefilled ?? 0);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  // Ticket 08: wall-clock stopwatch from first card to the success screen.
+  const [sessionStart] = useState(() => Date.now());
+  const sessionRecordedRef = useRef(false);
+  const [timeStats, setTimeStats] = useState<{
+    todaySec: number;
+    averageSec: number;
+  } | null>(null);
   const current = queue[0];
+  const finished = !current;
+
+  useEffect(() => {
+    if (!finished || sessionRecordedRef.current) return;
+    sessionRecordedRef.current = true;
+    const nowMs = Date.now();
+    const durationSec = Math.max(0, Math.round((nowMs - sessionStart) / 1000));
+    const summary = recordCompletedSession(durationSec, nowMs);
+    setTimeStats({ todaySec: summary.todaySec, averageSec: summary.averageSec });
+  }, [finished, sessionStart]);
+
+  const timeStatsLine =
+    timeStats !== null ? (
+      <p className="m-0 text-sm text-[var(--color-muted)]">
+        {copy.sessionTimeToday}: {formatSessionDuration(timeStats.todaySec)} ·{" "}
+        {copy.sessionTimeAverage}: {formatSessionDuration(timeStats.averageSec)}
+      </p>
+    ) : null;
 
   if (!current) {
     if (batchMode) {
       const remaining = Math.max(0, batchMode.totalDueCount - batchMode.batchSize);
-      const nextBatchSize = Math.min(BATCH_SIZE, remaining);
+      // Mode-aware continuation: propose the current session's mode
+      // (batchSize == limit whenever anything remains), capped at what's
+      // left so a tail never offers more than remaining. Tail values outside
+      // the {5,10} allowlist fall back to 10 in resolveSessionLimit and yield
+      // the same cards (fix 1 decision).
+      const nextBatchSize = Math.min(batchMode.batchSize, remaining);
 
       return (
-        <main
-          data-ui="FlashcardsReviewSession"
-          className={cn(
-            "mx-auto grid min-h-dvh w-full max-w-3xl",
-            "content-start gap-4 bg-[var(--color-background)] p-4",
-          )}
-        >
-          <p className="m-0 text-2xl font-bold text-[var(--color-text)]">
-            {copy.batchDoneTitle}
-          </p>
-          <p className="m-0 text-lg text-[var(--color-text)]">
-            {copy.batchCompletedPrefix} {batchMode.batchSize} {copy.batchCompletedCards}
-          </p>
-          {remaining > 0 ? (
-            <p className="m-0 text-sm text-[var(--color-muted)]">
-              {copy.batchRemainingPrefix} {remaining} {copy.batchRemainingCards}
+        <SessionSuccessScreen
+          title={copy.batchDoneTitle}
+          titleLarge
+          completedLine={
+            <p className="m-0 text-lg text-[var(--color-text)]">
+              {copy.batchCompletedPrefix} {batchMode.batchSize} {copy.batchCompletedCards}
             </p>
-          ) : null}
-          {remaining > 0 ? (
-            <Button
-              type="button"
-              color="primary"
-              onClick={() => navigate(`/app/review?limit=${nextBatchSize}`)}
-            >
-              {copy.batchContinue} {nextBatchSize}
-            </Button>
-          ) : null}
-          <Button type="button" color="ghost" onClick={() => navigate("/app/flashcards")}>
-            {copy.backToFlashcards}
-          </Button>
-        </main>
+          }
+          masteredCount={masteredCount}
+          sessionRefilled={sessionRefilled}
+          timeStatsLine={timeStatsLine}
+          copy={copy}
+          remaining={remaining}
+          nextBatchSize={nextBatchSize}
+          onContinue={() => navigate(`/app/review?limit=${nextBatchSize}`)}
+          onBack={() => navigate("/app/flashcards")}
+        />
       );
     }
 
     return (
-      <main
-        data-ui="FlashcardsReviewSession"
-        className={cn(
-          "mx-auto grid min-h-dvh w-full max-w-3xl",
-          "content-start gap-4 bg-[var(--color-background)] p-4",
-        )}
-      >
-        <p className="m-0 text-lg text-[var(--color-text)]">{copy.done}</p>
-        <Button type="button" color="primary" onClick={() => navigate("/app/flashcards")}>
-          {copy.backToFlashcards}
-        </Button>
-      </main>
+      <SessionSuccessScreen
+        title={copy.done}
+        masteredCount={masteredCount}
+        sessionRefilled={sessionRefilled}
+        timeStatsLine={timeStatsLine}
+        copy={copy}
+        onBack={() => navigate("/app/flashcards")}
+      />
     );
   }
 
@@ -231,6 +351,19 @@ export function FlashcardsReviewSession({
                     setDueToday((prev) => Math.max(0, prev - 1));
                     setReviewedToday((prev) => prev + 1);
                     setBatchCompleted((prev) => prev + 1);
+                    // Count cards that crossed the mastery threshold in this
+                    // session: before-state not mastered, after-state mastered.
+                    if (
+                      result.updatedCard &&
+                      isMasteredSchedule(result.updatedCard) &&
+                      !isMasteredSchedule(current)
+                    ) {
+                      setMasteredCount((prev) => prev + 1);
+                    }
+                  }
+                  if (typeof result.refilled === "number" && result.refilled > 0) {
+                    const refilled = result.refilled;
+                    setSessionRefilled((prev) => prev + refilled);
                   }
                   setQueue((prev) => {
                     const next = prev.slice(1);

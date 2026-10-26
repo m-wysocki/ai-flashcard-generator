@@ -358,6 +358,46 @@ describe("FlashcardsReviewSession", () => {
       await screen.findByRole("button", { name: "Zrób kolejne 4" });
     });
 
+    it("shows Zrób kolejne 5 button after a session of 5 when remaining >= 5", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 5, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 5, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      // 56 total - 5 batch = 51 remaining → propose the session mode (5), not 10
+      await screen.findByRole("button", { name: "Zrób kolejne 5" });
+    });
+
+    it("caps Zrób kolejne button at remaining after a session of 5 (tail)", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 5, totalCards: 8, reviewedToday: 0 }}
+          batchMode={{ batchSize: 5, totalDueCount: 8 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      // 8 total - 5 batch = 3 remaining → min(mode, remaining)
+      await screen.findByRole("button", { name: "Zrób kolejne 3" });
+    });
+
     it("hides Zrób kolejne button when no cards remain", async () => {
       const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
 
@@ -476,6 +516,142 @@ describe("FlashcardsReviewSession", () => {
       fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
       await screen.findByRole("button", { name: "Wróć do Fiszek" });
+    });
+  });
+
+  describe("success screen (ticket 07)", () => {
+    async function completeOneCardSession({
+      gradeAction,
+      batchMode = { batchSize: 5, totalDueCount: 5 },
+      sessionStartRefilled,
+      initialCards = [{ id: "1", front: "A", back: "B", notes: null }],
+    }: {
+      gradeAction: jest.Mock;
+      batchMode?: { batchSize: number; totalDueCount: number };
+      sessionStartRefilled?: number;
+      initialCards?: Array<{ id: string; front: string; back: string; notes: null }>;
+    }) {
+      render(
+        <FlashcardsReviewSession
+          initialCards={initialCards}
+          stats={{ dueToday: 5, totalCards: 20, reviewedToday: 0 }}
+          batchMode={batchMode}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+          sessionStartRefilled={sessionStartRefilled}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Gotowe!");
+    }
+
+    it("shows mastered count when a card crosses the mastery threshold", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({
+        ok: true,
+        shouldRequeue: false,
+        updatedCard: {
+          id: "1",
+          front: "A",
+          back: "B",
+          notes: null,
+          state: "REVIEW",
+          scheduledDays: 21,
+        },
+      });
+
+      await completeOneCardSession({ gradeAction });
+
+      expect(screen.getByText(/Opanowałeś 1 fiszek/)).toBeInTheDocument();
+      expect(screen.queryByText(/każda powtórka się liczy/i)).not.toBeInTheDocument();
+    });
+
+    it("shows celebration variant when nothing was mastered", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      await completeOneCardSession({ gradeAction });
+
+      expect(screen.getByText(/każda powtórka się liczy/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Opanowałeś/i)).not.toBeInTheDocument();
+    });
+
+    it("does not count a card that was already mastered before the grade", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({
+        ok: true,
+        shouldRequeue: false,
+        updatedCard: {
+          id: "1",
+          front: "A",
+          back: "B",
+          notes: null,
+          state: "REVIEW",
+          scheduledDays: 30,
+        },
+      });
+
+      await completeOneCardSession({
+        gradeAction,
+        initialCards: [
+          {
+            id: "1",
+            front: "A",
+            back: "B",
+            notes: null,
+            state: "REVIEW",
+            scheduledDays: 30,
+          } as never,
+        ],
+      });
+
+      expect(screen.getByText(/każda powtórka się liczy/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Opanowałeś/i)).not.toBeInTheDocument();
+    });
+
+    it("shows refill count summed from session start and per-grade refilled", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({
+        ok: true,
+        shouldRequeue: false,
+        refilled: 2,
+      });
+
+      await completeOneCardSession({ gradeAction, sessionStartRefilled: 1 });
+
+      // 1 (session start) + 2 (grade) = 3
+      expect(screen.getByText(/Nowe z Inboxa: 3 fiszki/)).toBeInTheDocument();
+      expect(screen.queryByText(/Brak nowych fiszek z Inboxa/i)).not.toBeInTheDocument();
+    });
+
+    it("shows zero-refill variant when nothing came from Inbox", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      await completeOneCardSession({ gradeAction });
+
+      expect(screen.getByText(/Brak nowych fiszek z Inboxa/i)).toBeInTheDocument();
+    });
+
+    it("keeps back-to-flashcards and next-session buttons on the success screen", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Gotowe!");
+      expect(
+        screen.getByRole("button", { name: "Wróć do Fiszek" }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Zrób kolejne 10" })).toBeInTheDocument();
     });
   });
 });

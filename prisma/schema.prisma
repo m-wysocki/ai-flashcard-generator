@@ -90,11 +90,13 @@ model Flashcard {
   lapses        Int          @default(0)
   state         FsrsCardState @default(NEW)
   lastReviewAt  DateTime?
+  isActive      Boolean       @default(false)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, dueAt])
+  @@index([userId, isActive])
 }
 
 model AiGenerationLog {

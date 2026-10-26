@@ -4,52 +4,27 @@ import { StartSessionBanner } from "./StartSessionBanner";
 const meta = {
   component: StartSessionBanner,
   tags: ["autodocs"],
-  args: {
-    onStart: () => {},
-  },
-  argTypes: {
-    onStart: { action: "started" },
-  },
 } satisfies Meta<typeof StartSessionBanner>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const FewCards: Story = {
-  args: {
-    title: "Rozpocznij sesję",
-    subtitle: "1 fiszki · ok. 1 minut",
-  },
-};
-
 export const Default: Story = {
   args: {
     title: "Rozpocznij sesję",
-    subtitle: "4 fiszki · ok. 2 minut",
-  },
-};
-
-export const ManyCards: Story = {
-  args: {
-    title: "Rozpocznij sesję",
-    subtitle: "12 fiszki · ok. 6 minut",
-  },
-};
-
-export const WithBatchLink: Story = {
-  args: {
-    title: "Rozpocznij sesję",
-    subtitle: "56 fiszki · ok. 28 minut",
-    batchLink: {
-      label: "Zrób tylko 10 kart",
-      onClick: () => {},
-    },
+    options: [
+      { label: "5 fiszek (~2–3 min)", onClick: () => {} },
+      { label: "10 fiszek (~5 min)", onClick: () => {} },
+    ],
   },
 };
 
 export const EnglishUI: Story = {
   args: {
     title: "Start session",
-    subtitle: "4 flashcards · approx. 2 min",
+    options: [
+      { label: "5 flashcards (~2–3 min)", onClick: () => {} },
+      { label: "10 flashcards (~5 min)", onClick: () => {} },
+    ],
   },
 };

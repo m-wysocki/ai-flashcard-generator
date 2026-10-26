@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge/Badge";
 import { DropdownButton, DropdownMenuItem } from "@/components/ui/DropdownButton/DropdownButton";
 import { DeleteFlashcardDialog } from "./DeleteFlashcardDialog";
 import { EditFlashcardDialog } from "./EditFlashcardDialog";
+import { InboxActivateButton } from "./InboxActivateButton";
 import { formatDueAt } from "./helpers";
 import type { Flashcard, FlashcardsCopyLanguage, FlashcardStatus, MutateFlashcardAction } from "./types";
 
@@ -22,6 +23,8 @@ type FlashcardItemProps = {
   flashcard: Flashcard;
   updateFlashcardAction: MutateFlashcardAction;
   deleteFlashcardAction: MutateFlashcardAction;
+  activateFlashcardAction?: MutateFlashcardAction | null;
+  activationDisabled?: boolean;
   language: FlashcardsCopyLanguage;
 };
 
@@ -29,6 +32,8 @@ export function FlashcardItem({
   flashcard,
   updateFlashcardAction,
   deleteFlashcardAction,
+  activateFlashcardAction,
+  activationDisabled,
   language,
 }: FlashcardItemProps) {
   const copy = appCopy[language].flashcards;
@@ -72,6 +77,14 @@ export function FlashcardItem({
                 <RefreshCw size={12} className="shrink-0" />
                 {dueLabel}
               </p>
+            ) : null}
+            {activateFlashcardAction ? (
+              <InboxActivateButton
+                flashcardId={flashcard.id}
+                activateFlashcardAction={activateFlashcardAction}
+                disabled={activationDisabled}
+                language={language}
+              />
             ) : null}
           </div>
 
