@@ -11,6 +11,7 @@ type DropdownButtonProps = {
   align?: "start" | "end";
   sideOffset?: number;
   contentClassName?: string;
+  contentAriaLabel?: string;
   triggerClassName?: string;
 };
 
@@ -20,6 +21,7 @@ export function DropdownButton({
   align = "end",
   sideOffset = 8,
   contentClassName,
+  contentAriaLabel,
   triggerClassName,
 }: DropdownButtonProps) {
   return (
@@ -46,6 +48,7 @@ export function DropdownButton({
         >
           <ShadowFrame
             data-ui="DropdownButton"
+            aria-label={contentAriaLabel}
             className={cn(
               "z-50 min-w-40 p-1.5",
               contentClassName,

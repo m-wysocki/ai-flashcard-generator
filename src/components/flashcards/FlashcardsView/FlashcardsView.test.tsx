@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FlashcardsView } from "./FlashcardsView";
 
@@ -23,10 +23,13 @@ describe("FlashcardsView", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: /Do powtórki/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Inbox/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Opanowane/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Do powtórki/ })).toHaveAttribute("aria-current", "page");
+    const tabsNav = screen.getByRole("navigation", { name: "Karty fiszek" });
+    expect(within(tabsNav).getByRole("button", { name: /Do powtórki/ })).toBeInTheDocument();
+    expect(within(tabsNav).getByRole("button", { name: /Inbox/ })).toBeInTheDocument();
+    expect(within(tabsNav).getByRole("button", { name: /Opanowane/ })).toBeInTheDocument();
+    expect(
+      within(tabsNav).getByRole("button", { name: /Do powtórki/ }),
+    ).toHaveAttribute("aria-current", "page");
   });
 
   it("clicking Dodaj opens the add dialog", async () => {
@@ -263,7 +266,11 @@ describe("FlashcardsView", () => {
       expect(screen.getByRole("status")).toHaveTextContent("Usunięto fiszkę."),
     );
     expect(screen.queryByRole("button", { name: "Cofnij" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Inbox/ })).toHaveAttribute("aria-current", "page");
+    const tabsNav = screen.getByRole("navigation", { name: "Karty fiszek" });
+    expect(within(tabsNav).getByRole("button", { name: /Inbox/ })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
   it("offers Undo after edit and restores previous values", async () => {
