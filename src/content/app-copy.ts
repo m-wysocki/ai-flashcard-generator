@@ -43,7 +43,8 @@ type AppCopy = {
     statsReviewedToday: string;
     tabsLabel: string;
     tabDue: string;
-    tabAll: string;
+    tabInbox: string;
+    tabMastered: string;
     tabAdd: string;
     addSave: string;
     addSaving: string;
@@ -53,6 +54,8 @@ type AppCopy = {
     sessionModeStandard: string;
     noDueCards: string;
     noCards: string;
+    noInboxCards: string;
+    noMasteredCards: string;
     edit: string;
     editTitle: string;
     editDescription: string;
@@ -76,6 +79,14 @@ type AppCopy = {
     inboxActivateAll: string;
     inboxActivating: string;
     inboxLimitReached: string;
+    toastCreated: string;
+    toastUpdated: string;
+    toastUndone: string;
+    toastDeleted: string;
+    toastActivated: string;
+    toastActivatedAll: string;
+    toastUndo: string;
+    toastDismiss: string;
   };
   dailyPhrase: {
     title: string;
@@ -160,7 +171,8 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       statsReviewedToday: "powtórzonych",
       tabsLabel: "Karty fiszek",
       tabDue: "Do powtórki",
-      tabAll: "Wszystkie",
+      tabInbox: "Inbox",
+      tabMastered: "Opanowane",
       tabAdd: "Dodaj",
       addSave: "Zapisz fiszkę",
       addSaving: "Zapisywanie...",
@@ -168,8 +180,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionTitle: "Rozpocznij sesję",
       sessionModeShort: "5 fiszek (~2–3 min)",
       sessionModeStandard: "10 fiszek (~5 min)",
-      noDueCards: "Brak fiszek do powtórki.",
+      noDueCards:
+        "Brak fiszek do powtórki. Trafiają tu wszystkie aktywne karty poza opanowanymi — powtarzaj dalej, a lista sama urośnie.",
       noCards: "Brak fiszek.",
+      noInboxCards: "Brak fiszek w Inboxie. Nowe fiszki pojawią się tutaj.",
+      noMasteredCards: "Brak opanowanych fiszek. Trafiają tu karty, które znasz już na tyle dobrze, że wypadły z powtórek — powtarzaj dalej, a lista sama urośnie.",
       edit: "Edytuj",
       editTitle: "Edytuj fiszkę",
       editDescription: "Zmień pola i zapisz.",
@@ -194,6 +209,14 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       inboxActivateAll: "Dodaj wszystkie do limitu",
       inboxActivating: "Dodawanie...",
       inboxLimitReached: "Masz już 100 aktywnych fiszek — najpierw coś opanuj.",
+    toastCreated: "Zapisano fiszkę.",
+    toastUpdated: "Zapisano zmiany.",
+    toastUndone: "Cofnięto zmianę.",
+    toastDeleted: "Usunięto fiszkę.",
+    toastActivated: "Dodano fiszkę do nauki.",
+    toastActivatedAll: "Dodano fiszki do nauki.",
+    toastUndo: "Cofnij",
+    toastDismiss: "Zamknij powiadomienie",
     },
     dailyPhrase: {
       title: "Zdanie Dnia",
@@ -276,7 +299,8 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       statsReviewedToday: "reviewed",
       tabsLabel: "Flashcards tabs",
       tabDue: "Due",
-      tabAll: "All",
+      tabInbox: "Inbox",
+      tabMastered: "Mastered",
       tabAdd: "Add",
       addSave: "Save flashcard",
       addSaving: "Saving...",
@@ -284,8 +308,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionTitle: "Start session",
       sessionModeShort: "5 flashcards (~2–3 min)",
       sessionModeStandard: "10 flashcards (~5 min)",
-      noDueCards: "No cards due.",
+      noDueCards:
+        "No cards due. All active cards except mastered ones land here — keep reviewing and this list will grow.",
       noCards: "No flashcards yet.",
+      noInboxCards: "No cards in Inbox. New flashcards will appear here.",
+      noMasteredCards: "No mastered cards yet. Cards you know well enough to leave the review queue land here — keep reviewing and this list will grow.",
       edit: "Edit",
       editTitle: "Edit flashcard",
       editDescription: "Update fields and save.",
@@ -310,6 +337,14 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       inboxActivateAll: "Add all up to the limit",
       inboxActivating: "Adding...",
       inboxLimitReached: "You already have 100 active flashcards — master something first.",
+    toastCreated: "Flashcard saved.",
+    toastUpdated: "Changes saved.",
+    toastUndone: "Change reverted.",
+    toastDeleted: "Flashcard deleted.",
+    toastActivated: "Card added to study.",
+    toastActivatedAll: "Cards added to study.",
+    toastUndo: "Undo",
+    toastDismiss: "Dismiss notification",
     },
     dailyPhrase: {
       title: "Phrase of the Day",

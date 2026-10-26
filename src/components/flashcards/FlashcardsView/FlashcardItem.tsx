@@ -6,11 +6,12 @@ import { appCopy } from "@/content/app-copy";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/Badge/Badge";
 import { DropdownButton, DropdownMenuItem } from "@/components/ui/DropdownButton/DropdownButton";
+import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { DeleteFlashcardDialog } from "./DeleteFlashcardDialog";
 import { EditFlashcardDialog } from "./EditFlashcardDialog";
 import { InboxActivateButton } from "./InboxActivateButton";
 import { formatDueAt } from "./helpers";
-import type { Flashcard, FlashcardsCopyLanguage, FlashcardStatus, MutateFlashcardAction } from "./types";
+import type { Flashcard, FlashcardsCopyLanguage, FlashcardStatus, MutateFlashcardAction, NotifyMutation } from "./types";
 
 const STATUS_BADGE_VARIANT = {
   new: "blue",
@@ -26,6 +27,7 @@ type FlashcardItemProps = {
   activateFlashcardAction?: MutateFlashcardAction | null;
   activationDisabled?: boolean;
   language: FlashcardsCopyLanguage;
+  onNotify?: NotifyMutation;
 };
 
 export function FlashcardItem({
@@ -35,8 +37,10 @@ export function FlashcardItem({
   activateFlashcardAction,
   activationDisabled,
   language,
+  onNotify,
 }: FlashcardItemProps) {
   const copy = appCopy[language].flashcards;
+  const { refresh } = useNavigation();
   const [openDialog, setOpenDialog] = useState<"edit" | "delete" | null>(null);
   const statusLabel: Record<FlashcardStatus, string> = {
     new: copy.statusNew,
@@ -84,6 +88,9 @@ export function FlashcardItem({
                 activateFlashcardAction={activateFlashcardAction}
                 disabled={activationDisabled}
                 language={language}
+                onActivated={() => {
+                  onNotify?.(copy.toastActivated);
+                }}
               />
             ) : null}
           </div>
@@ -122,6 +129,33 @@ export function FlashcardItem({
         language={language}
         open={openDialog === "edit"}
         onOpenChange={closeDialog}
+        onSaved={() => {
+          // Snapshot pre-edit values while props still hold them (parent
+          // refreshes only after this callback runs), so "Undo" can restore.
+          const previous = {
+            front: flashcard.front,
+            back: flashcard.back,
+            notes: flashcard.notes,
+          };
+          refresh();
+          onNotify?.(copy.toastUpdated, {
+            label: copy.toastUndo,
+            run: () => {
+              void (async () => {
+                const formData = new FormData();
+                formData.set("flashcardId", flashcard.id);
+                formData.set("front", previous.front);
+                formData.set("back", previous.back);
+                formData.set("notes", previous.notes ?? "");
+                const result = await updateFlashcardAction(formData);
+                if (result.ok) {
+                  refresh();
+                  onNotify?.(copy.toastUndone);
+                }
+              })();
+            },
+          });
+        }}
       />
       <DeleteFlashcardDialog
         flashcardId={flashcard.id}
@@ -129,6 +163,10 @@ export function FlashcardItem({
         language={language}
         open={openDialog === "delete"}
         onOpenChange={closeDialog}
+        onDeleted={() => {
+          // Hard delete is irreversible (no restore endpoint) — inform only.
+          onNotify?.(copy.toastDeleted);
+        }}
       />
     </>
   );

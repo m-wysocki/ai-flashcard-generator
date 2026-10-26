@@ -11,6 +11,7 @@ type InboxActivateButtonProps = {
   activateFlashcardAction: MutateFlashcardAction;
   disabled?: boolean;
   language: FlashcardsCopyLanguage;
+  onActivated?: () => void;
 };
 
 export function InboxActivateButton({
@@ -18,11 +19,13 @@ export function InboxActivateButton({
   activateFlashcardAction,
   disabled,
   language,
+  onActivated,
 }: InboxActivateButtonProps) {
   const copy = appCopy[language].flashcards;
   const { refresh } = useNavigation();
   const { state, submit } = useAsyncFormAction(activateFlashcardAction, {
     onSuccess: () => {
+      onActivated?.();
       refresh();
     },
   });

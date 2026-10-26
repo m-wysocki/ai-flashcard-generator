@@ -17,10 +17,13 @@ import {
 } from "@/server/flashcards/service";
 import { getReviewStats } from "@/server/review/service";
 
-function parseTab(value?: string): "due" | "all" {
-  if (value === "all" || value === "due") {
+import type { FlashcardsTab } from "@/components/flashcards/FlashcardsView/types";
+
+export function parseTab(value?: string): FlashcardsTab {
+  if (value === "inbox" || value === "mastered" || value === "due") {
     return value;
   }
+  // Legacy "?tab=all" deep links map to "due" (Q7 TAK).
   return "due";
 }
 

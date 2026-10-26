@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { GeneratorPageClient } from "@/components/generator/GeneratorPageClient";
-import type { GeneratorSidebarData } from "@/components/generator/DailySection";
 import { generateLearningMaterialAction } from "@/server/ai/actions";
 import { createFlashcardFromGeneratorAction } from "@/server/flashcards/actions";
 import { refreshDailyPhraseAction } from "@/server/daily-phrase/actions";
@@ -11,53 +10,43 @@ import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { getAppEnv } from "@/server/config/app-env";
 import { prismaUserStreakRepository } from "@/server/review/prisma-streak";
 import { getEffectiveStreak, isReviewedToday } from "@/server/review/streak-service";
-
-const EMPTY_SIDEBAR: GeneratorSidebarData = {
-  dailyPhrase: null,
-  streak: 0,
-  reviewedToday: false,
-};
-
-function loadGeneratorSidebar(userId: string): Promise<GeneratorSidebarData> {
-  const env = getAppEnv();
-  const dateKey = toDateKey();
-  return (async () => {
-    const [dailyPhraseResult, streakData] = await Promise.all([
-      getDailyPhrase(
-        { userId, dateKey },
-        {
-          repo: prismaDailyPhraseRepository,
-          aiClient: openaiDailyPhraseClient,
-          openai: env.openai,
-        },
-      ),
-      prismaUserStreakRepository.findById(userId),
-    ]);
-    return {
-      dailyPhrase: dailyPhraseResult.ok ? dailyPhraseResult.phrase : null,
-      streak: getEffectiveStreak(streakData ?? { currentStreak: 0, lastReviewDate: null }),
-      reviewedToday: isReviewedToday(streakData?.lastReviewDate ?? null),
-    };
-  })();
-}
+import type { DailyPhraseData } from "@/server/daily-phrase/service";
 
 export default async function AppPage() {
   const session = await auth();
   const email = session?.user?.email;
 
-  let sidebarPromise: Promise<GeneratorSidebarData> = Promise.resolve(EMPTY_SIDEBAR);
+  let dailyPhrase: DailyPhraseData | null = null;
+  let streak = 0;
+  let reviewedToday = false;
 
   if (email) {
     const user = await prismaUserCredentialsRepository.findByEmail(email);
     if (user) {
-      sidebarPromise = loadGeneratorSidebar(user.id);
+      const env = getAppEnv();
+      const [dailyPhraseResult, streakData] = await Promise.all([
+        getDailyPhrase(
+          { userId: user.id, dateKey: toDateKey() },
+          {
+            repo: prismaDailyPhraseRepository,
+            aiClient: openaiDailyPhraseClient,
+            openai: env.openai,
+          },
+        ),
+        prismaUserStreakRepository.findById(user.id),
+      ]);
+      dailyPhrase = dailyPhraseResult.ok ? dailyPhraseResult.phrase : null;
+      streak = getEffectiveStreak(streakData ?? { currentStreak: 0, lastReviewDate: null });
+      reviewedToday = isReviewedToday(streakData?.lastReviewDate ?? null);
     }
   }
 
   return (
     <GeneratorPageClient
       email={email ?? undefined}
-      sidebarPromise={sidebarPromise}
+      dailyPhrase={dailyPhrase}
+      streak={streak}
+      reviewedToday={reviewedToday}
       generateLearningMaterialAction={generateLearningMaterialAction}
       createFlashcardAction={createFlashcardFromGeneratorAction}
       refreshDailyPhraseAction={refreshDailyPhraseAction}

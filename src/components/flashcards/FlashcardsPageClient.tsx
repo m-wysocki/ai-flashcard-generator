@@ -5,11 +5,11 @@ import { useUiLanguage } from "@/hooks/use-ui-language";
 import { AppFrame } from "@/components/app-shell/AppFrame";
 import { HeaderControls } from "@/components/app-shell/HeaderControls";
 import { FlashcardsView } from "./FlashcardsView/FlashcardsView";
-import type { MutateFlashcardAction } from "./FlashcardsView/types";
+import type { FlashcardsTab, MutateFlashcardAction } from "./FlashcardsView/types";
 
 type FlashcardsPageClientProps = {
   email?: string;
-  activeTab: "due" | "all";
+  activeTab: FlashcardsTab;
   flashcards: Array<{
     id: string;
     front: string;

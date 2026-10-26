@@ -13,7 +13,7 @@ export type Flashcard = {
   dueAt: string;
 };
 
-export type FlashcardsTab = "due" | "all";
+export type FlashcardsTab = "due" | "inbox" | "mastered";
 
 export type ReviewStats = {
   dueToday: number;
@@ -22,5 +22,18 @@ export type ReviewStats = {
 };
 
 export type MutateFlashcardAction = (formData: FormData) => Promise<FlashcardActionState>;
+
+export type FlashcardsToastUndo = {
+  label: string;
+  run: () => void;
+};
+
+export type NotifyMutation = (message: string, undo?: FlashcardsToastUndo) => void;
+
+export type FlashcardsToastData = {
+  key: number;
+  message: string;
+  undo?: FlashcardsToastUndo;
+};
 
 export type FlashcardsCopyLanguage = UiLanguage;
