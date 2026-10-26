@@ -105,11 +105,26 @@ describe("InboxSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the inbox section inside FlashcardsView on every tab", () => {
+  it("renders the inbox section only on the inbox tab (per-tab rendering)", () => {
     const { rerender } = render(
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
+        flashcards={[]}
+        dueFlashcardIds={[]}
+        inboxFlashcards={[inboxCard("i-1")]}
+        updateFlashcardAction={noopAction}
+        deleteFlashcardAction={noopAction}
+      />,
+    );
+
+    expect(screen.queryByText("W Inboxie: 1")).not.toBeInTheDocument();
+    expect(screen.queryByText("Front i-1")).not.toBeInTheDocument();
+
+    rerender(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="inbox"
         flashcards={[]}
         dueFlashcardIds={[]}
         inboxFlashcards={[inboxCard("i-1")]}
@@ -124,7 +139,7 @@ describe("InboxSection", () => {
     rerender(
       <FlashcardsView
         title="Fiszki"
-        activeTab="all"
+        activeTab="inbox"
         flashcards={[]}
         dueFlashcardIds={[]}
         inboxFlashcards={[]}
@@ -259,7 +274,7 @@ describe("InboxSection manual activation (ticket 06)", () => {
     render(
       <FlashcardsView
         title="Fiszki"
-        activeTab="all"
+        activeTab="inbox"
         flashcards={[]}
         dueFlashcardIds={[]}
         inboxFlashcards={[inboxCard("i-1")]}

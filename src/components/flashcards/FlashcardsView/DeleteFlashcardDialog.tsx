@@ -17,6 +17,7 @@ type DeleteFlashcardDialogProps = {
   language: FlashcardsCopyLanguage;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDeleted?: () => void;
 };
 
 export function DeleteFlashcardDialog({
@@ -25,12 +26,14 @@ export function DeleteFlashcardDialog({
   language,
   open,
   onOpenChange,
+  onDeleted,
 }: DeleteFlashcardDialogProps) {
   const copy = appCopy[language].flashcards;
   const { refresh } = useNavigation();
   const { pending, state, submit } = useAsyncFormAction(deleteFlashcardAction, {
     onSuccess: () => {
       onOpenChange(false);
+      onDeleted?.();
       refresh();
     },
   });

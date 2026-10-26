@@ -9,16 +9,19 @@ import type { FlashcardsCopyLanguage, MutateFlashcardAction } from "./types";
 type InboxActivateAllButtonProps = {
   activateAllAction: MutateFlashcardAction;
   language: FlashcardsCopyLanguage;
+  onActivated?: () => void;
 };
 
 export function InboxActivateAllButton({
   activateAllAction,
   language,
+  onActivated,
 }: InboxActivateAllButtonProps) {
   const copy = appCopy[language].flashcards;
   const { refresh } = useNavigation();
   const { state, submit } = useAsyncFormAction(activateAllAction, {
     onSuccess: () => {
+      onActivated?.();
       refresh();
     },
   });

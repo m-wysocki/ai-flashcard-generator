@@ -9,21 +9,24 @@ type FlashcardsTabsProps = {
   activeTab: FlashcardsTab;
   language: FlashcardsCopyLanguage;
   dueCount?: number;
-  allCount?: number;
+  inboxCount?: number;
+  masteredCount?: number;
 };
 
 export function FlashcardsTabs({
   activeTab,
   language,
   dueCount,
-  allCount,
+  inboxCount,
+  masteredCount,
 }: FlashcardsTabsProps) {
   const copy = appCopy[language].flashcards;
   const { navigate } = useNavigation();
 
   const tabs = [
     { id: "due", label: copy.tabDue, count: dueCount },
-    { id: "all", label: copy.tabAll, count: allCount },
+    { id: "inbox", label: copy.tabInbox, count: inboxCount },
+    { id: "mastered", label: copy.tabMastered, count: masteredCount },
   ];
 
   return (

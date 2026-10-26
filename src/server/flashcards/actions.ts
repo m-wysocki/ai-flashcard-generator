@@ -45,7 +45,7 @@ export async function createManualFlashcardAction(
   }
 
   revalidatePath("/app/flashcards");
-  redirect("/app/flashcards?tab=all");
+  redirect("/app/flashcards?tab=due");
 }
 
 export async function createFlashcardFromGeneratorAction(

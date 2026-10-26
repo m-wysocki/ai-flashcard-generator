@@ -2,7 +2,7 @@ import { appCopy } from "@/content/app-copy";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FlashcardsList } from "./FlashcardsList";
 import { InboxActivateAllButton } from "./InboxActivateAllButton";
-import type { Flashcard, FlashcardsCopyLanguage, MutateFlashcardAction } from "./types";
+import type { Flashcard, FlashcardsCopyLanguage, MutateFlashcardAction, NotifyMutation } from "./types";
 
 type InboxSectionProps = {
   flashcards: Flashcard[];
@@ -12,6 +12,7 @@ type InboxSectionProps = {
   activateAllAction?: MutateFlashcardAction | null;
   isInboxFull?: boolean;
   language: FlashcardsCopyLanguage;
+  onNotify?: NotifyMutation;
 };
 
 export function InboxSection({
@@ -22,6 +23,7 @@ export function InboxSection({
   activateAllAction,
   isInboxFull,
   language,
+  onNotify,
 }: InboxSectionProps) {
   const copy = appCopy[language].flashcards;
   const limitReached = isInboxFull === true;
@@ -54,7 +56,13 @@ export function InboxSection({
               {copy.inboxLimitReached}
             </p>
           ) : activateAllAction ? (
-            <InboxActivateAllButton activateAllAction={activateAllAction} language={language} />
+            <InboxActivateAllButton
+              activateAllAction={activateAllAction}
+              language={language}
+              onActivated={() => {
+                onNotify?.(copy.toastActivatedAll);
+              }}
+            />
           ) : null}
           <FlashcardsList
             flashcards={flashcards}
@@ -63,6 +71,7 @@ export function InboxSection({
             activateFlashcardAction={activateFlashcardAction}
             activationDisabled={limitReached}
             language={language}
+            onNotify={onNotify}
           />
         </>
       )}

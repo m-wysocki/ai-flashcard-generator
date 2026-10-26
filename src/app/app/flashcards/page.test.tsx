@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import FlashcardsPage from "./page";
+import FlashcardsPage, { parseTab } from "./page";
 import { auth } from "@/auth";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { listUserDueFlashcards, listUserFlashcards, listUserInboxFlashcards } from "@/server/flashcards/service";
@@ -71,5 +71,22 @@ describe("FlashcardsPage smoke", () => {
     expect(screen.getByText("do powtórki")).toBeInTheDocument();
     expect(screen.getByText("Rozpocznij sesję")).toBeInTheDocument();
     expect(screen.getByText("Cześć")).toBeInTheDocument();
+  });
+});
+
+describe("parseTab", () => {
+  it('maps legacy "?tab=all" deep links to "due"', () => {
+    expect(parseTab("all")).toBe("due");
+  });
+
+  it("keeps known tabs", () => {
+    expect(parseTab("due")).toBe("due");
+    expect(parseTab("inbox")).toBe("inbox");
+    expect(parseTab("mastered")).toBe("mastered");
+  });
+
+  it("falls back to due for missing or unknown values", () => {
+    expect(parseTab(undefined)).toBe("due");
+    expect(parseTab("nope")).toBe("due");
   });
 });

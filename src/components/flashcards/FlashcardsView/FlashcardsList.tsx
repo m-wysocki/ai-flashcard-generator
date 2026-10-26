@@ -1,7 +1,7 @@
 import { appCopy } from "@/content/app-copy";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FlashcardItem } from "./FlashcardItem";
-import type { Flashcard, FlashcardsCopyLanguage, MutateFlashcardAction } from "./types";
+import type { Flashcard, FlashcardsCopyLanguage, MutateFlashcardAction, NotifyMutation } from "./types";
 
 type FlashcardsListProps = {
   flashcards: Flashcard[];
@@ -11,6 +11,7 @@ type FlashcardsListProps = {
   activateFlashcardAction?: MutateFlashcardAction | null;
   activationDisabled?: boolean;
   language: FlashcardsCopyLanguage;
+  onNotify?: NotifyMutation;
 };
 
 export function FlashcardsList({
@@ -21,6 +22,7 @@ export function FlashcardsList({
   activateFlashcardAction,
   activationDisabled,
   language,
+  onNotify,
 }: FlashcardsListProps) {
   const copy = appCopy[language].flashcards;
 
@@ -39,6 +41,7 @@ export function FlashcardsList({
             activateFlashcardAction={activateFlashcardAction}
             activationDisabled={activationDisabled}
             language={language}
+            onNotify={onNotify}
           />
         </li>
       ))}
