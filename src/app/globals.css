@@ -36,6 +36,13 @@ body {
     min-height: 100%;
 }
 
+@supports (min-height: 100dvh) {
+    html,
+    body {
+        min-height: 100dvh;
+    }
+}
+
 body {
     margin: 0;
     background: var(--color-background);
@@ -43,6 +50,10 @@ body {
     font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
     text-rendering: optimizeLegibility;
+    /* iOS PWA: keep the page background opaque so the Liquid Glass /
+       status-bar blur blends with the app instead of showing white. */
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
 }
 
 h1,
