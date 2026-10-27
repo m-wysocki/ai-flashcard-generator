@@ -31,9 +31,17 @@
     box-sizing: border-box;
 }
 
+html {
+    /* iOS: nie pozwalaj Safari na automatyczne skalowanie tekstu (i zoom po focusie). */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 html,
 body {
     min-height: 100%;
+    /* Gdyby iOS mimo wszystko przybliżył, nie pozwól treści "rozjechać się" w bok. */
+    overflow-x: clip;
 }
 
 @supports (min-height: 100dvh) {
@@ -74,7 +82,11 @@ a {
 input,
 textarea,
 select {
-  font: inherit;
+  font-family: inherit;
+  /* iOS Safari auto-zoomuje po focusie, gdy input ma <16px.
+     max() gwarantuje min. 16px, a większe rozmiary (np. text-lg) dalej działają. */
+  font-size: max(16px, 1em);
+  line-height: inherit;
 }
 
 button {
@@ -82,8 +94,13 @@ button {
 }
 
 button,
-a {
+a,
+input,
+textarea,
+select {
     -webkit-tap-highlight-color: transparent;
+    /* Usuwa 300ms opóźnienia i zoom przy podwójnym tapie na iOS. */
+    touch-action: manipulation;
 }
 
 @keyframes progress {

@@ -23,6 +23,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // iOS PWA: Safari auto-zoomuje po focusie na input i nie oddala widoku
+  // po schowaniu klawiatury, przez co layout "rozjeżdża się" za ekran.
+  // maximumScale=1 blokuje ten zoom. Pola mają też min. 16px (globals.css).
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
   themeColor: "#fef9ea",
 };
