@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Sparkles, RotateCcw, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ModalDialog } from "@/components/ui/ModalDialog/ModalDialog";
+import { SpeakButton } from "@/components/ui/SpeakButton";
 import { GeneratedFlashcardForm } from "@/components/generator/GeneratedFlashcardForm";
 import { appCopy } from "@/content/app-copy";
 import type { DailyPhraseData } from "@/server/daily-phrase/service";
@@ -30,6 +31,7 @@ export function DailyPhraseCard({
   const router = useRouter();
   const copy = appCopy[language].dailyPhrase;
   const generatorCopy = appCopy[language].generator;
+  const playbackLabel = appCopy[language].review.playback;
 
   const savedKey = useMemo(() => `daily-phrase-saved:${new Date().toISOString().slice(0, 10)}`, []);
 
@@ -128,9 +130,10 @@ export function DailyPhraseCard({
 
       {/* Phrase content */}
       <div className="mb-3">
-        <p className="text-xl font-bold leading-snug text-[var(--color-text)]">
-          {phrase.english}
-        </p>
+          <p className="text-xl font-bold leading-snug text-[var(--color-text)]">
+            {phrase.english}{" "}
+            <SpeakButton text={phrase.english} label={playbackLabel} className="h-6 w-6 align-middle" />
+          </p>
         <p className="mt-1 text-sm font-semibold text-[var(--color-muted)]">
           {phrase.polish}
         </p>

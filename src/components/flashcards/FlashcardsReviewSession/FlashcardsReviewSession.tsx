@@ -93,7 +93,8 @@ function SessionSuccessScreen({
       data-ui="FlashcardsReviewSession"
       className={cn(
         "mx-auto grid min-h-dvh w-full max-w-3xl",
-        "content-start gap-4 bg-[var(--color-background)] p-4",
+        // iOS PWA: keep content below the status-bar / Liquid Glass blur.
+        "content-start gap-4 bg-[var(--color-background)] p-4 pt-[calc(1rem+env(safe-area-inset-top))]",
       )}
     >
       <p
@@ -246,7 +247,8 @@ export function FlashcardsReviewSession({
       data-ui="FlashcardsReviewSession"
       className={cn(
         "mx-auto grid min-h-dvh w-full max-w-3xl",
-        "content-start gap-4 bg-[var(--color-background)] p-4",
+        // iOS PWA: keep content below the status-bar / Liquid Glass blur.
+        "content-start gap-4 bg-[var(--color-background)] p-4 pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))]",
       )}
     >
       <header className="grid grid-cols-3 gap-2">

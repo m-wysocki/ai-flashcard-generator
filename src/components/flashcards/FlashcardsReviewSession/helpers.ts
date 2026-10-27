@@ -67,11 +67,68 @@ export function buildGradeIntervals(card: ReviewCard): Record<ReviewGrade, strin
   };
 }
 
-export function speakEnglish(text: string): void {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    return;
+function pickEnglishVoice(
+  synth: SpeechSynthesis,
+): SpeechSynthesisVoice | null {
+  try {
+    const getVoices = synth.getVoices?.bind(synth);
+    if (typeof getVoices !== "function") return null;
+    const voices = getVoices();
+    if (!voices || voices.length === 0) return null;
+    return (
+      voices.find((v) => v.lang?.toLowerCase() === "en-us") ??
+      voices.find((v) => v.lang?.toLowerCase().startsWith("en")) ??
+      null
+    );
+  } catch {
+    return null;
   }
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  window.speechSynthesis.speak(utterance);
+}
+
+function keepAliveWhileSpeaking(synth: SpeechSynthesis): void {
+  // iOS Safari pauses long utterances (~15 s) and never fires `end`.
+  // Poking `resume()` while speaking works around it; harmless elsewhere.
+  try {
+    if (typeof synth.resume !== "function") return;
+    const id = setInterval(() => {
+      try {
+        if (synth.speaking && synth.paused) synth.resume();
+        else if (!synth.speaking) clearInterval(id);
+      } catch {
+        clearInterval(id);
+      }
+    }, 5_000);
+    setTimeout(() => clearInterval(id), 60_000);
+  } catch {
+    // no-op — TTS still attempted
+  }
+}
+
+export function speakEnglish(text: string): void {
+  try {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      return;
+    }
+    const trimmed = text?.trim();
+    if (!trimmed) return;
+    const synth = window.speechSynthesis;
+    // iOS quirk: a stuck queue / paused state silently swallows the next
+    // speak(). Cancel + resume in the same user gesture unblocks it.
+    if (typeof synth.cancel === "function") synth.cancel();
+    if (synth.paused && typeof synth.resume === "function") synth.resume();
+
+    const utterance = new SpeechSynthesisUtterance(trimmed);
+    utterance.lang = "en-US";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    const voice = pickEnglishVoice(synth);
+    if (voice) {
+      utterance.voice = voice;
+      utterance.lang = voice.lang || "en-US";
+    }
+    keepAliveWhileSpeaking(synth);
+    synth.speak(utterance);
+  } catch {
+    // TTS is best-effort — never break the review flow.
+  }
 }

@@ -11,7 +11,14 @@ export function AppHeader({ action }: AppHeaderProps) {
   return (
     <header
       data-ui="AppHeader"
-      className={cn("border-b border-[var(--color-border)]", "bg-[var(--color-surface)]")}
+      className={cn(
+        "sticky top-0 z-40 border-b border-[var(--color-border)]",
+        "bg-[var(--color-surface)]",
+        // iOS PWA (standalone): content renders under the status bar /
+        // Liquid Glass blur when viewportFit=cover. Push the header below
+        // the safe area so logo/controls are never blurred or clipped.
+        "pt-[env(safe-area-inset-top)]",
+      )}
     >
       <Container>
         <div className={cn("flex items-center justify-between gap-3", "py-3")}>

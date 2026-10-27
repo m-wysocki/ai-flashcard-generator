@@ -6,6 +6,7 @@ import { appCopy } from "@/content/app-copy";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/Badge/Badge";
 import { DropdownButton, DropdownMenuItem } from "@/components/ui/DropdownButton/DropdownButton";
+import { SpeakButton } from "@/components/ui/SpeakButton";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { DeleteFlashcardDialog } from "./DeleteFlashcardDialog";
 import { EditFlashcardDialog } from "./EditFlashcardDialog";
@@ -40,6 +41,7 @@ export function FlashcardItem({
   onNotify,
 }: FlashcardItemProps) {
   const copy = appCopy[language].flashcards;
+  const playbackLabel = appCopy[language].review.playback;
   const { refresh } = useNavigation();
   const [openDialog, setOpenDialog] = useState<"edit" | "delete" | null>(null);
   const statusLabel: Record<FlashcardStatus, string> = {
@@ -63,37 +65,10 @@ export function FlashcardItem({
         data-ui="FlashcardsView.FlashcardItem"
         className="border-t border-black/10 py-4"
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <Badge variant={STATUS_BADGE_VARIANT[flashcard.status]} className="mb-2">
-              {statusLabel[flashcard.status]}
-            </Badge>
-            <p className="font-semibold leading-snug">{flashcard.front}</p>
-            <p className="mt-0.5 text-sm text-[var(--color-muted)]">{flashcard.back}</p>
-            {flashcard.notes ? (
-              <p className="mt-1 flex items-start gap-1 text-xs text-[var(--color-muted)]">
-                <Info size={12} className="mt-0.5 shrink-0" />
-                {flashcard.notes}
-              </p>
-            ) : null}
-            {dueLabel !== "teraz" ? (
-              <p className="mt-1 flex items-center gap-1 text-xs text-[var(--color-muted)]">
-                <RefreshCw size={12} className="shrink-0" />
-                {dueLabel}
-              </p>
-            ) : null}
-            {activateFlashcardAction ? (
-              <InboxActivateButton
-                flashcardId={flashcard.id}
-                activateFlashcardAction={activateFlashcardAction}
-                disabled={activationDisabled}
-                language={language}
-                onActivated={() => {
-                  onNotify?.(copy.toastActivated);
-                }}
-              />
-            ) : null}
-          </div>
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <Badge variant={STATUS_BADGE_VARIANT[flashcard.status]}>
+            {statusLabel[flashcard.status]}
+          </Badge>
 
           <DropdownButton
             trigger={
@@ -121,6 +96,36 @@ export function FlashcardItem({
             </DropdownMenuItem>
           </DropdownButton>
         </div>
+        <div className="min-w-0">
+            <p className="font-semibold leading-snug">{flashcard.front}</p>
+            <p className="mt-0.5 text-sm text-[var(--color-muted)]">
+              {flashcard.back}{" "}
+              <SpeakButton text={flashcard.back} label={playbackLabel} className="h-5 w-5 align-middle" />
+            </p>
+            {flashcard.notes ? (
+              <p className="mt-1 flex items-start gap-1 text-xs text-[var(--color-muted)]">
+                <Info size={12} className="mt-0.5 shrink-0" />
+                {flashcard.notes}
+              </p>
+            ) : null}
+            {dueLabel !== "teraz" ? (
+              <p className="mt-1 flex items-center gap-1 text-xs text-[var(--color-muted)]">
+                <RefreshCw size={12} className="shrink-0" />
+                {dueLabel}
+              </p>
+            ) : null}
+            {activateFlashcardAction ? (
+              <InboxActivateButton
+                flashcardId={flashcard.id}
+                activateFlashcardAction={activateFlashcardAction}
+                disabled={activationDisabled}
+                language={language}
+                onActivated={() => {
+                  onNotify?.(copy.toastActivated);
+                }}
+              />
+            ) : null}
+          </div>
       </article>
 
       <EditFlashcardDialog
