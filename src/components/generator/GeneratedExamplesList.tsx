@@ -2,6 +2,7 @@ import { Check, Info, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
+import { SpeakButton } from "@/components/ui/SpeakButton";
 import { cn } from "@/lib/cn";
 
 type Example = { english: string; polish: string; note: string | null };
@@ -13,6 +14,7 @@ type GeneratedExamplesListProps = {
   selectLabel: string;
   savedLabel: string;
   noExamplesLabel: string;
+  playLabel: string;
 };
 
 export function GeneratedExamplesList({
@@ -22,6 +24,7 @@ export function GeneratedExamplesList({
   selectLabel,
   savedLabel,
   noExamplesLabel,
+  playLabel,
 }: GeneratedExamplesListProps) {
   if (examples.length === 0) {
     return <EmptyState title={noExamplesLabel} />;
@@ -39,7 +42,10 @@ export function GeneratedExamplesList({
             className="grid gap-2 p-3"
           >
             <p className="text-sm text-[var(--color-muted)]">{example.polish}</p>
-            <p className="font-semibold">{example.english}</p>
+            <p className="font-semibold">
+              {example.english}{" "}
+              <SpeakButton text={example.english} label={playLabel} className="h-5 w-5 align-middle" />
+            </p>
 
             {example.note ? (
               <p

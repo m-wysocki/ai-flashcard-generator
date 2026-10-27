@@ -161,6 +161,7 @@ export function GeneratorView({
           selectLabel={copy.useAsFlashcard}
           savedLabel={copy.flashcardSaved}
           noExamplesLabel={copy.noExamplesToSave}
+          playLabel={appCopy[language].review.playback}
         />
       ) : null}
 
