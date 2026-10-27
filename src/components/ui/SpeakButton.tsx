@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { Volume2 } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { speakEnglish } from "@/components/flashcards/FlashcardsReviewSession/helpers";
+import { speakEnglish, stopSpeaking } from "@/components/flashcards/FlashcardsReviewSession/helpers";
 
 type SpeakButtonProps = {
   text: string;
@@ -58,6 +58,10 @@ export function SpeakButton({ text, label, className }: SpeakButtonProps) {
       const synth = window.speechSynthesis;
       if (synth.speaking && lastSpokenText === text) {
         synth.cancel();
+        // Also drop a still-pending deferred speak() and the keep-alive
+        // ticker: without this, a stop click inside speakEnglish()'s 60 ms
+        // defer window would still queue the utterance afterwards.
+        stopSpeaking();
         lastSpokenText = null;
         return;
       }
@@ -77,9 +81,12 @@ export function SpeakButton({ text, label, className }: SpeakButtonProps) {
       aria-label={label}
       onClick={handleClick}
       className={cn(
-        "inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full -mt-0.5",
+        "relative inline-flex h-7 w-7 shrink-0 cursor-pointer touch-manipulation items-center justify-center rounded-full select-none -mt-0.5",
+        // 44px+ tap target without changing the icon's visual size.
+        "after:absolute after:-inset-3 after:content-['']",
         "text-[var(--color-muted)] transition-colors",
         "hover:bg-black/5 hover:text-[var(--color-text)]",
+        "active:bg-black/10 active:text-[var(--color-text)]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-text)]",
         className,
       )}
