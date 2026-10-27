@@ -1,17 +1,29 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FlashcardsReviewSession } from "./FlashcardsReviewSession";
+import { __resetSpeechStateForTests } from "./helpers";
 
 const updateAction = jest.fn().mockResolvedValue({ ok: true });
 const deleteAction = jest.fn().mockResolvedValue({ ok: true });
 
 beforeEach(() => {
+  __resetSpeechStateForTests();
   global.SpeechSynthesisUtterance = jest.fn().mockImplementation((text: string) => ({ text })) as never;
   Object.defineProperty(window, "speechSynthesis", {
-    value: { speak: jest.fn() },
+    value: {
+      speak: jest.fn(),
+      cancel: jest.fn(),
+      resume: jest.fn(),
+      getVoices: jest.fn().mockReturnValue([]),
+      addEventListener: jest.fn(),
+    },
     configurable: true,
     writable: true,
   });
+});
+
+afterEach(() => {
+  jest.useRealTimers();
 });
 
 describe("FlashcardsReviewSession", () => {
@@ -168,6 +180,7 @@ describe("FlashcardsReviewSession", () => {
   });
 
   it("auto-plays the answer audio on reveal", async () => {
+    jest.useFakeTimers();
     render(
       <FlashcardsReviewSession
         initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
@@ -178,6 +191,16 @@ describe("FlashcardsReviewSession", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+
+    // speak() is deferred past cancel()'s tick (iOS WebKit race) —
+    // nothing queued synchronously.
+    expect(window.speechSynthesis.speak).not.toHaveBeenCalledWith(
+      expect.objectContaining({ text: "B" }),
+    );
+
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
 
     expect(window.speechSynthesis.speak).toHaveBeenCalledWith(
       expect.objectContaining({ text: "B" }),
