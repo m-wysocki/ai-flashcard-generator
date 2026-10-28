@@ -48,7 +48,8 @@ describe("ReviewPage smoke", () => {
         id: "f-1",
         front: "Cześć",
         back: "Hi",
-        notes: "Common greeting",
+        frontNotes: null,
+        backNotes: "Common greeting",
         dueAt: new Date("2026-05-08T09:00:00.000Z"),
       },
     ]);

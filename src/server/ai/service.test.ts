@@ -6,7 +6,12 @@ type MockResponse = {
   detectedLanguage?: "POLISH" | "ENGLISH";
   translations?: string[];
   meanings?: string[];
-  examples?: Array<{ english: string; polish: string; note?: string | null }>;
+  examples?: Array<{
+    english: string;
+    polish: string;
+    frontNote?: string | null;
+    backNote?: string | null;
+  }>;
   notes?: string | null;
 };
 
@@ -29,7 +34,7 @@ describe("ai generation service", () => {
               detectedLanguage: "POLISH",
               translations: [],
               meanings: [],
-              examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", note: null }],
+              examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", frontNote: null, backNote: null }],
               notes: null,
             };
           },
@@ -52,7 +57,7 @@ describe("ai generation service", () => {
         detectedLanguage: "POLISH",
         translations: [],
         meanings: [],
-        examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", note: null }],
+        examples: [{ english: "How do I say this naturally?", polish: "Jak to powiedzieć naturalnie?", frontNote: null, backNote: null }],
         notes: null,
       },
     });
@@ -81,7 +86,7 @@ describe("ai generation service", () => {
               detectedLanguage: "ENGLISH",
               translations: [],
               meanings: ["zrozumieć coś"],
-              examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", note: null }],
+              examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", frontNote: null, backNote: null }],
               notes: null,
             };
           },
@@ -103,7 +108,58 @@ describe("ai generation service", () => {
         detectedLanguage: "ENGLISH",
         translations: [],
         meanings: ["zrozumieć coś"],
-        examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", note: null }],
+        examples: [{ english: "I need to figure it out.", polish: "Muszę to rozgryźć.", frontNote: null, backNote: null }],
+        notes: null,
+      },
+    });
+  });
+
+  it("trims both note fields and nulls blanks", async () => {
+    const result = await generateLearningMaterial(
+      {
+        userId: "user-1",
+        text: "figure out",
+      },
+      {
+        limitPerDay: 10,
+        now: () => new Date("2026-05-08T09:00:00.000Z"),
+        openai: { generationEnabled: true, model: "gpt-4.1-mini", apiKey: "sk-test" },
+        aiClient: {
+          async generate() {
+            return {
+              inputType: "phrase",
+              detectedLanguage: "ENGLISH",
+              translations: [],
+              meanings: ["zrozumieć coś"],
+              examples: [
+                { english: "I need to figure it out.", polish: "Muszę to rozgryźć.", frontNote: "  Podpowiedź. ", backNote: "  Częsta kolokacja. " },
+                // Blank frontNote becomes null.
+                { english: "She figured it out.", polish: "Ona to rozgryzła.", frontNote: "   ", backNote: "Rejestr potoczny." },
+              ],
+              notes: null,
+            };
+          },
+        },
+        logs: {
+          async countSuccessfulSince() {
+            return 0;
+          },
+          async create() {},
+        },
+      },
+    );
+
+    expect(result).toEqual({
+      ok: true,
+      material: {
+        inputType: "phrase",
+        detectedLanguage: "ENGLISH",
+        translations: [],
+        meanings: ["zrozumieć coś"],
+        examples: [
+          { english: "I need to figure it out.", polish: "Muszę to rozgryźć.", frontNote: "Podpowiedź.", backNote: "Częsta kolokacja." },
+          { english: "She figured it out.", polish: "Ona to rozgryzła.", frontNote: null, backNote: "Rejestr potoczny." },
+        ],
         notes: null,
       },
     });

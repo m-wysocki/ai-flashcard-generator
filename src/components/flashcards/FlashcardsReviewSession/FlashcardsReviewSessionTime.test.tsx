@@ -5,7 +5,7 @@ import { SESSION_TIME_STORAGE_KEY } from "./session-time-stats";
 const updateAction = jest.fn().mockResolvedValue({ ok: true });
 const deleteAction = jest.fn().mockResolvedValue({ ok: true });
 
-const oneCard = [{ id: "1", front: "A", back: "B", notes: null }];
+const oneCard = [{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }];
 
 beforeEach(() => {
   window.localStorage.clear();

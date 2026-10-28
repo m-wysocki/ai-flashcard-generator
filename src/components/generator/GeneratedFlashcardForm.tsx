@@ -6,14 +6,19 @@ import { Field } from "@/components/ui/Field/Field";
 import { Button } from "@/components/ui/Button/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 
+const NOTES_MAX_LENGTH = 1200;
+
 type GeneratedFlashcardFormProps = {
   frontDefault: string;
   backDefault: string;
-  notesDefault: string;
+  frontNotesDefault: string;
+  backNotesDefault: string;
   frontLabel: string;
   backLabel: string;
-  notesLabel: string;
-  clearNotesLabel: string;
+  frontNotesLabel: string;
+  backNotesLabel: string;
+  clearFrontNotesLabel: string;
+  clearBackNotesLabel: string;
   submitLabel: string;
   savingLabel: string;
   error: string | null;
@@ -24,18 +29,22 @@ type GeneratedFlashcardFormProps = {
 export function GeneratedFlashcardForm({
   frontDefault,
   backDefault,
-  notesDefault,
+  frontNotesDefault,
+  backNotesDefault,
   frontLabel,
   backLabel,
-  notesLabel,
-  clearNotesLabel,
+  frontNotesLabel,
+  backNotesLabel,
+  clearFrontNotesLabel,
+  clearBackNotesLabel,
   submitLabel,
   savingLabel,
   error,
   pending,
   onSubmit,
 }: GeneratedFlashcardFormProps) {
-  const [notesValue, setNotesValue] = useState(notesDefault);
+  const [frontNotesValue, setFrontNotesValue] = useState(frontNotesDefault);
+  const [backNotesValue, setBackNotesValue] = useState(backNotesDefault);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -51,20 +60,45 @@ export function GeneratedFlashcardForm({
         <div className="relative">
           <Field
             as="textarea"
-            name="notes"
-            label={notesLabel}
+            name="frontNotes"
+            label={frontNotesLabel}
             rows={4}
-            value={notesValue}
-            onChange={(e) => setNotesValue(e.target.value)}
-            className={notesValue ? "pr-9" : undefined}
+            maxLength={NOTES_MAX_LENGTH}
+            value={frontNotesValue}
+            onChange={(e) => setFrontNotesValue(e.target.value)}
+            className={frontNotesValue ? "pr-9" : undefined}
           />
-          {notesValue ? (
+          {frontNotesValue ? (
             <Button
               type="button"
               color="ghost"
               size="sm"
-              aria-label={clearNotesLabel}
-              onClick={() => setNotesValue("")}
+              aria-label={clearFrontNotesLabel}
+              onClick={() => setFrontNotesValue("")}
+              icon={<X size={16} />}
+              className="absolute bottom-2 right-1.5 h-7 w-7 p-0"
+            />
+          ) : null}
+        </div>
+
+        <div className="relative">
+          <Field
+            as="textarea"
+            name="backNotes"
+            label={backNotesLabel}
+            rows={4}
+            maxLength={NOTES_MAX_LENGTH}
+            value={backNotesValue}
+            onChange={(e) => setBackNotesValue(e.target.value)}
+            className={backNotesValue ? "pr-9" : undefined}
+          />
+          {backNotesValue ? (
+            <Button
+              type="button"
+              color="ghost"
+              size="sm"
+              aria-label={clearBackNotesLabel}
+              onClick={() => setBackNotesValue("")}
               icon={<X size={16} />}
               className="absolute bottom-2 right-1.5 h-7 w-7 p-0"
             />

@@ -8,7 +8,8 @@ export type Flashcard = {
   id: string;
   front: string;
   back: string;
-  notes: string | null;
+  frontNotes: string | null;
+  backNotes: string | null;
   status: FlashcardStatus;
   dueAt: string;
 };

@@ -55,7 +55,7 @@ describe("GeneratorView", () => {
             detectedLanguage: "POLISH",
             translations: ["figure out"],
             meanings: [],
-            examples: [{ english: "I need to figure this out.", polish: "Muszę to rozgryźć.", note: null }],
+            examples: [{ english: "I need to figure this out.", polish: "Muszę to rozgryźć.", frontNote: null, backNote: null }],
             notes: null,
           },
         })}
@@ -87,7 +87,7 @@ describe("GeneratorView", () => {
             detectedLanguage: "ENGLISH",
             translations: [],
             meanings: ["zrozumieć coś"],
-            examples: [{ english: "I need to figure this out.", polish: "Muszę to rozgryźć.", note: null }],
+            examples: [{ english: "I need to figure this out.", polish: "Muszę to rozgryźć.", frontNote: null, backNote: null }],
             notes: null,
           },
         })}
@@ -108,7 +108,7 @@ describe("GeneratorView", () => {
   });
 
   it("lets user edit one generated example and save it as a flashcard", async () => {
-    const createdCards: Array<{ front: string; back: string; notes: string }> = [];
+    const createdCards: Array<{ front: string; back: string; frontNotes: string; backNotes: string }> = [];
 
     render(
       <GeneratorView
@@ -125,12 +125,14 @@ describe("GeneratorView", () => {
               {
                 english: "I need to figure this out today.",
                 polish: "Muszę to dziś rozgryźć.",
-                note: null,
+                frontNote: "Podpowiedź: kontekst potoczny.",
+                backNote: "Kolokacja: figure out.",
               },
               {
                 english: "She figured out the answer quickly.",
                 polish: "Szybko rozgryzła odpowiedź.",
-                note: null,
+                frontNote: null,
+                backNote: null,
               },
             ],
             notes: "Often used for solving problems.",
@@ -144,7 +146,8 @@ describe("GeneratorView", () => {
           createdCards.push({
             front: String(formData.get("front") ?? ""),
             back: String(formData.get("back") ?? ""),
-            notes: String(formData.get("notes") ?? ""),
+            frontNotes: String(formData.get("frontNotes") ?? ""),
+            backNotes: String(formData.get("backNotes") ?? ""),
           });
           return { ok: true };
         }}
@@ -161,15 +164,18 @@ describe("GeneratorView", () => {
 
     const frontField = await screen.findByRole("textbox", { name: "Front (PL)" });
     const backField = screen.getByRole("textbox", { name: "Back (EN)" });
-    const notesField = screen.getByRole("textbox", { name: "Notatki (opcjonalnie)" });
+    const frontNotesField = screen.getByRole("textbox", { name: "Notatka przód (opcjonalnie)" });
+    const backNotesField = screen.getByRole("textbox", { name: "Notatka tył (opcjonalnie)" });
 
     expect(frontField).toHaveValue("Muszę to dziś rozgryźć.");
     expect(backField).toHaveValue("I need to figure this out today.");
-    expect(notesField).toHaveValue("");
+    expect(frontNotesField).toHaveValue("Podpowiedź: kontekst potoczny.");
+    expect(backNotesField).toHaveValue("Kolokacja: figure out.");
 
     fireEvent.change(frontField, { target: { value: "Rozgryźć to dziś." } });
     fireEvent.change(backField, { target: { value: "I need to figure this out today." } });
-    fireEvent.change(notesField, { target: { value: "Useful for problem solving." } });
+    fireEvent.change(frontNotesField, { target: { value: "Front hint." } });
+    fireEvent.change(backNotesField, { target: { value: "Useful for problem solving." } });
 
     fireEvent.click(screen.getByRole("button", { name: "Zapisz wygenerowaną fiszkę" }));
 
@@ -178,10 +184,51 @@ describe("GeneratorView", () => {
         {
           front: "Rozgryźć to dziś.",
           back: "I need to figure this out today.",
-          notes: "Useful for problem solving.",
+          frontNotes: "Front hint.",
+          backNotes: "Useful for problem solving.",
         },
       ]),
     );
+  });
+
+  it("shows front and back note suggestions with distinct labels", async () => {
+    render(
+      <GeneratorView
+        language="pl"
+        title="Słownik"
+        generateLearningMaterialAction={async () => ({
+          ok: true,
+          material: {
+            inputType: "phrase",
+            detectedLanguage: "POLISH",
+            translations: ["figure out"],
+            meanings: [],
+            examples: [
+              {
+                english: "I need to figure this out today.",
+                polish: "Muszę to dziś rozgryźć.",
+                frontNote: "Kontekst potoczny.",
+                backNote: "Częsta kolokacja.",
+              },
+            ],
+            notes: null,
+          },
+        })}
+        dailyPhrase={null}
+        streak={0}
+        reviewedToday={false}
+        refreshDailyPhraseAction={async () => ({ ok: true })}
+        createFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Tekst" }), {
+      target: { value: "rozgryźć" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Tłumacz" }));
+
+    expect(await screen.findByText("Kontekst potoczny.")).toBeInTheDocument();
+    expect(screen.getByText("Częsta kolokacja.")).toBeInTheDocument();
   });
 
   it("shows a clear message when generated material has no examples to save", async () => {

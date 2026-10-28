@@ -8,7 +8,8 @@ export const prismaFlashcardsRepository: FlashcardsRepository = {
         userId: input.userId,
         front: input.front,
         back: input.back,
-        notes: input.notes,
+        frontNotes: input.frontNotes,
+        backNotes: input.backNotes,
         dueAt: input.dueAt,
         isActive: false,
       },
@@ -125,7 +126,8 @@ export const prismaFlashcardsRepository: FlashcardsRepository = {
       data: {
         front: input.front,
         back: input.back,
-        notes: input.notes,
+        frontNotes: input.frontNotes,
+        backNotes: input.backNotes,
       },
     });
 

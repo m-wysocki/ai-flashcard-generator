@@ -52,7 +52,9 @@ IMPORTANT — when inputType is "sentence" and detectedLanguage is "POLISH": the
 
 IMPORTANT — when inputType is "sentence" and detectedLanguage is "ENGLISH": the FIRST example's "english" field MUST be the user's English input reproduced almost exactly. The FIRST example's "polish" field MUST be a natural Polish translation.
 
-For each example, set "note" to a short, specific remark ONLY when it genuinely adds value — for example: a different register, a common collocation, a subtle meaning difference, or a usage restriction. Set "note" to null when there is nothing important to add.
+For each example, set "frontNote" and "backNote" to short remarks in Polish, ONLY when they genuinely add value — otherwise set them to null.
+- "frontNote" is a guiding hint shown together with the front of the flashcard (context, register, or situation that helps recall the answer). HARD CONSTRAINT: it MUST NEVER contain the translation, the meaning, or any content of the back side — it must not give away the answer.
+- "backNote" is a nuance shown together with the back of the flashcard — for example: a common collocation, a different register, a subtle meaning difference, or a usage restriction. Set "backNote" to null when there is nothing important to add.
 
 Set the global "notes" field ONLY for broader context about the whole word or phrase (e.g. etymology, formality level, frequency). Set it to null if nothing important to add.
 
@@ -98,9 +100,10 @@ Input: ${input.text}`;
                     properties: {
                       english: { type: "string" },
                       polish: { type: "string" },
-                      note: { type: ["string", "null"] },
+                      frontNote: { type: ["string", "null"] },
+                      backNote: { type: ["string", "null"] },
                     },
-                    required: ["english", "polish", "note"],
+                    required: ["english", "polish", "frontNote", "backNote"],
                     additionalProperties: false,
                   },
                 },

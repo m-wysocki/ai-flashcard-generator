@@ -35,7 +35,7 @@ describe("FlashcardsReviewSession", () => {
 
     render(
       <FlashcardsReviewSession
-        initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+        initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
@@ -54,6 +54,25 @@ describe("FlashcardsReviewSession", () => {
     await screen.findByText("To wszystko na teraz.");
   });
 
+  it("shows frontNotes before reveal but hides backNotes until reveal (anti-spoiler)", () => {
+    render(
+      <FlashcardsReviewSession
+        initialCards={[{ id: "1", front: "A", back: "B", frontNotes: "FRONT-HINT-123", backNotes: "BACK-NOTE-456" }]}
+        stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+        gradeAction={jest.fn()}
+        updateAction={updateAction} deleteAction={deleteAction}
+      />,
+    );
+
+    expect(screen.getByText(/FRONT-HINT-123/)).toBeInTheDocument();
+    expect(screen.queryByText(/BACK-NOTE-456/)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+
+    expect(screen.getByText(/FRONT-HINT-123/)).toBeInTheDocument();
+    expect(screen.getByText(/BACK-NOTE-456/)).toBeInTheDocument();
+  });
+
   it("shows pending feedback and blocks grade buttons during grading", async () => {
     let resolveGrade: ((value: { ok: boolean; shouldRequeue?: boolean }) => void) | undefined;
     const gradeAction = jest.fn().mockImplementation(
@@ -65,7 +84,7 @@ describe("FlashcardsReviewSession", () => {
 
     render(
       <FlashcardsReviewSession
-        initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+        initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
@@ -94,8 +113,8 @@ describe("FlashcardsReviewSession", () => {
     render(
       <FlashcardsReviewSession
         initialCards={[
-          { id: "1", front: "A", back: "B", notes: null },
-          { id: "2", front: "C", back: "D", notes: null },
+          { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+          { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
         ]}
         stats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
         gradeAction={gradeAction}
@@ -124,8 +143,8 @@ describe("FlashcardsReviewSession", () => {
     render(
       <FlashcardsReviewSession
         initialCards={[
-          { id: "1", front: "A", back: "B", notes: null },
-          { id: "2", front: "C", back: "D", notes: null },
+          { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+          { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
         ]}
         stats={{ dueToday: 2, totalCards: 10, reviewedToday: 3 }}
         gradeAction={gradeAction}
@@ -155,8 +174,8 @@ describe("FlashcardsReviewSession", () => {
     render(
       <FlashcardsReviewSession
         initialCards={[
-          { id: "1", front: "A", back: "B", notes: null },
-          { id: "2", front: "C", back: "D", notes: null },
+          { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+          { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
         ]}
         stats={{ dueToday: 2, totalCards: 5, reviewedToday: 2 }}
         gradeAction={gradeAction}
@@ -183,7 +202,7 @@ describe("FlashcardsReviewSession", () => {
     jest.useFakeTimers();
     render(
       <FlashcardsReviewSession
-        initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+        initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
         updateAction={updateAction} deleteAction={deleteAction}
@@ -210,7 +229,7 @@ describe("FlashcardsReviewSession", () => {
   it("shows next-review interval below each grade button after reveal", async () => {
     render(
       <FlashcardsReviewSession
-        initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+        initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
         updateAction={updateAction} deleteAction={deleteAction}
@@ -228,7 +247,7 @@ describe("FlashcardsReviewSession", () => {
       id: "1",
       front: "A",
       back: "B",
-      notes: null,
+      frontNotes: null, backNotes: null,
       stability: 0,
       difficulty: 0,
       reps: 0,
@@ -285,7 +304,7 @@ describe("FlashcardsReviewSession", () => {
 
     render(
       <FlashcardsReviewSession
-        initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+        initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
@@ -307,7 +326,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
@@ -327,7 +346,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
@@ -349,7 +368,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
@@ -368,7 +387,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 14 }}
           gradeAction={gradeAction}
@@ -388,7 +407,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 5, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 5, totalDueCount: 56 }}
           gradeAction={gradeAction}
@@ -408,7 +427,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 5, totalCards: 8, reviewedToday: 0 }}
           batchMode={{ batchSize: 5, totalDueCount: 8 }}
           gradeAction={gradeAction}
@@ -428,7 +447,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 10, totalCards: 10, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 10 }}
           gradeAction={gradeAction}
@@ -449,8 +468,8 @@ describe("FlashcardsReviewSession", () => {
       render(
         <FlashcardsReviewSession
           initialCards={[
-            { id: "1", front: "A", back: "B", notes: null },
-            { id: "2", front: "C", back: "D", notes: null },
+            { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+            { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
           ]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
@@ -468,8 +487,8 @@ describe("FlashcardsReviewSession", () => {
       render(
         <FlashcardsReviewSession
           initialCards={[
-            { id: "1", front: "A", back: "B", notes: null },
-            { id: "2", front: "C", back: "D", notes: null },
+            { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+            { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
           ]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
@@ -494,8 +513,8 @@ describe("FlashcardsReviewSession", () => {
       render(
         <FlashcardsReviewSession
           initialCards={[
-            { id: "1", front: "A", back: "B", notes: null },
-            { id: "2", front: "C", back: "D", notes: null },
+            { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+            { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
           ]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
@@ -514,7 +533,7 @@ describe("FlashcardsReviewSession", () => {
     it("does not show batch progress counter in non-batch mode", () => {
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 1, totalCards: 5, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}
@@ -529,7 +548,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
@@ -549,12 +568,12 @@ describe("FlashcardsReviewSession", () => {
       gradeAction,
       batchMode = { batchSize: 5, totalDueCount: 5 },
       sessionStartRefilled,
-      initialCards = [{ id: "1", front: "A", back: "B", notes: null }],
+      initialCards = [{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }],
     }: {
       gradeAction: jest.Mock;
       batchMode?: { batchSize: number; totalDueCount: number };
       sessionStartRefilled?: number;
-      initialCards?: Array<{ id: string; front: string; back: string; notes: null }>;
+      initialCards?: Array<{ id: string; front: string; back: string; frontNotes: null, backNotes: null }>;
     }) {
       render(
         <FlashcardsReviewSession
@@ -581,7 +600,7 @@ describe("FlashcardsReviewSession", () => {
           id: "1",
           front: "A",
           back: "B",
-          notes: null,
+          frontNotes: null, backNotes: null,
           state: "REVIEW",
           scheduledDays: 21,
         },
@@ -610,7 +629,7 @@ describe("FlashcardsReviewSession", () => {
           id: "1",
           front: "A",
           back: "B",
-          notes: null,
+          frontNotes: null, backNotes: null,
           state: "REVIEW",
           scheduledDays: 30,
         },
@@ -623,7 +642,7 @@ describe("FlashcardsReviewSession", () => {
             id: "1",
             front: "A",
             back: "B",
-            notes: null,
+            frontNotes: null, backNotes: null,
             state: "REVIEW",
             scheduledDays: 30,
           } as never,
@@ -661,7 +680,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
@@ -684,7 +703,7 @@ describe("FlashcardsReviewSession", () => {
     it("shows a delete button next to the edit button", () => {
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}
@@ -702,8 +721,8 @@ describe("FlashcardsReviewSession", () => {
       render(
         <FlashcardsReviewSession
           initialCards={[
-            { id: "1", front: "A", back: "B", notes: null },
-            { id: "2", front: "C", back: "D", notes: null },
+            { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+            { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
           ]}
           stats={{ dueToday: 2, totalCards: 10, reviewedToday: 3 }}
           batchMode={{ batchSize: 2, totalDueCount: 2 }}
@@ -733,7 +752,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={localDeleteAction}
@@ -752,7 +771,7 @@ describe("FlashcardsReviewSession", () => {
 
       render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={failingDeleteAction}
@@ -776,7 +795,7 @@ describe("FlashcardsReviewSession", () => {
 
       const { container } = render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}
@@ -802,7 +821,7 @@ describe("FlashcardsReviewSession", () => {
 
       const { container } = render(
         <FlashcardsReviewSession
-          initialCards={[{ id: "1", front: "A", back: "B", notes: null }]}
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}

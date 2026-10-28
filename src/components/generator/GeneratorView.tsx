@@ -15,7 +15,12 @@ import type { FlashcardActionState } from "@/server/flashcards/actions";
 import type { DailyPhraseData } from "@/server/daily-phrase/service";
 import type { RefreshDailyPhraseAction } from "@/server/daily-phrase/actions";
 
-type Example = { english: string; polish: string; note: string | null };
+type Example = {
+  english: string;
+  polish: string;
+  frontNote: string | null;
+  backNote: string | null;
+};
 
 type GeneratorActionState = { ok: true; material: Material } | { ok: false; error: string } | null;
 
@@ -174,11 +179,14 @@ export function GeneratorView({
           <GeneratedFlashcardForm
             frontDefault={selectedExample.polish}
             backDefault={selectedExample.english}
-            notesDefault={selectedExample.note ?? ""}
+            frontNotesDefault={selectedExample.frontNote ?? ""}
+            backNotesDefault={selectedExample.backNote ?? ""}
             frontLabel={copy.frontLabel}
             backLabel={copy.backLabel}
-            notesLabel={copy.notesLabel}
-            clearNotesLabel={copy.clearNotes}
+            frontNotesLabel={copy.frontNotesLabel}
+            backNotesLabel={copy.backNotesLabel}
+            clearFrontNotesLabel={copy.clearFrontNotes}
+            clearBackNotesLabel={copy.clearBackNotes}
             submitLabel={copy.saveGeneratedFlashcard}
             savingLabel={copy.saving}
             error={createError}

@@ -2,7 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { RotateCcw, Zap, ThumbsUp, Star, Volume2, ArrowDownToLine, Pencil, Trash2 } from "lucide-react";
+import {
+  RotateCcw,
+  Zap,
+  ThumbsUp,
+  Star,
+  Volume2,
+  ArrowDownToLine,
+  Pencil,
+  Trash2,
+  Lightbulb,
+} from "lucide-react";
 import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
 import { isMasteredSchedule } from "@/lib/mastered-threshold";
@@ -241,6 +251,8 @@ export function FlashcardsReviewSession({
   }
 
   const gradeIntervals = buildGradeIntervals(current);
+  const frontNote = current.frontNotes;
+  const backNote = current.backNotes;
 
   return (
     <main
@@ -305,6 +317,12 @@ export function FlashcardsReviewSession({
       </div>
       <ShadowFrame key={current.id} className="rounded-xl p-4">
         <p className="m-0 w-full text-xl text-[var(--color-text)]">{current.front}</p>
+        {frontNote ? (
+          <p className="mt-2 flex items-start gap-1.5 text-sm text-[var(--color-muted)]">
+            <Lightbulb size={14} className="mt-0.5 shrink-0" />
+            {frontNote}
+          </p>
+        ) : null}
         {revealed && (
           <>
             <div className="my-3 h-px bg-black/15" />
@@ -324,17 +342,17 @@ export function FlashcardsReviewSession({
                 icon={<Volume2 size={16} />}
               />
             </div>
-            {current.notes && (
+            {backNote ? (
               <>
                 <div className="my-2 h-px bg-black/10" />
                 <p className={cn(
                   "m-0 text-sm font-light italic",
                   "text-[var(--color-muted)]",
                 )}>
-                  {current.notes}
+                  {backNote}
                 </p>
               </>
-            )}
+            ) : null}
           </>
         )}
       </ShadowFrame>

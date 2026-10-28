@@ -35,7 +35,8 @@ export async function createManualFlashcardAction(
       userId,
       front: formData.get("front"),
       back: formData.get("back"),
-      notes: formData.get("notes") ?? "",
+      frontNotes: formData.get("frontNotes") ?? "",
+      backNotes: formData.get("backNotes") ?? "",
     },
     { flashcards: prismaFlashcardsRepository },
   );
@@ -62,7 +63,8 @@ export async function createFlashcardFromGeneratorAction(
       userId,
       front: formData.get("front"),
       back: formData.get("back"),
-      notes: formData.get("notes") ?? "",
+      frontNotes: formData.get("frontNotes") ?? "",
+      backNotes: formData.get("backNotes") ?? "",
     },
     { flashcards: prismaFlashcardsRepository },
   );
@@ -84,7 +86,8 @@ export async function updateManualFlashcardAction(formData: FormData): Promise<F
       flashcardId: formData.get("flashcardId"),
       front: formData.get("front"),
       back: formData.get("back"),
-      notes: formData.get("notes") ?? "",
+      frontNotes: formData.get("frontNotes") ?? "",
+      backNotes: formData.get("backNotes") ?? "",
     },
     { flashcards: prismaFlashcardsRepository },
   );

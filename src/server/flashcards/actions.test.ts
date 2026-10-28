@@ -48,7 +48,8 @@ function flashcardForm(extra: Record<string, string> = {}) {
   formData.set("flashcardId", "f-1");
   formData.set("front", "Cześć");
   formData.set("back", "Hi");
-  formData.set("notes", "");
+  formData.set("frontNotes", "");
+  formData.set("backNotes", "");
   for (const [key, value] of Object.entries(extra)) {
     formData.set(key, value);
   }
