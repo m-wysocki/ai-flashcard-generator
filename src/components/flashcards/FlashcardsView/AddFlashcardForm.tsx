@@ -28,7 +28,20 @@ export function AddFlashcardForm({
     >
       <Field name="front" label={copy.generator.frontLabel} required />
       <Field name="back" label={copy.generator.backLabel} required />
-      <Field as="textarea" name="notes" label={copy.generator.notesLabel} rows={4} />
+      <Field
+        as="textarea"
+        name="frontNotes"
+        label={copy.generator.frontNotesLabel}
+        rows={4}
+        maxLength={1200}
+      />
+      <Field
+        as="textarea"
+        name="backNotes"
+        label={copy.generator.backNotesLabel}
+        rows={4}
+        maxLength={1200}
+      />
       {state && !state.ok ? (
         <p className="text-sm text-[var(--color-danger)]">{state.error}</p>
       ) : null}

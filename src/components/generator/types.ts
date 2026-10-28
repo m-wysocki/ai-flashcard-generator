@@ -3,6 +3,11 @@ export type Material = {
   detectedLanguage: "POLISH" | "ENGLISH";
   translations: string[];
   meanings: string[];
-  examples: Array<{ english: string; polish: string; note: string | null }>;
+  examples: Array<{
+    english: string;
+    polish: string;
+    frontNote: string | null;
+    backNote: string | null;
+  }>;
   notes: string | null;
 };

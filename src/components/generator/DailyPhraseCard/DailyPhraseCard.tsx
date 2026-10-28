@@ -198,11 +198,14 @@ export function DailyPhraseCard({
         <GeneratedFlashcardForm
           frontDefault={phrase.polish}
           backDefault={phrase.english}
-          notesDefault={phrase.notes ?? ""}
+          frontNotesDefault=""
+          backNotesDefault={phrase.notes ?? ""}
           frontLabel={generatorCopy.frontLabel}
           backLabel={generatorCopy.backLabel}
-          notesLabel={generatorCopy.notesLabel}
-          clearNotesLabel={generatorCopy.clearNotes}
+          frontNotesLabel={generatorCopy.frontNotesLabel}
+          backNotesLabel={generatorCopy.backNotesLabel}
+          clearFrontNotesLabel={generatorCopy.clearFrontNotes}
+          clearBackNotesLabel={generatorCopy.clearBackNotes}
           submitLabel={generatorCopy.saveGeneratedFlashcard}
           savingLabel={generatorCopy.saving}
           error={createError}

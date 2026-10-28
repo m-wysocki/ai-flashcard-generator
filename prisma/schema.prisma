@@ -80,7 +80,8 @@ model Flashcard {
   userId        String
   front         String
   back          String
-  notes         String?
+  frontNotes    String?
+  backNotes     String?
   dueAt         DateTime      @default(now())
   stability     Float?
   difficulty    Float?

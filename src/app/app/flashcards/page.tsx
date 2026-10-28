@@ -57,7 +57,8 @@ export default async function FlashcardsPage({
     id: string;
     front: string;
     back: string;
-    notes: string | null;
+    frontNotes: string | null;
+    backNotes: string | null;
     state?: "NEW" | "LEARNING" | "REVIEW" | "RELEARNING";
     scheduledDays?: number;
     dueAt: Date;
@@ -65,7 +66,8 @@ export default async function FlashcardsPage({
     id: flashcard.id,
     front: flashcard.front,
     back: flashcard.back,
-    notes: flashcard.notes,
+    frontNotes: flashcard.frontNotes,
+    backNotes: flashcard.backNotes,
     status: getFlashcardStatus(
       flashcard.state ?? "NEW",
       dueIds.has(flashcard.id),

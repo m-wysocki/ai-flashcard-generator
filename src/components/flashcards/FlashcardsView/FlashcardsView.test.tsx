@@ -115,7 +115,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "mastered" as const, dueAt: new Date().toISOString() }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "mastered" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
@@ -133,8 +133,8 @@ describe("FlashcardsView", () => {
         title="Fiszki"
         activeTab="due"
         flashcards={[
-          { id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() },
-          { id: "f-2", front: "Kot-mastered", back: "Cat", notes: null, status: "mastered" as const, dueAt: new Date().toISOString() },
+          { id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "Kot-mastered", back: "Cat", frontNotes: null, backNotes: null, status: "mastered" as const, dueAt: new Date().toISOString() },
         ]}
         dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
@@ -152,7 +152,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
@@ -170,7 +170,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
@@ -189,7 +189,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: false, error: "Nie udało się usunąć fiszki." })}
@@ -212,7 +212,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: false, error: "Nie udało się zaktualizować fiszki." })}
         deleteFlashcardAction={async () => ({ ok: true })}
@@ -233,7 +233,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={["f-1"]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
@@ -252,7 +252,7 @@ describe("FlashcardsView", () => {
         activeTab="inbox"
         flashcards={[]}
         dueFlashcardIds={[]}
-        inboxFlashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        inboxFlashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -280,7 +280,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", notes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
         dueFlashcardIds={[]}
         updateFlashcardAction={updateAction}
         deleteFlashcardAction={async () => ({ ok: true })}

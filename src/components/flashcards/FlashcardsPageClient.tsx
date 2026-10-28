@@ -14,7 +14,8 @@ type FlashcardsPageClientProps = {
     id: string;
     front: string;
     back: string;
-    notes: string | null;
+    frontNotes: string | null;
+    backNotes: string | null;
     status: "new" | "due" | "learning" | "mastered";
     dueAt: string;
   }>;
@@ -24,7 +25,8 @@ type FlashcardsPageClientProps = {
     id: string;
     front: string;
     back: string;
-    notes: string | null;
+    frontNotes: string | null;
+    backNotes: string | null;
     status: "new" | "due" | "learning" | "mastered";
     dueAt: string;
   }>;

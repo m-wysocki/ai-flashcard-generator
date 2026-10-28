@@ -8,14 +8,33 @@ import { SubmitButton } from "@/components/ui/SubmitButton";
 import { useAsyncFormAction } from "./useAsyncFormAction";
 import type { FlashcardsCopyLanguage, MutateFlashcardAction } from "./types";
 
+export type EditedFlashcardValues = {
+  front: string;
+  back: string;
+  frontNotes: string | null;
+  backNotes: string | null;
+};
+
 type EditFlashcardDialogProps = {
-  flashcard: { id: string; front: string; back: string; notes: string | null };
+  flashcard: {
+    id: string;
+    front: string;
+    back: string;
+    frontNotes: string | null;
+    backNotes: string | null;
+  };
   updateFlashcardAction: MutateFlashcardAction;
   language: FlashcardsCopyLanguage;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSaved?: (updated: { front: string; back: string; notes: string | null }) => void;
+  onSaved?: (updated: EditedFlashcardValues) => void;
 };
+
+function readNotesField(formData: FormData, name: string): string | null {
+  const value = formData.get(name) as string | null;
+  const trimmed = (value ?? "").trim();
+  return trimmed || null;
+}
 
 export function EditFlashcardDialog({
   flashcard,
@@ -32,10 +51,13 @@ export function EditFlashcardDialog({
     onSuccess: (_, formData) => {
       onOpenChange(false);
       if (onSaved) {
+        const frontNotes = readNotesField(formData, "frontNotes");
+        const backNotes = readNotesField(formData, "backNotes");
         onSaved({
           front: formData.get("front") as string,
           back: formData.get("back") as string,
-          notes: (formData.get("notes") as string) || null,
+          frontNotes,
+          backNotes,
         });
       } else {
         refresh();
@@ -67,10 +89,19 @@ export function EditFlashcardDialog({
           />
           <Field
             as="textarea"
-            name="notes"
-            label={generatorCopy.notesLabel}
-            defaultValue={flashcard.notes ?? ""}
+            name="frontNotes"
+            label={generatorCopy.frontNotesLabel}
+            defaultValue={flashcard.frontNotes ?? ""}
             rows={3}
+            maxLength={1200}
+          />
+          <Field
+            as="textarea"
+            name="backNotes"
+            label={generatorCopy.backNotesLabel}
+            defaultValue={flashcard.backNotes ?? ""}
+            rows={3}
+            maxLength={1200}
           />
           {state && !state.ok ? (
             <p className="text-sm text-[var(--color-danger)]">{state.error}</p>

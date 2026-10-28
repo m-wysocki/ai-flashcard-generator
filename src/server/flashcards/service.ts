@@ -13,7 +13,8 @@ export type FlashcardRecord = {
   userId: string;
   front: string;
   back: string;
-  notes: string | null;
+  frontNotes: string | null;
+  backNotes: string | null;
   dueAt: Date;
   stability?: number | null;
   difficulty?: number | null;
@@ -112,7 +113,8 @@ export type CreateFlashcardInput = {
   userId: string;
   front: unknown;
   back: unknown;
-  notes: unknown;
+  frontNotes: unknown;
+  backNotes: unknown;
 };
 
 export type UpdateFlashcardInput = {
@@ -120,7 +122,8 @@ export type UpdateFlashcardInput = {
   flashcardId: unknown;
   front: unknown;
   back: unknown;
-  notes: unknown;
+  frontNotes: unknown;
+  backNotes: unknown;
 };
 
 export type DeleteFlashcardInput = {
@@ -133,7 +136,8 @@ export type FlashcardsRepository = {
     userId: string;
     front: string;
     back: string;
-    notes: string | null;
+    frontNotes: string | null;
+    backNotes: string | null;
     dueAt: Date;
   }): Promise<FlashcardRecord>;
   findByUser(input: { userId: string; flashcardId: string }): Promise<FlashcardRecord | null>;
@@ -164,7 +168,8 @@ export type FlashcardsRepository = {
     flashcardId: string;
     front: string;
     back: string;
-    notes: string | null;
+    frontNotes: string | null;
+    backNotes: string | null;
   }): Promise<FlashcardRecord | null>;
   updateScheduleByUser(input: {
     userId: string;
@@ -197,7 +202,8 @@ const createSchema = z.object({
   userId: z.string().trim().min(1),
   front: textSchema,
   back: textSchema,
-  notes: notesSchema,
+  frontNotes: notesSchema,
+  backNotes: notesSchema,
 });
 
 const updateSchema = z.object({
@@ -205,7 +211,8 @@ const updateSchema = z.object({
   flashcardId: z.string().trim().min(1),
   front: textSchema,
   back: textSchema,
-  notes: notesSchema,
+  frontNotes: notesSchema,
+  backNotes: notesSchema,
 });
 
 const deleteSchema = z.object({
@@ -224,7 +231,10 @@ export async function createManualFlashcard(
   }
 
   const dueAt = dependencies.now?.() ?? new Date();
-  const flashcard = await dependencies.flashcards.create({ ...parsedInput.data, dueAt });
+  const flashcard = await dependencies.flashcards.create({
+    ...parsedInput.data,
+    dueAt,
+  });
 
   return { ok: true as const, flashcard };
 }
@@ -392,7 +402,9 @@ export async function updateManualFlashcard(
     return { ok: false as const, error: genericMutationError };
   }
 
-  const flashcard = await dependencies.flashcards.updateByUser(parsedInput.data);
+  const flashcard = await dependencies.flashcards.updateByUser({
+    ...parsedInput.data,
+  });
 
   if (!flashcard) {
     return { ok: false as const, error: notFoundError };

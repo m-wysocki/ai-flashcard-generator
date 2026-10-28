@@ -5,7 +5,8 @@ export type ReviewCard = {
   id: string;
   front: string;
   back: string;
-  notes: string | null;
+  frontNotes: string | null;
+  backNotes: string | null;
   // FSRS fields for next-review interval preview (optional — defaults to new-card state)
   dueAtMs?: number;
   stability?: number;

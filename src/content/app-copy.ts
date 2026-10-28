@@ -30,12 +30,14 @@ type AppCopy = {
     noExamplesToSave: string;
     frontLabel: string;
     backLabel: string;
-    notesLabel: string;
+    frontNotesLabel: string;
+    backNotesLabel: string;
     saveFlashcardDialogTitle: string;
     saveGeneratedFlashcard: string;
     saving: string;
     flashcardSaved: string;
-    clearNotes: string;
+    clearFrontNotes: string;
+    clearBackNotes: string;
   };
   flashcards: {
     statsDueToday: string;
@@ -159,12 +161,14 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       noExamplesToSave: "Brak przykładów do zapisania jako fiszka.",
       frontLabel: "Front (PL)",
       backLabel: "Back (EN)",
-      notesLabel: "Notatki (opcjonalnie)",
+      frontNotesLabel: "Notatka przód (opcjonalnie)",
+      backNotesLabel: "Notatka tył (opcjonalnie)",
       saveFlashcardDialogTitle: "Nowa fiszka",
       saveGeneratedFlashcard: "Zapisz wygenerowaną fiszkę",
       saving: "Zapisywanie...",
       flashcardSaved: "Zapisano",
-      clearNotes: "Wyczyść notatki",
+      clearFrontNotes: "Wyczyść notatkę przodu",
+      clearBackNotes: "Wyczyść notatkę tyłu",
     },
     flashcards: {
       statsDueToday: "do powtórki",
@@ -288,12 +292,14 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       noExamplesToSave: "No examples available to save as a flashcard.",
       frontLabel: "Front (PL)",
       backLabel: "Back (EN)",
-      notesLabel: "Notes (optional)",
+      frontNotesLabel: "Front note (optional)",
+      backNotesLabel: "Back note (optional)",
       saveFlashcardDialogTitle: "New flashcard",
       saveGeneratedFlashcard: "Save generated flashcard",
       saving: "Saving...",
       flashcardSaved: "Saved",
-      clearNotes: "Clear notes",
+      clearFrontNotes: "Clear front note",
+      clearBackNotes: "Clear back note",
     },
     flashcards: {
       statsDueToday: "due",

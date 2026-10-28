@@ -14,7 +14,7 @@ function inboxCard(id: string) {
     id,
     front: `Front ${id}`,
     back: `Back ${id}`,
-    notes: null,
+    frontNotes: null, backNotes: null,
     status: "new" as const,
     dueAt: new Date().toISOString(),
   };

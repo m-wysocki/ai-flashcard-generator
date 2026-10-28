@@ -1,11 +1,16 @@
-import { Check, Info, Plus } from "lucide-react";
+import { Check, Info, Lightbulb, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ShadowFrame } from "@/components/ui/ShadowFrame/ShadowFrame";
 import { SpeakButton } from "@/components/ui/SpeakButton";
 import { cn } from "@/lib/cn";
 
-type Example = { english: string; polish: string; note: string | null };
+type Example = {
+  english: string;
+  polish: string;
+  frontNote: string | null;
+  backNote: string | null;
+};
 
 type GeneratedExamplesListProps = {
   examples: Example[];
@@ -34,6 +39,8 @@ export function GeneratedExamplesList({
     <ul data-ui="GeneratedExamplesList" className="grid gap-3">
       {examples.map((example, index) => {
         const saved = savedIndices.has(index);
+        const frontNote = example.frontNote ?? null;
+        const backNote = example.backNote ?? null;
 
         return (
           <ShadowFrame
@@ -47,7 +54,19 @@ export function GeneratedExamplesList({
               <SpeakButton text={example.english} label={playLabel} className="h-5 w-5 align-middle" />
             </p>
 
-            {example.note ? (
+            {frontNote ? (
+              <p
+                className={cn(
+                  "flex items-start gap-1.5 text-xs",
+                  "text-[var(--color-muted)]",
+                )}
+              >
+                <Lightbulb size={12} className="mt-0.5 shrink-0" aria-hidden />
+                {frontNote}
+              </p>
+            ) : null}
+
+            {backNote ? (
               <p
                 className={cn(
                   "flex items-start gap-1.5 text-xs",
@@ -55,7 +74,7 @@ export function GeneratedExamplesList({
                 )}
               >
                 <Info size={12} className="mt-0.5 shrink-0" aria-hidden />
-                {example.note}
+                {backNote}
               </p>
             ) : null}
 

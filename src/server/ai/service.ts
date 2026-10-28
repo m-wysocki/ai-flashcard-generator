@@ -19,7 +19,8 @@ const materialSchema = z.object({
     z.object({
       english: z.string().trim().min(1),
       polish: z.string().trim().min(1),
-      note: z.string().trim().max(600).nullable().optional(),
+      frontNote: z.string().trim().max(600).nullable().optional(),
+      backNote: z.string().trim().max(600).nullable().optional(),
     }),
   ),
   notes: z.string().trim().max(1200).nullable().optional(),
@@ -30,7 +31,12 @@ export type LearningMaterial = {
   detectedLanguage: "POLISH" | "ENGLISH";
   translations: string[];
   meanings: string[];
-  examples: Array<{ english: string; polish: string; note: string | null }>;
+  examples: Array<{
+    english: string;
+    polish: string;
+    frontNote: string | null;
+    backNote: string | null;
+  }>;
   notes: string | null;
 };
 
@@ -173,11 +179,24 @@ function normalizeMaterial(material: z.infer<typeof materialSchema>): LearningMa
     detectedLanguage: material.detectedLanguage,
     translations: material.translations ?? [],
     meanings: material.meanings ?? [],
-    examples: material.examples.map((e) => ({
-      english: e.english,
-      polish: e.polish,
-      note: e.note ?? null,
-    })),
+    examples: material.examples.map((e) => {
+      const frontNote = cleanNote(e.frontNote);
+      const backNote = cleanNote(e.backNote);
+      return {
+        english: e.english,
+        polish: e.polish,
+        frontNote,
+        backNote,
+      };
+    }),
     notes: material.notes ?? null,
   };
+}
+
+function cleanNote(value: string | null | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }

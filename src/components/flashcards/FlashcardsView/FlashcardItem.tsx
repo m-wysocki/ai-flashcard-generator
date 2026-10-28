@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Info, MoreHorizontal, RefreshCw } from "lucide-react";
+import { Info, Lightbulb, MoreHorizontal, RefreshCw } from "lucide-react";
 import { appCopy } from "@/content/app-copy";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/Badge/Badge";
@@ -52,6 +52,8 @@ export function FlashcardItem({
   };
 
   const dueLabel = formatDueAt(new Date(flashcard.dueAt), new Date());
+  const frontNote = flashcard.frontNotes;
+  const backNote = flashcard.backNotes;
 
   const openEdit = useCallback(() => setOpenDialog("edit"), []);
   const openDelete = useCallback(() => setOpenDialog("delete"), []);
@@ -102,10 +104,16 @@ export function FlashcardItem({
               {flashcard.back}{" "}
               <SpeakButton text={flashcard.back} label={playbackLabel} className="h-5 w-5 align-middle" />
             </p>
-            {flashcard.notes ? (
+            {frontNote ? (
+              <p className="mt-1 flex items-start gap-1 text-xs text-[var(--color-muted)]">
+                <Lightbulb size={12} className="mt-0.5 shrink-0" />
+                {frontNote}
+              </p>
+            ) : null}
+            {backNote ? (
               <p className="mt-1 flex items-start gap-1 text-xs text-[var(--color-muted)]">
                 <Info size={12} className="mt-0.5 shrink-0" />
-                {flashcard.notes}
+                {backNote}
               </p>
             ) : null}
             {dueLabel !== "teraz" ? (
@@ -140,7 +148,8 @@ export function FlashcardItem({
           const previous = {
             front: flashcard.front,
             back: flashcard.back,
-            notes: flashcard.notes,
+            frontNotes: flashcard.frontNotes,
+            backNotes: flashcard.backNotes,
           };
           refresh();
           onNotify?.(copy.toastUpdated, {
@@ -151,7 +160,8 @@ export function FlashcardItem({
                 formData.set("flashcardId", flashcard.id);
                 formData.set("front", previous.front);
                 formData.set("back", previous.back);
-                formData.set("notes", previous.notes ?? "");
+                formData.set("frontNotes", previous.frontNotes ?? "");
+                formData.set("backNotes", previous.backNotes ?? "");
                 const result = await updateFlashcardAction(formData);
                 if (result.ok) {
                   refresh();
