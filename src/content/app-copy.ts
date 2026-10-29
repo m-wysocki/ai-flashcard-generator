@@ -96,7 +96,6 @@ type AppCopy = {
     useAsFlashcard: string;
   };
   review: {
-    done: string;
     backToFlashcards: string;
     dueToday: string;
     allCards: string;
@@ -112,18 +111,13 @@ type AppCopy = {
     playback: string;
     editCard: string;
     deleteCard: string;
-    batchDoneTitle: string;
-    batchCompletedPrefix: string;
     batchCompletedCards: string;
     batchRemainingPrefix: string;
-    batchRemainingCards: string;
     batchContinue: string;
     batchProgress: string;
     sessionMasteredPrefix: string;
     sessionMasteredCards: string;
     sessionCelebration: string;
-    sessionTimeToday: string;
-    sessionTimeAverage: string;
     sessionRefilledPrefix: string;
     sessionRefilledCards: string;
     sessionRefilledZero: string;
@@ -246,7 +240,6 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       useAsFlashcard: "Dodaj jako fiszkę",
     },
     review: {
-      done: "To wszystko na teraz.",
       backToFlashcards: "Wróć do Fiszek",
       dueToday: "Do powtórki dzisiaj",
       allCards: "Wszystkie fiszki",
@@ -262,18 +255,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       playback: "Odtwórz wymowę",
       editCard: "Edytuj fiszkę",
       deleteCard: "Usuń fiszkę",
-      batchDoneTitle: "Gotowe!",
-      batchCompletedPrefix: "Zrobiłeś",
       batchCompletedCards: "fiszek",
       batchRemainingPrefix: "Zostało jeszcze",
-      batchRemainingCards: "kart do powtórki",
       batchContinue: "Zrób kolejne",
       batchProgress: "Partia",
       sessionMasteredPrefix: "Opanowałeś",
       sessionMasteredCards: "fiszek",
       sessionCelebration: "Dobra robota — każda powtórka się liczy!",
-      sessionTimeToday: "Dziś",
-      sessionTimeAverage: "Średnio",
       sessionRefilledPrefix: "Nowe z Inboxa:",
       sessionRefilledCards: "fiszki",
       sessionRefilledZero: "Brak nowych fiszek z Inboxa.",
@@ -394,7 +382,6 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       useAsFlashcard: "Add as flashcard",
     },
     review: {
-      done: "That's all for now.",
       backToFlashcards: "Back to Flashcards",
       dueToday: "Due today",
       allCards: "All cards",
@@ -410,18 +397,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       playback: "Play pronunciation",
       editCard: "Edit flashcard",
       deleteCard: "Delete flashcard",
-      batchDoneTitle: "Done!",
-      batchCompletedPrefix: "You completed",
       batchCompletedCards: "flashcards",
       batchRemainingPrefix: "Still",
-      batchRemainingCards: "cards left",
       batchContinue: "Do next",
       batchProgress: "Batch",
       sessionMasteredPrefix: "You mastered",
       sessionMasteredCards: "flashcards",
       sessionCelebration: "Well done — every review counts!",
-      sessionTimeToday: "Today",
-      sessionTimeAverage: "Average",
       sessionRefilledPrefix: "New from Inbox:",
       sessionRefilledCards: "flashcards",
       sessionRefilledZero: "No new flashcards from Inbox.",

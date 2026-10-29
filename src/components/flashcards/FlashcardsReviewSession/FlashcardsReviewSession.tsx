@@ -155,7 +155,7 @@ function SessionSuccessScreen({
 }) {
   const hasMore = remaining != null && remaining > 0 && nextBatchSize != null;
   const masteredPositive = masteredCount > 0;
-  const inboxPositive = sessionRefilled === 0;
+  const inboxEmpty = sessionRefilled === 0;
   return (
     <main
       data-ui="FlashcardsReviewSession"
@@ -200,7 +200,7 @@ function SessionSuccessScreen({
         </p>
       </ShadowFrame>
 
-      {timeStats !== null ? (
+      {timeStats ? (
         <SessionTimeStats
           lastSec={timeStats.lastSec}
           todaySec={timeStats.todaySec}
@@ -236,7 +236,7 @@ function SessionSuccessScreen({
           <span
             className={cn(
               "flex size-[38px] shrink-0 items-center justify-center rounded-full border-2 border-black bg-[var(--color-surface-raised)]",
-              inboxPositive && "bg-[var(--color-secondary)]",
+              inboxEmpty && "bg-[var(--color-secondary)]",
             )}
           >
             <Inbox size={18} aria-hidden className="text-[var(--color-text)]" />
