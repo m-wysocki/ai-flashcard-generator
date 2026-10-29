@@ -127,6 +127,23 @@ type AppCopy = {
     sessionRefilledPrefix: string;
     sessionRefilledCards: string;
     sessionRefilledZero: string;
+    successEyebrow: string;
+    successBatchTitle: string;
+    successBatchAllDoneTitle: string;
+    successSessionTitle: string;
+    successHeroSuffix: string;
+    successTimeTitle: string;
+    successTimeThisSession: string;
+    successTimeTodayTotal: string;
+    successTimeAverageSession: string;
+    successTimeNote: string;
+    successMasteredZeroTitle: string;
+    successMasteredZeroSubtitle: string;
+    successInboxEmptyTitle: string;
+    successInboxEmptySubtitle: string;
+    successBatchRemainingCardsShort: string;
+    successBatchRemainingSuffix: string;
+    successAllDoneTagline: string;
   };
 };
 
@@ -260,6 +277,23 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionRefilledPrefix: "Nowe z Inboxa:",
       sessionRefilledCards: "fiszki",
       sessionRefilledZero: "Brak nowych fiszek z Inboxa.",
+      successEyebrow: "POWTÓRKA UKOŃCZONA",
+      successBatchTitle: "Partia zaliczona!",
+      successBatchAllDoneTitle: "Wszystko powtórzone!",
+      successSessionTitle: "Sesja zaliczona!",
+      successHeroSuffix: "za Tobą",
+      successTimeTitle: "Czas nauki",
+      successTimeThisSession: "TA SESJA",
+      successTimeTodayTotal: "DZIŚ ŁĄCZNIE",
+      successTimeAverageSession: "ŚREDNIA SESJA",
+      successTimeNote: "Czas od pierwszej karty do tego ekranu.",
+      successMasteredZeroTitle: "Bez nowych opanowanych",
+      successMasteredZeroSubtitle: "Każda powtórka wzmacnia pamięć",
+      successInboxEmptyTitle: "Inbox pusty",
+      successInboxEmptySubtitle: "Nic nie czeka — czysta głowa",
+      successBatchRemainingCardsShort: "kart",
+      successBatchRemainingSuffix: "— jesteś na fali",
+      successAllDoneTagline: "Wszystko powtórzone — zasłużona przerwa.",
     },
   },
   en: {
@@ -391,6 +425,23 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionRefilledPrefix: "New from Inbox:",
       sessionRefilledCards: "flashcards",
       sessionRefilledZero: "No new flashcards from Inbox.",
+      successEyebrow: "REVIEW COMPLETE",
+      successBatchTitle: "Batch crushed!",
+      successBatchAllDoneTitle: "All caught up!",
+      successSessionTitle: "Session complete!",
+      successHeroSuffix: "behind you",
+      successTimeTitle: "Study time",
+      successTimeThisSession: "THIS SESSION",
+      successTimeTodayTotal: "TODAY TOTAL",
+      successTimeAverageSession: "AVG SESSION",
+      successTimeNote: "Time from the first card to this screen.",
+      successMasteredZeroTitle: "No new masteries",
+      successMasteredZeroSubtitle: "Every review strengthens memory",
+      successInboxEmptyTitle: "Inbox clear",
+      successInboxEmptySubtitle: "Nothing waiting — clear mind",
+      successBatchRemainingCardsShort: "cards",
+      successBatchRemainingSuffix: "— you're on a roll",
+      successAllDoneTagline: "All caught up — well-earned break.",
     },
   },
 };

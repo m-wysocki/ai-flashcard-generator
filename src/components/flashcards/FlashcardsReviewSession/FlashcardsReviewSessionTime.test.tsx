@@ -43,14 +43,19 @@ async function completeOneCard({
   fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
   fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
   if (elapsedMs !== undefined) nowSpy.mockReturnValue(start + elapsedMs);
-  await screen.findByText(batchMode ? "Gotowe!" : "To wszystko na teraz.");
+  if (batchMode) {
+    const remaining = Math.max(0, batchMode.totalDueCount - batchMode.batchSize);
+    await screen.findByText(remaining > 0 ? "Partia zaliczona!" : "Wszystko powtórzone!");
+  } else {
+    await screen.findByText("Sesja zaliczona!");
+  }
   return view;
 }
 
 describe("FlashcardsReviewSession session time (ticket 08)", () => {
-  it("records a completed batch session and shows the Today/Average line", async () => {
+  it("records a completed batch session and shows the three time stats", async () => {
     await completeOneCard({
-      batchMode: { batchSize: 5, totalDueCount: 5 },
+      batchMode: { batchSize: 5, totalDueCount: 50 },
       elapsedMs: 5_000,
     });
 
@@ -60,18 +65,21 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
     expect(stored).toHaveLength(1);
     expect(stored[0].durationSec).toBe(5);
 
+    expect(await screen.findByText("TA SESJA")).toBeInTheDocument();
+    expect(screen.getByText("DZIŚ ŁĄCZNIE")).toBeInTheDocument();
+    expect(screen.getByText("ŚREDNIA SESJA")).toBeInTheDocument();
     expect(
-      await screen.findByText(/Dziś: \d+:\d\d · Średnio: \d+:\d\d/),
+      screen.getByText("Czas od pierwszej karty do tego ekranu."),
     ).toBeInTheDocument();
   });
 
-  it("shows the Today/Average line on the non-batch success screen too", async () => {
+  it("shows the three time stats on the non-batch success screen too", async () => {
     await completeOneCard({ elapsedMs: 5_000 });
 
     expect(window.localStorage.getItem(SESSION_TIME_STORAGE_KEY)).not.toBeNull();
-    expect(
-      await screen.findByText(/Dziś: \d+:\d\d · Średnio: \d+:\d\d/),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("TA SESJA")).toBeInTheDocument();
+    expect(screen.getByText("DZIŚ ŁĄCZNIE")).toBeInTheDocument();
+    expect(screen.getByText("ŚREDNIA SESJA")).toBeInTheDocument();
   });
 
   it("measures wall-clock time from mount to success screen", async () => {
@@ -82,7 +90,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
       <FlashcardsReviewSession
         initialCards={oneCard}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
-        batchMode={{ batchSize: 5, totalDueCount: 5 }}
+        batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
       />,
@@ -93,8 +101,11 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
-    await screen.findByText("Gotowe!");
-    expect(await screen.findByText("Dziś: 4:37 · Średnio: 4:37")).toBeInTheDocument();
+    await screen.findByText("Partia zaliczona!");
+    // This session is the hero stat; today total and average match for a first session.
+    expect(await screen.findByText("TA SESJA")).toBeInTheDocument();
+    const heroValues = screen.getAllByText("4:37");
+    expect(heroValues.length).toBeGreaterThanOrEqual(3);
   });
 
   it("accumulates Today across sessions and averages all entries", async () => {
@@ -107,7 +118,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
       <FlashcardsReviewSession
         initialCards={oneCard}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
-        batchMode={{ batchSize: 5, totalDueCount: 5 }}
+        batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={firstGrade}
         updateAction={updateAction} deleteAction={deleteAction}
       />,
@@ -115,7 +126,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
     nowSpy.mockReturnValue(start + 60_000);
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
-    await screen.findByText("Gotowe!");
+    await screen.findByText("Partia zaliczona!");
     first.unmount();
 
     // Session 2 mounts at start+60s, completes at start+180s → 120 s session.
@@ -125,7 +136,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
       <FlashcardsReviewSession
         initialCards={oneCard}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
-        batchMode={{ batchSize: 5, totalDueCount: 5 }}
+        batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
       />,
@@ -133,10 +144,13 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
     nowSpy.mockReturnValue(start + 180_000);
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
-    await screen.findByText("Gotowe!");
+    await screen.findByText("Partia zaliczona!");
 
-    // Today = 60 + 120 = 3:00, Average = (60 + 120) / 2 = 1:30.
-    expect(await screen.findByText("Dziś: 3:00 · Średnio: 1:30")).toBeInTheDocument();
+    // This session = 2:00, Today = 60 + 120 = 3:00, Average = (60 + 120) / 2 = 1:30.
+    expect(await screen.findByText("TA SESJA")).toBeInTheDocument();
+    expect(screen.getByText("2:00")).toBeInTheDocument();
+    expect(screen.getByText("3:00")).toBeInTheDocument();
+    expect(screen.getByText("1:30")).toBeInTheDocument();
   });
 
   it("ignores a micro-session (<1 s) without breaking the success screen", async () => {
@@ -147,7 +161,7 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
       <FlashcardsReviewSession
         initialCards={oneCard}
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
-        batchMode={{ batchSize: 5, totalDueCount: 5 }}
+        batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
       />,
@@ -158,9 +172,11 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
-    await screen.findByText("Gotowe!");
+    await screen.findByText("Partia zaliczona!");
     expect(window.localStorage.getItem(SESSION_TIME_STORAGE_KEY)).toBeNull();
-    expect(await screen.findByText("Dziś: 0:00 · Średnio: 0:00")).toBeInTheDocument();
+    await screen.findByText("TA SESJA");
+    const zeroValues = screen.getAllByText("0:00");
+    expect(zeroValues.length).toBeGreaterThanOrEqual(3);
   });
 
   it("does not record time when the session is interrupted via Zakończ", async () => {

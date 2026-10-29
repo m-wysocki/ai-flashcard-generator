@@ -51,7 +51,7 @@ describe("FlashcardsReviewSession", () => {
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
     await waitFor(() => expect(gradeAction).toHaveBeenCalledTimes(2));
-    await screen.findByText("To wszystko na teraz.");
+    await screen.findByText("Sesja zaliczona!");
   });
 
   it("shows frontNotes before reveal but hides backNotes until reveal (anti-spoiler)", () => {
@@ -100,7 +100,7 @@ describe("FlashcardsReviewSession", () => {
     if (resolveGrade) {
       resolveGrade({ ok: true, shouldRequeue: false });
     }
-    await screen.findByText("To wszystko na teraz.");
+    await screen.findByText("Sesja zaliczona!");
   });
 
   it("dueToday decrements on non-Again grade and stays unchanged on Again", async () => {
@@ -162,7 +162,7 @@ describe("FlashcardsReviewSession", () => {
     // Grade second card — session ends; done screen has no stats header
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
     fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
-    await screen.findByText("To wszystko na teraz.");
+    await screen.findByText("Sesja zaliczona!");
   });
 
   it("reviewedToday does not increment on Again grade", async () => {
@@ -337,8 +337,8 @@ describe("FlashcardsReviewSession", () => {
       fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
       fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
-      await screen.findByText("Gotowe!");
-      expect(screen.queryByText("To wszystko na teraz.")).not.toBeInTheDocument();
+      await screen.findByText("Partia zaliczona!");
+      expect(screen.queryByText("Sesja zaliczona!")).not.toBeInTheDocument();
     });
 
     it("shows completed count and remaining count on batch done screen", async () => {
@@ -357,10 +357,12 @@ describe("FlashcardsReviewSession", () => {
       fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
       fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
-      // "Zrobiłeś 10 fiszek"
-      await screen.findByText(/Zrobiłeś 10 fiszek/);
-      // "Zostało jeszcze 46 kart do powtórki"
-      expect(screen.getByText(/Zostało jeszcze 46 kart do powtórki/)).toBeInTheDocument();
+      // hero count "10 fiszek za Tobą"
+      await screen.findByText(/10 fiszek/);
+      expect(screen.getByText(/za Tobą/)).toBeInTheDocument();
+      // batch banner "Zostało jeszcze 46 kart — jesteś na fali"
+      expect(screen.getByText(/Zostało jeszcze 46 kart/)).toBeInTheDocument();
+      expect(screen.getByText(/jesteś na fali/)).toBeInTheDocument();
     });
 
     it("shows Zrób kolejne 10 button when remaining >= 10", async () => {
@@ -458,7 +460,7 @@ describe("FlashcardsReviewSession", () => {
       fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
       fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
-      await screen.findByText("Gotowe!");
+      await screen.findByText("Wszystko powtórzone!");
       expect(screen.queryByRole("button", { name: /Zrób kolejne/i })).not.toBeInTheDocument();
     });
 
@@ -589,7 +591,7 @@ describe("FlashcardsReviewSession", () => {
       fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
       fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
-      await screen.findByText("Gotowe!");
+      await screen.findByText("Wszystko powtórzone!");
     }
 
     it("shows mastered count when a card crosses the mastery threshold", async () => {
@@ -609,7 +611,7 @@ describe("FlashcardsReviewSession", () => {
       await completeOneCardSession({ gradeAction });
 
       expect(screen.getByText(/Opanowałeś 1 fiszek/)).toBeInTheDocument();
-      expect(screen.queryByText(/każda powtórka się liczy/i)).not.toBeInTheDocument();
+      expect(screen.queryByText("Bez nowych opanowanych")).not.toBeInTheDocument();
     });
 
     it("shows celebration variant when nothing was mastered", async () => {
@@ -618,6 +620,7 @@ describe("FlashcardsReviewSession", () => {
       await completeOneCardSession({ gradeAction });
 
       expect(screen.getByText(/każda powtórka się liczy/i)).toBeInTheDocument();
+      expect(screen.getByText("Bez nowych opanowanych")).toBeInTheDocument();
       expect(screen.queryByText(/Opanowałeś/i)).not.toBeInTheDocument();
     });
 
@@ -650,6 +653,7 @@ describe("FlashcardsReviewSession", () => {
       });
 
       expect(screen.getByText(/każda powtórka się liczy/i)).toBeInTheDocument();
+      expect(screen.getByText("Bez nowych opanowanych")).toBeInTheDocument();
       expect(screen.queryByText(/Opanowałeś/i)).not.toBeInTheDocument();
     });
 
@@ -664,7 +668,7 @@ describe("FlashcardsReviewSession", () => {
 
       // 1 (session start) + 2 (grade) = 3
       expect(screen.getByText(/Nowe z Inboxa: 3 fiszki/)).toBeInTheDocument();
-      expect(screen.queryByText(/Brak nowych fiszek z Inboxa/i)).not.toBeInTheDocument();
+      expect(screen.queryByText("Inbox pusty")).not.toBeInTheDocument();
     });
 
     it("shows zero-refill variant when nothing came from Inbox", async () => {
@@ -672,7 +676,75 @@ describe("FlashcardsReviewSession", () => {
 
       await completeOneCardSession({ gradeAction });
 
-      expect(screen.getByText(/Brak nowych fiszek z Inboxa/i)).toBeInTheDocument();
+      expect(screen.getByText("Inbox pusty")).toBeInTheDocument();
+      expect(screen.getByText(/Nic nie czeka/)).toBeInTheDocument();
+    });
+
+    it("shows the hero eyebrow, title, count and tagline on the all-done screen", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      await completeOneCardSession({ gradeAction });
+
+      expect(screen.getByText("POWTÓRKA UKOŃCZONA")).toBeInTheDocument();
+      expect(screen.getByText("Wszystko powtórzone!")).toBeInTheDocument();
+      expect(screen.getByText(/5 fiszek/)).toBeInTheDocument();
+      expect(screen.getByText(/za Tobą/)).toBeInTheDocument();
+      expect(
+        screen.getByText("Wszystko powtórzone — zasłużona przerwa."),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(/jesteś na fali/),
+      ).not.toBeInTheDocument();
+    });
+
+    it("shows the batch banner and two buttons when cards remain", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
+          stats={{ dueToday: 10, totalCards: 56, reviewedToday: 0 }}
+          batchMode={{ batchSize: 10, totalDueCount: 56 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction} deleteAction={deleteAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Partia zaliczona!");
+      expect(screen.getByText("POWTÓRKA UKOŃCZONA")).toBeInTheDocument();
+      expect(screen.getByText(/Zostało jeszcze 46 kart/)).toBeInTheDocument();
+      expect(screen.getByText(/jesteś na fali/)).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Zrób kolejne 10" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Wróć do Fiszek" })).toBeInTheDocument();
+    });
+
+    it("shows the completed count on the non-batch success screen", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[
+            { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+            { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
+          ]}
+          stats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction} deleteAction={deleteAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+      await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Sesja zaliczona!");
+      expect(screen.getByText(/2 fiszek/)).toBeInTheDocument();
+      expect(screen.getByText(/za Tobą/)).toBeInTheDocument();
     });
 
     it("keeps back-to-flashcards and next-session buttons on the success screen", async () => {
@@ -691,7 +763,7 @@ describe("FlashcardsReviewSession", () => {
       fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
       fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
-      await screen.findByText("Gotowe!");
+      await screen.findByText("Partia zaliczona!");
       expect(
         screen.getByRole("button", { name: "Wróć do Fiszek" }),
       ).toBeInTheDocument();
@@ -762,7 +834,7 @@ describe("FlashcardsReviewSession", () => {
       await user.click(screen.getByRole("button", { name: "Usuń fiszkę" }));
       await user.click(await screen.findByRole("button", { name: "Usuń" }));
 
-      await screen.findByText("To wszystko na teraz.");
+      await screen.findByText("Sesja zaliczona!");
     });
 
     it("keeps the card and shows an error when delete fails", async () => {

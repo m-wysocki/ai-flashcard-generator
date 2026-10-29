@@ -35,6 +35,7 @@ describe("summarizeSessionTimes", () => {
       count: 0,
       todaySec: 0,
       averageSec: 0,
+      lastSec: 0,
     });
   });
 
@@ -51,6 +52,7 @@ describe("summarizeSessionTimes", () => {
       count: 3,
       todaySec: 589,
       averageSec: Math.round(1189 / 3),
+      lastSec: 277,
     });
   });
 
@@ -60,7 +62,7 @@ describe("summarizeSessionTimes", () => {
       [{ finishedAt: now, durationSec: 60 }, null, "x", {}] as never,
       now,
     );
-    expect(summary).toEqual({ count: 1, todaySec: 60, averageSec: 60 });
+    expect(summary).toEqual({ count: 1, todaySec: 60, averageSec: 60, lastSec: 60 });
   });
 });
 
@@ -71,6 +73,7 @@ describe("recordCompletedSession", () => {
     expect(summary.count).toBe(1);
     expect(summary.todaySec).toBe(277);
     expect(summary.averageSec).toBe(277);
+    expect(summary.lastSec).toBe(277);
 
     const stored = JSON.parse(
       window.localStorage.getItem(SESSION_TIME_STORAGE_KEY) ?? "[]",
@@ -99,12 +102,22 @@ describe("recordCompletedSession", () => {
   it("ignores micro-sessions below 1 s instead of storing a 0 s entry", () => {
     const now = Date.now();
     const summary = recordCompletedSession(0, now);
-    expect(summary).toEqual({ count: 0, todaySec: 0, averageSec: 0 });
+    expect(summary).toEqual({ count: 0, todaySec: 0, averageSec: 0, lastSec: 0 });
     expect(window.localStorage.getItem(SESSION_TIME_STORAGE_KEY)).toBeNull();
 
     const fractional = recordCompletedSession(0.4, now);
     expect(fractional.count).toBe(0);
+    expect(fractional.lastSec).toBe(0);
     expect(window.localStorage.getItem(SESSION_TIME_STORAGE_KEY)).toBeNull();
+  });
+
+  it("reports lastSec for the session that just finished", () => {
+    const now = Date.now();
+    recordCompletedSession(60, now - 1000);
+    const summary = recordCompletedSession(120, now);
+    expect(summary.lastSec).toBe(120);
+    expect(summary.count).toBe(2);
+    expect(summary.averageSec).toBe(90);
   });
 
   it("recovers from corrupted storage instead of throwing", () => {

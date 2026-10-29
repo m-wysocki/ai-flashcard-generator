@@ -14,6 +14,8 @@ export type SessionTimeSummary = {
   count: number;
   todaySec: number;
   averageSec: number;
+  /** Wall-clock length of the session that just finished. */
+  lastSec: number;
 };
 
 export function formatSessionDuration(totalSec: number): string {
@@ -74,10 +76,15 @@ export function summarizeSessionTimes(
     .filter((entry) => isSameLocalDay(entry.finishedAt, nowMs))
     .reduce((sum, entry) => sum + entry.durationSec, 0);
   const total = sane.reduce((sum, entry) => sum + entry.durationSec, 0);
+  const lastSec =
+    sane.length > 0
+      ? sane.reduce((a, b) => (b.finishedAt >= a.finishedAt ? b : a)).durationSec
+      : 0;
   return {
     count: sane.length,
     todaySec,
     averageSec: sane.length > 0 ? Math.round(total / sane.length) : 0,
+    lastSec,
   };
 }
 
@@ -94,11 +101,11 @@ export function recordCompletedSession(
   // Ignore micro-sessions (<1 s): a 0 s entry would only drag the average
   // down. The caller still shows the success screen normally.
   if (safeDuration < 1) {
-    return summarizeSessionTimes(loadSessionTimeEntries(), nowMs);
+    return { ...summarizeSessionTimes(loadSessionTimeEntries(), nowMs), lastSec: 0 };
   }
   const entries = loadSessionTimeEntries();
   entries.push({ finishedAt: nowMs, durationSec: safeDuration });
   const trimmed = entries.slice(-MAX_SESSION_TIME_ENTRIES);
   saveSessionTimeEntries(trimmed);
-  return summarizeSessionTimes(trimmed, nowMs);
+  return { ...summarizeSessionTimes(trimmed, nowMs), lastSec: safeDuration };
 }
