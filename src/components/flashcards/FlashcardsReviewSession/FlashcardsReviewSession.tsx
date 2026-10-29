@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { ReactNode } from "react";
 import {
   RotateCcw,
   Zap,
@@ -12,6 +11,9 @@ import {
   Pencil,
   Trash2,
   Lightbulb,
+  Trophy,
+  Inbox,
+  Timer,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
@@ -65,20 +67,75 @@ const GRADE_CONFIG = [
 type ReviewCopy = (typeof appCopy)["pl"]["review"];
 
 /**
- * Single success screen for both batch and non-batch session endings.
- * The mastered / refill / time-stats blocks render identically; only the
- * title, the batch progress line, and the continuation button vary.
- * Non-batch renders through the same component so both branches stay in
- * sync (and a non-batch ending with remaining cards would offer the same
- * next-session button instead of a dead end).
+ * Three-parameter time summary (Hero Celebration Card): this session is the
+ * hero (larger value), followed by today's total and the all-time average.
+ */
+function SessionTimeStats({
+  lastSec,
+  todaySec,
+  averageSec,
+  copy,
+}: {
+  lastSec: number;
+  todaySec: number;
+  averageSec: number;
+  copy: ReviewCopy;
+}) {
+  return (
+    <ShadowFrame
+      as="article"
+      aria-label={copy.successTimeTitle}
+      className="bg-[var(--color-surface-raised)] p-4"
+    >
+      <p className="m-0 mb-3 flex items-center gap-1.5 text-xs font-bold tracking-[0.06em] text-[var(--color-muted)] uppercase">
+        <Timer size={14} aria-hidden />
+        {copy.successTimeTitle}
+      </p>
+      <div className="grid grid-cols-[1.25fr_1fr_1fr]">
+        <div className="px-1 text-center sm:px-2.5">
+          <div className="text-[26px] leading-[30px] font-bold text-[var(--color-text)]">
+            {formatSessionDuration(lastSec)}
+          </div>
+          <div className="mt-0.5 text-[10px] font-bold tracking-[0.06em] whitespace-nowrap text-[var(--color-text)] uppercase sm:text-[11px]">
+            {copy.successTimeThisSession}
+          </div>
+        </div>
+        <div className="border-l-2 border-black/10 px-1 text-center sm:px-2.5">
+          <div className="text-lg leading-6 font-bold text-[var(--color-text)]">
+            {formatSessionDuration(todaySec)}
+          </div>
+          <div className="mt-0.5 text-[10px] font-bold tracking-[0.06em] whitespace-nowrap text-[var(--color-muted)] uppercase sm:text-[11px]">
+            {copy.successTimeTodayTotal}
+          </div>
+        </div>
+        <div className="border-l-2 border-black/10 px-1 text-center sm:px-2.5">
+          <div className="text-lg leading-6 font-bold text-[var(--color-text)]">
+            {formatSessionDuration(averageSec)}
+          </div>
+          <div className="mt-0.5 text-[10px] font-bold tracking-[0.06em] whitespace-nowrap text-[var(--color-muted)] uppercase sm:text-[11px]">
+            {copy.successTimeAverageSession}
+          </div>
+        </div>
+      </div>
+      <p className="m-0 mt-2.5 text-center text-xs font-medium text-[var(--color-muted)]">
+        {copy.successTimeNote}
+      </p>
+    </ShadowFrame>
+  );
+}
+
+/**
+ * Hero Celebration Card success screen (mockup A) for both batch and
+ * non-batch session endings. The mastered / refill / time-stats blocks
+ * render identically; only the title, the hero count, the batch banner,
+ * and the continuation buttons vary.
  */
 function SessionSuccessScreen({
   title,
-  titleLarge,
-  completedLine,
+  completedCount,
   masteredCount,
   sessionRefilled,
-  timeStatsLine,
+  timeStats,
   copy,
   remaining,
   nextBatchSize,
@@ -86,11 +143,10 @@ function SessionSuccessScreen({
   onBack,
 }: {
   title: string;
-  titleLarge?: boolean;
-  completedLine?: ReactNode;
+  completedCount: number;
   masteredCount: number;
   sessionRefilled: number;
-  timeStatsLine: ReactNode;
+  timeStats: { lastSec: number; todaySec: number; averageSec: number } | null;
   copy: ReviewCopy;
   remaining?: number;
   nextBatchSize?: number;
@@ -98,59 +154,148 @@ function SessionSuccessScreen({
   onBack: () => void;
 }) {
   const hasMore = remaining != null && remaining > 0 && nextBatchSize != null;
+  const masteredPositive = masteredCount > 0;
+  const inboxEmpty = sessionRefilled === 0;
   return (
     <main
       data-ui="FlashcardsReviewSession"
       className={cn(
         "mx-auto grid min-h-dvh w-full max-w-3xl",
         // iOS PWA: keep content below the status-bar / Liquid Glass blur.
-        "content-start gap-4 bg-[var(--color-background)] p-4 pt-[calc(1rem+env(safe-area-inset-top))]",
+        "content-start gap-5 bg-[var(--color-background)] p-4 pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))]",
       )}
     >
-      <p
-        className={
-          titleLarge
-            ? "m-0 text-2xl font-bold text-[var(--color-text)]"
-            : "m-0 text-lg text-[var(--color-text)]"
-        }
+      <div className="flex justify-center">
+        <span className="inline-flex items-center gap-1.5 rounded-full border-2 border-black bg-[var(--color-secondary)] px-3.5 py-1.5 text-xs font-bold tracking-[0.08em] text-[var(--color-text)] shadow-[var(--shadow-offset)]">
+          {copy.successEyebrow}
+        </span>
+      </div>
+
+      <ShadowFrame
+        as="article"
+        className="relative grid justify-items-center gap-2.5 overflow-hidden p-7 text-center"
       >
-        {title}
-      </p>
-      {completedLine}
-      {masteredCount > 0 ? (
-        <p className="m-0 text-lg text-[var(--color-text)]">
-          {copy.sessionMasteredPrefix} {masteredCount} {copy.sessionMasteredCards}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-6 -right-6 size-28 rounded-full border-2 border-black bg-[var(--color-secondary)] opacity-35"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-7 -left-7 size-24 rounded-full border-2 border-black bg-[var(--color-primary)] opacity-25"
+        />
+        <div className="relative z-[1] flex size-[72px] -rotate-6 items-center justify-center rounded-full border-2 border-black bg-[var(--color-secondary)] shadow-[var(--shadow-offset)]">
+          <Trophy size={32} aria-hidden className="text-[var(--color-text)]" />
+        </div>
+        <h1 className="relative z-[1] m-0 text-[28px] leading-[34px] font-bold tracking-[-0.01em] text-[var(--color-text)]">
+          {title}
+        </h1>
+        <p className="relative z-[1] m-0 text-lg leading-[26px] font-semibold text-[var(--color-text)]">
+          <strong className="rounded-full border-2 border-black bg-[var(--color-secondary)] px-2.5 py-px font-bold">
+            {completedCount} {copy.batchCompletedCards}
+          </strong>{" "}
+          {copy.successHeroSuffix}
         </p>
-      ) : (
-        <p className="m-0 text-lg text-[var(--color-text)]">{copy.sessionCelebration}</p>
-      )}
-      {sessionRefilled > 0 ? (
-        <p className="m-0 text-sm text-[var(--color-muted)]">
-          {copy.sessionRefilledPrefix} {sessionRefilled} {copy.sessionRefilledCards}
+        <p className="relative z-[1] m-0 text-base leading-6 font-medium text-[var(--color-muted)]">
+          {copy.sessionCelebration}
         </p>
-      ) : (
-        <p className="m-0 text-sm text-[var(--color-muted)]">
-          {copy.sessionRefilledZero}
-        </p>
-      )}
-      {timeStatsLine}
-      {remaining != null && remaining > 0 ? (
-        <p className="m-0 text-sm text-[var(--color-muted)]">
-          {copy.batchRemainingPrefix} {remaining} {copy.batchRemainingCards}
-        </p>
+      </ShadowFrame>
+
+      {timeStats ? (
+        <SessionTimeStats
+          lastSec={timeStats.lastSec}
+          todaySec={timeStats.todaySec}
+          averageSec={timeStats.averageSec}
+          copy={copy}
+        />
       ) : null}
+
+      <div className="grid gap-2.5">
+        <div className="flex items-center gap-3 rounded-xl border-2 border-black bg-[var(--color-surface)] p-3">
+          <span
+            className={cn(
+              "flex size-[38px] shrink-0 items-center justify-center rounded-full border-2 border-black bg-[var(--color-surface-raised)]",
+              masteredPositive && "bg-[var(--color-secondary)]",
+            )}
+          >
+            <Star size={18} aria-hidden className="text-[var(--color-text)]" />
+          </span>
+          {masteredPositive ? (
+            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
+              {copy.sessionMasteredPrefix} {masteredCount} {copy.sessionMasteredCards}
+            </p>
+          ) : (
+            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
+              {copy.successMasteredZeroTitle}
+              <small className="block text-[13px] font-medium text-[var(--color-muted)]">
+                {copy.successMasteredZeroSubtitle}
+              </small>
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border-2 border-black bg-[var(--color-surface)] p-3">
+          <span
+            className={cn(
+              "flex size-[38px] shrink-0 items-center justify-center rounded-full border-2 border-black bg-[var(--color-surface-raised)]",
+              inboxEmpty && "bg-[var(--color-secondary)]",
+            )}
+          >
+            <Inbox size={18} aria-hidden className="text-[var(--color-text)]" />
+          </span>
+          {sessionRefilled > 0 ? (
+            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
+              {copy.sessionRefilledPrefix} {sessionRefilled} {copy.sessionRefilledCards}
+            </p>
+          ) : (
+            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
+              {copy.successInboxEmptyTitle}
+              <small className="block text-[13px] font-medium text-[var(--color-muted)]">
+                {copy.successInboxEmptySubtitle}
+              </small>
+            </p>
+          )}
+        </div>
+      </div>
+
       {hasMore ? (
-        <Button type="button" color="primary" onClick={onContinue}>
-          {copy.batchContinue} {nextBatchSize}
-        </Button>
+        <ShadowFrame className="bg-[var(--color-secondary)] p-3 text-center text-[15px] font-semibold text-[var(--color-text)]">
+          {copy.batchRemainingPrefix} {remaining} {copy.successBatchRemainingCardsShort}{" "}
+          {copy.successBatchRemainingSuffix}
+        </ShadowFrame>
       ) : null}
-      <Button
-        type="button"
-        color={hasMore ? "ghost" : "primary"}
-        onClick={onBack}
-      >
-        {copy.backToFlashcards}
-      </Button>
+
+      <div className="grid gap-3">
+        {hasMore ? (
+          <>
+            <Button
+              type="button"
+              color="primary"
+              size="lg"
+              shape="pill"
+              onClick={onContinue}
+            >
+              {copy.batchContinue} {nextBatchSize}
+            </Button>
+            <Button type="button" color="ghost" size="lg" shape="pill" onClick={onBack}>
+              {copy.backToFlashcards}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              type="button"
+              color="primary"
+              size="lg"
+              shape="pill"
+              onClick={onBack}
+            >
+              {copy.backToFlashcards}
+            </Button>
+            <p className="m-0 text-center text-xs font-medium text-[var(--color-muted)]">
+              {copy.successAllDoneTagline}
+            </p>
+          </>
+        )}
+      </div>
     </main>
   );
 }
@@ -184,6 +329,7 @@ export function FlashcardsReviewSession({
   const [sessionStart] = useState(() => Date.now());
   const sessionRecordedRef = useRef(false);
   const [timeStats, setTimeStats] = useState<{
+    lastSec: number;
     todaySec: number;
     averageSec: number;
   } | null>(null);
@@ -196,16 +342,12 @@ export function FlashcardsReviewSession({
     const nowMs = Date.now();
     const durationSec = Math.max(0, Math.round((nowMs - sessionStart) / 1000));
     const summary = recordCompletedSession(durationSec, nowMs);
-    setTimeStats({ todaySec: summary.todaySec, averageSec: summary.averageSec });
+    setTimeStats({
+      lastSec: summary.lastSec,
+      todaySec: summary.todaySec,
+      averageSec: summary.averageSec,
+    });
   }, [finished, sessionStart]);
-
-  const timeStatsLine =
-    timeStats !== null ? (
-      <p className="m-0 text-sm text-[var(--color-muted)]">
-        {copy.sessionTimeToday}: {formatSessionDuration(timeStats.todaySec)} ·{" "}
-        {copy.sessionTimeAverage}: {formatSessionDuration(timeStats.averageSec)}
-      </p>
-    ) : null;
 
   if (!current) {
     if (batchMode) {
@@ -219,16 +361,11 @@ export function FlashcardsReviewSession({
 
       return (
         <SessionSuccessScreen
-          title={copy.batchDoneTitle}
-          titleLarge
-          completedLine={
-            <p className="m-0 text-lg text-[var(--color-text)]">
-              {copy.batchCompletedPrefix} {batchMode.batchSize} {copy.batchCompletedCards}
-            </p>
-          }
+          title={remaining > 0 ? copy.successBatchTitle : copy.successBatchAllDoneTitle}
+          completedCount={batchMode.batchSize}
           masteredCount={masteredCount}
           sessionRefilled={sessionRefilled}
-          timeStatsLine={timeStatsLine}
+          timeStats={timeStats}
           copy={copy}
           remaining={remaining}
           nextBatchSize={nextBatchSize}
@@ -240,10 +377,11 @@ export function FlashcardsReviewSession({
 
     return (
       <SessionSuccessScreen
-        title={copy.done}
+        title={copy.successSessionTitle}
+        completedCount={initialCards.length}
         masteredCount={masteredCount}
         sessionRefilled={sessionRefilled}
-        timeStatsLine={timeStatsLine}
+        timeStats={timeStats}
         copy={copy}
         onBack={() => navigate("/app/flashcards")}
       />
