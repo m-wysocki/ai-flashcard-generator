@@ -41,10 +41,13 @@ type AppCopy = {
   };
   flashcards: {
     statsDueToday: string;
+    statsNew: string;
     statsAll: string;
     statsReviewedToday: string;
     tabsLabel: string;
     tabDue: string;
+    tabLearning: string;
+    tabNew: string;
     tabInbox: string;
     tabMastered: string;
     tabAdd: string;
@@ -55,6 +58,8 @@ type AppCopy = {
     sessionModeShort: string;
     sessionModeStandard: string;
     noDueCards: string;
+    noLearningCards: string;
+    noNewCards: string;
     noCards: string;
     noInboxCards: string;
     noMasteredCards: string;
@@ -82,6 +87,7 @@ type AppCopy = {
     inboxActivating: string;
     inboxLimitReached: string;
     toastCreated: string;
+    toastInboxCreated: string;
     toastUpdated: string;
     toastUndone: string;
     toastDeleted: string;
@@ -111,16 +117,10 @@ type AppCopy = {
     playback: string;
     editCard: string;
     deleteCard: string;
-    batchCompletedCards: string;
     batchRemainingPrefix: string;
     batchContinue: string;
     batchProgress: string;
-    sessionMasteredPrefix: string;
-    sessionMasteredCards: string;
     sessionCelebration: string;
-    sessionRefilledPrefix: string;
-    sessionRefilledCards: string;
-    sessionRefilledZero: string;
     successEyebrow: string;
     successBatchTitle: string;
     successBatchAllDoneTitle: string;
@@ -131,11 +131,12 @@ type AppCopy = {
     successTimeTodayTotal: string;
     successTimeAverageSession: string;
     successTimeNote: string;
-    successMasteredZeroTitle: string;
-    successMasteredZeroSubtitle: string;
+    successReviewedTodayPrefix: string;
+    successReviewedTodaySubtitle: string;
+    successInboxRemainingPrefix: string;
+    successInboxRefilledNote: string;
     successInboxEmptyTitle: string;
     successInboxEmptySubtitle: string;
-    successBatchRemainingCardsShort: string;
     successBatchRemainingSuffix: string;
     successAllDoneTagline: string;
   };
@@ -183,10 +184,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     flashcards: {
       statsDueToday: "do powtórki",
+      statsNew: "nowe",
       statsAll: "wszystkich",
       statsReviewedToday: "powtórzonych",
       tabsLabel: "Karty fiszek",
       tabDue: "Do powtórki",
+      tabLearning: "W trakcie nauki",
+      tabNew: "Nowa",
       tabInbox: "Inbox",
       tabMastered: "Opanowane",
       tabAdd: "Dodaj",
@@ -197,7 +201,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionModeShort: "5 fiszek (~2–3 min)",
       sessionModeStandard: "10 fiszek (~5 min)",
       noDueCards:
-        "Brak fiszek do powtórki. Trafiają tu wszystkie aktywne karty poza opanowanymi — powtarzaj dalej, a lista sama urośnie.",
+        "Brak fiszek do powtórki. Trafiają tu tylko karty z terminem powtórki — powtarzaj dalej, a lista sama urośnie.",
+      noLearningCards:
+        "Brak fiszek w trakcie nauki. Trafiają tu karty, które już zacząłeś powtarzać, ale jeszcze nie opanowałeś — powtarzaj dalej, a lista sama urośnie.",
+      noNewCards:
+        "Brak nowych fiszek. Trafiają tu karty, których jeszcze nie zacząłeś powtarzać — dodaj coś do nauki, a zobaczysz je tutaj.",
       noCards: "Brak fiszek.",
       noInboxCards: "Brak fiszek w Inboxie. Nowe fiszki pojawią się tutaj.",
       noMasteredCards: "Brak opanowanych fiszek. Trafiają tu karty, które znasz już na tyle dobrze, że wypadły z powtórek — powtarzaj dalej, a lista sama urośnie.",
@@ -226,6 +234,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       inboxActivating: "Dodawanie...",
       inboxLimitReached: "Masz już 100 aktywnych fiszek — najpierw coś opanuj.",
     toastCreated: "Zapisano fiszkę.",
+    toastInboxCreated: "Zapisano do Inboxa.",
     toastUpdated: "Zapisano zmiany.",
     toastUndone: "Cofnięto zmianę.",
     toastDeleted: "Usunięto fiszkę.",
@@ -255,16 +264,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       playback: "Odtwórz wymowę",
       editCard: "Edytuj fiszkę",
       deleteCard: "Usuń fiszkę",
-      batchCompletedCards: "fiszek",
       batchRemainingPrefix: "Zostało jeszcze",
       batchContinue: "Zrób kolejne",
       batchProgress: "Partia",
-      sessionMasteredPrefix: "Opanowałeś",
-      sessionMasteredCards: "fiszek",
       sessionCelebration: "Dobra robota — każda powtórka się liczy!",
-      sessionRefilledPrefix: "Nowe z Inboxa:",
-      sessionRefilledCards: "fiszki",
-      sessionRefilledZero: "Brak nowych fiszek z Inboxa.",
       successEyebrow: "POWTÓRKA UKOŃCZONA",
       successBatchTitle: "Partia zaliczona!",
       successBatchAllDoneTitle: "Wszystko powtórzone!",
@@ -275,11 +278,12 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       successTimeTodayTotal: "DZIŚ ŁĄCZNIE",
       successTimeAverageSession: "ŚREDNIA SESJA",
       successTimeNote: "Czas od pierwszej karty do tego ekranu.",
-      successMasteredZeroTitle: "Bez nowych opanowanych",
-      successMasteredZeroSubtitle: "Każda powtórka wzmacnia pamięć",
+      successReviewedTodayPrefix: "Dziś powtórzone",
+      successReviewedTodaySubtitle: "Tak trzymaj - budujesz nawyk",
+      successInboxRemainingPrefix: "W Inboxie czeka",
+      successInboxRefilledNote: "Nowe w nauce",
       successInboxEmptyTitle: "Inbox pusty",
       successInboxEmptySubtitle: "Nic nie czeka — czysta głowa",
-      successBatchRemainingCardsShort: "kart",
       successBatchRemainingSuffix: "— jesteś na fali",
       successAllDoneTagline: "Wszystko powtórzone — zasłużona przerwa.",
     },
@@ -325,10 +329,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     flashcards: {
       statsDueToday: "due",
+      statsNew: "new",
       statsAll: "total",
       statsReviewedToday: "reviewed",
       tabsLabel: "Flashcards tabs",
       tabDue: "Due",
+      tabLearning: "Learning",
+      tabNew: "New",
       tabInbox: "Inbox",
       tabMastered: "Mastered",
       tabAdd: "Add",
@@ -339,7 +346,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionModeShort: "5 flashcards (~2–3 min)",
       sessionModeStandard: "10 flashcards (~5 min)",
       noDueCards:
-        "No cards due. All active cards except mastered ones land here — keep reviewing and this list will grow.",
+        "No cards due. Only cards with a review due land here — keep reviewing and this list will grow.",
+      noLearningCards:
+        "No cards in learning. Cards you have started reviewing but haven't mastered yet land here — keep reviewing and this list will grow.",
+      noNewCards:
+        "No new cards. Cards you haven't started reviewing yet land here — add something to study and you'll see it here.",
       noCards: "No flashcards yet.",
       noInboxCards: "No cards in Inbox. New flashcards will appear here.",
       noMasteredCards: "No mastered cards yet. Cards you know well enough to leave the review queue land here — keep reviewing and this list will grow.",
@@ -368,6 +379,7 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       inboxActivating: "Adding...",
       inboxLimitReached: "You already have 100 active flashcards — master something first.",
     toastCreated: "Flashcard saved.",
+    toastInboxCreated: "Flashcard saved to Inbox.",
     toastUpdated: "Changes saved.",
     toastUndone: "Change reverted.",
     toastDeleted: "Flashcard deleted.",
@@ -397,16 +409,10 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       playback: "Play pronunciation",
       editCard: "Edit flashcard",
       deleteCard: "Delete flashcard",
-      batchCompletedCards: "flashcards",
       batchRemainingPrefix: "Still",
       batchContinue: "Do next",
       batchProgress: "Batch",
-      sessionMasteredPrefix: "You mastered",
-      sessionMasteredCards: "flashcards",
       sessionCelebration: "Well done — every review counts!",
-      sessionRefilledPrefix: "New from Inbox:",
-      sessionRefilledCards: "flashcards",
-      sessionRefilledZero: "No new flashcards from Inbox.",
       successEyebrow: "REVIEW COMPLETE",
       successBatchTitle: "Batch crushed!",
       successBatchAllDoneTitle: "All caught up!",
@@ -417,11 +423,12 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       successTimeTodayTotal: "TODAY TOTAL",
       successTimeAverageSession: "AVG SESSION",
       successTimeNote: "Time from the first card to this screen.",
-      successMasteredZeroTitle: "No new masteries",
-      successMasteredZeroSubtitle: "Every review strengthens memory",
+      successReviewedTodayPrefix: "Reviewed today",
+      successReviewedTodaySubtitle: "Keep going - you're building a habit",
+      successInboxRemainingPrefix: "Waiting in Inbox",
+      successInboxRefilledNote: "Newly activated",
       successInboxEmptyTitle: "Inbox clear",
       successInboxEmptySubtitle: "Nothing waiting — clear mind",
-      successBatchRemainingCardsShort: "cards",
       successBatchRemainingSuffix: "— you're on a roll",
       successAllDoneTagline: "All caught up — well-earned break.",
     },

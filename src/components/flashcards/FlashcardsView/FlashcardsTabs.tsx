@@ -16,6 +16,8 @@ type FlashcardsTabsProps = {
   activeTab: FlashcardsTab;
   language: FlashcardsCopyLanguage;
   dueCount?: number;
+  learningCount?: number;
+  newCount?: number;
   inboxCount?: number;
   masteredCount?: number;
 };
@@ -24,6 +26,8 @@ export function FlashcardsTabs({
   activeTab,
   language,
   dueCount,
+  learningCount,
+  newCount,
   inboxCount,
   masteredCount,
 }: FlashcardsTabsProps) {
@@ -32,6 +36,8 @@ export function FlashcardsTabs({
 
   const tabs: { id: FlashcardsTab; label: string; count?: number }[] = [
     { id: "due", label: copy.tabDue, count: dueCount },
+    { id: "learning", label: copy.tabLearning, count: learningCount },
+    { id: "new", label: copy.tabNew, count: newCount },
     { id: "inbox", label: copy.tabInbox, count: inboxCount },
     { id: "mastered", label: copy.tabMastered, count: masteredCount },
   ];

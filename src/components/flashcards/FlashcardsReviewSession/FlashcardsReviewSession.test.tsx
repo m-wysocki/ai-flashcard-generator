@@ -39,7 +39,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -61,7 +62,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     expect(screen.getByText(/FRONT-HINT-123/)).toBeInTheDocument();
@@ -88,7 +90,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -119,7 +122,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     expect(screen.getByText("Do powtórki dzisiaj: 2")).toBeInTheDocument();
@@ -149,7 +153,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 2, totalCards: 10, reviewedToday: 3 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     expect(screen.getByText("Powtórzone dzisiaj: 3")).toBeInTheDocument();
@@ -180,7 +185,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 2, totalCards: 5, reviewedToday: 2 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     expect(screen.getByText("Powtórzone dzisiaj: 2")).toBeInTheDocument();
@@ -206,7 +212,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -233,7 +240,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={jest.fn()}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -280,7 +288,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -308,7 +317,8 @@ describe("FlashcardsReviewSession", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -331,6 +341,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -351,6 +362,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -375,6 +387,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -394,6 +407,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 14 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -414,6 +428,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 5, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -434,6 +449,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 5, totalDueCount: 8 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -454,6 +470,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 10 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -477,6 +494,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -496,6 +514,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -522,6 +541,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -539,6 +559,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 1, totalCards: 5, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -555,6 +576,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -570,21 +592,26 @@ describe("FlashcardsReviewSession", () => {
       gradeAction,
       batchMode = { batchSize: 5, totalDueCount: 5 },
       sessionStartRefilled,
+      inboxCount = 0,
+      reviewedTodayStart = 0,
       initialCards = [{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }],
     }: {
       gradeAction: jest.Mock;
       batchMode?: { batchSize: number; totalDueCount: number };
       sessionStartRefilled?: number;
+      inboxCount?: number;
+      reviewedTodayStart?: number;
       initialCards?: Array<{ id: string; front: string; back: string; frontNotes: null, backNotes: null }>;
     }) {
       render(
         <FlashcardsReviewSession
           initialCards={initialCards}
-          stats={{ dueToday: 5, totalCards: 20, reviewedToday: 0 }}
+          stats={{ dueToday: 5, totalCards: 20, reviewedToday: reviewedTodayStart }}
           batchMode={batchMode}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
           sessionStartRefilled={sessionStartRefilled}
+          inboxCount={inboxCount ?? 0}
         />,
       );
 
@@ -594,87 +621,58 @@ describe("FlashcardsReviewSession", () => {
       await screen.findByText("Wszystko powtórzone!");
     }
 
-    it("shows mastered count when a card crosses the mastery threshold", async () => {
+    it("shows reviewed-today total (stats + this session) instead of mastered box", async () => {
       const gradeAction = jest.fn().mockResolvedValue({
         ok: true,
         shouldRequeue: false,
-        updatedCard: {
-          id: "1",
-          front: "A",
-          back: "B",
-          frontNotes: null, backNotes: null,
-          state: "REVIEW",
-          scheduledDays: 21,
-        },
       });
 
-      await completeOneCardSession({ gradeAction });
+      await completeOneCardSession({ gradeAction, reviewedTodayStart: 4 });
 
-      expect(screen.getByText(/Opanowałeś 1 fiszek/)).toBeInTheDocument();
+      // 4 (stats) + 1 (this session) = 5
+      expect(screen.getByText(/Dziś powtórzone 5 fiszek/)).toBeInTheDocument();
+      expect(screen.getByText(/Tak trzymaj - budujesz nawyk/)).toBeInTheDocument();
       expect(screen.queryByText("Bez nowych opanowanych")).not.toBeInTheDocument();
+      expect(screen.queryByText(/Opanowałeś/i)).not.toBeInTheDocument();
     });
 
-    it("shows celebration variant when nothing was mastered", async () => {
+    it("shows reviewed-today starting from zero", async () => {
       const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
 
       await completeOneCardSession({ gradeAction });
 
-      expect(screen.getByText(/każda powtórka się liczy/i)).toBeInTheDocument();
-      expect(screen.getByText("Bez nowych opanowanych")).toBeInTheDocument();
-      expect(screen.queryByText(/Opanowałeś/i)).not.toBeInTheDocument();
+      expect(screen.getByText(/Dziś powtórzone 1 fiszka/)).toBeInTheDocument();
     });
 
-    it("does not count a card that was already mastered before the grade", async () => {
-      const gradeAction = jest.fn().mockResolvedValue({
-        ok: true,
-        shouldRequeue: false,
-        updatedCard: {
-          id: "1",
-          front: "A",
-          back: "B",
-          frontNotes: null, backNotes: null,
-          state: "REVIEW",
-          scheduledDays: 30,
-        },
-      });
+    it("shows true inbox remaining count instead of refill-driven empty state", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
 
-      await completeOneCardSession({
-        gradeAction,
-        initialCards: [
-          {
-            id: "1",
-            front: "A",
-            back: "B",
-            frontNotes: null, backNotes: null,
-            state: "REVIEW",
-            scheduledDays: 30,
-          } as never,
-        ],
-      });
+      await completeOneCardSession({ gradeAction, inboxCount: 25 });
 
-      expect(screen.getByText(/każda powtórka się liczy/i)).toBeInTheDocument();
-      expect(screen.getByText("Bez nowych opanowanych")).toBeInTheDocument();
-      expect(screen.queryByText(/Opanowałeś/i)).not.toBeInTheDocument();
+      // Bug scenario: 25 cards in Inbox must NOT render "Inbox pusty"
+      expect(screen.getByText(/W Inboxie czeka 25 fiszek/)).toBeInTheDocument();
+      expect(screen.queryByText("Inbox pusty")).not.toBeInTheDocument();
     });
 
-    it("shows refill count summed from session start and per-grade refilled", async () => {
+    it("shows refilled note alongside remaining inbox count", async () => {
       const gradeAction = jest.fn().mockResolvedValue({
         ok: true,
         shouldRequeue: false,
         refilled: 2,
       });
 
-      await completeOneCardSession({ gradeAction, sessionStartRefilled: 1 });
+      await completeOneCardSession({ gradeAction, sessionStartRefilled: 1, inboxCount: 25 });
 
-      // 1 (session start) + 2 (grade) = 3
-      expect(screen.getByText(/Nowe z Inboxa: 3 fiszki/)).toBeInTheDocument();
+      // 1 (session start) + 2 (grade) = 3 newly activated, 25 - 3 = 22 left
+      expect(screen.getByText(/W Inboxie czeka 22 fiszki/)).toBeInTheDocument();
+      expect(screen.getByText(/Nowe w nauce: 3/)).toBeInTheDocument();
       expect(screen.queryByText("Inbox pusty")).not.toBeInTheDocument();
     });
 
-    it("shows zero-refill variant when nothing came from Inbox", async () => {
+    it("shows empty inbox only when inboxCount is really zero", async () => {
       const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
 
-      await completeOneCardSession({ gradeAction });
+      await completeOneCardSession({ gradeAction, inboxCount: 0 });
 
       expect(screen.getByText("Inbox pusty")).toBeInTheDocument();
       expect(screen.getByText(/Nic nie czeka/)).toBeInTheDocument();
@@ -707,6 +705,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -733,6 +732,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -743,8 +743,170 @@ describe("FlashcardsReviewSession", () => {
       fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
 
       await screen.findByText("Sesja zaliczona!");
-      expect(screen.getByText(/2 fiszek/)).toBeInTheDocument();
+      expect(screen.getAllByText(/2 fiszki/).length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText(/za Tobą/)).toBeInTheDocument();
+      expect(screen.getByText(/Dziś powtórzone 2 fiszki/)).toBeInTheDocument();
+    });
+
+    it("does not count Again grades in the success-screen reviewed-today total", async () => {
+      const gradeAction = jest
+        .fn()
+        .mockResolvedValueOnce({ ok: true, shouldRequeue: true })
+        .mockResolvedValueOnce({ ok: true, shouldRequeue: false })
+        .mockResolvedValueOnce({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[
+            { id: "1", front: "A", back: "B", frontNotes: null, backNotes: null },
+            { id: "2", front: "C", back: "D", frontNotes: null, backNotes: null },
+          ]}
+          stats={{ dueToday: 2, totalCards: 2, reviewedToday: 5 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
+        />,
+      );
+
+      // Again on card 1 — requeued, must not count
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Ponownie" }));
+      await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+
+      // Good on card 2, then Good on requeued card 1
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+      await screen.findByRole("button", { name: "Pokaż odpowiedź" });
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Sesja zaliczona!");
+      // 5 (stats) + 2 completed (Again excluded) = 7
+      expect(screen.getByText(/Dziś powtórzone 7 fiszek/)).toBeInTheDocument();
+    });
+
+    it("shows unchanged reviewed-today total and empty inbox when the last card is deleted", async () => {
+      const user = userEvent.setup();
+      const localDeleteAction = jest.fn().mockResolvedValue({ ok: true });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 4 }}
+          gradeAction={jest.fn()}
+          updateAction={updateAction} deleteAction={localDeleteAction}
+        inboxCount={0}
+        />,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Usuń fiszkę" }));
+      await user.click(await screen.findByRole("button", { name: "Usuń" }));
+
+      await screen.findByText("Sesja zaliczona!");
+      // delete must not bump the counter; inboxCount omitted → defaults to 0
+      expect(screen.getByText(/Dziś powtórzone 4 fiszki/)).toBeInTheDocument();
+      expect(screen.getByText("Inbox pusty")).toBeInTheDocument();
+    });
+
+    it("shows inbox remaining count on the non-batch success screen", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction} deleteAction={deleteAction}
+          inboxCount={7}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Sesja zaliczona!");
+      expect(screen.getByText(/W Inboxie czeka 7 fiszek/)).toBeInTheDocument();
+      expect(screen.queryByText("Inbox pusty")).not.toBeInTheDocument();
+    });
+
+    it("shows the refilled note in the empty branch when top-up drained the inbox", async () => {
+      // Reported bug: 1 card in Inbox + room in the pool → session-start
+      // top-up activates it (sessionStartRefilled=1), so snapshot-minus-
+      // refilled hits 0. The screen must still tell the user where the card
+      // went instead of a bare "Inbox pusty".
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+      const getInboxCountAction = jest.fn().mockResolvedValue({ ok: true, count: 0 });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction} deleteAction={deleteAction}
+          sessionStartRefilled={1}
+          inboxCount={1}
+          getInboxCountAction={getInboxCountAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Sesja zaliczona!");
+      await waitFor(() => expect(getInboxCountAction).toHaveBeenCalled());
+      expect(screen.getByText("Inbox pusty")).toBeInTheDocument();
+      expect(screen.getByText(/Nowe w nauce: 1/)).toBeInTheDocument();
+    });
+
+    it("prefers the live inbox count over the stale snapshot", async () => {
+      // A card lands in the Inbox mid-session (another tab): the snapshot
+      // says 0, the live fetch says 1 — the screen must show 1 waiting.
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+      const getInboxCountAction = jest.fn().mockResolvedValue({ ok: true, count: 1 });
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction} deleteAction={deleteAction}
+          inboxCount={0}
+          getInboxCountAction={getInboxCountAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Sesja zaliczona!");
+      await screen.findByText(/W Inboxie czeka 1 fiszka/);
+      expect(screen.queryByText("Inbox pusty")).not.toBeInTheDocument();
+    });
+
+    it("falls back to snapshot-minus-refilled when the live fetch fails", async () => {
+      const gradeAction = jest.fn().mockResolvedValue({ ok: true, shouldRequeue: false });
+      const getInboxCountAction = jest.fn().mockRejectedValue(new Error("offline"));
+
+      render(
+        <FlashcardsReviewSession
+          initialCards={[{ id: "1", front: "A", back: "B", frontNotes: null, backNotes: null }]}
+          stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
+          gradeAction={gradeAction}
+          updateAction={updateAction} deleteAction={deleteAction}
+          sessionStartRefilled={1}
+          inboxCount={25}
+          getInboxCountAction={getInboxCountAction}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
+      fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
+
+      await screen.findByText("Sesja zaliczona!");
+      await waitFor(() => expect(getInboxCountAction).toHaveBeenCalled());
+      // 25 - 1 = 24 fallback, no crash, no "Inbox pusty"
+      expect(screen.getByText(/W Inboxie czeka 24 fiszki/)).toBeInTheDocument();
+      expect(screen.queryByText("Inbox pusty")).not.toBeInTheDocument();
     });
 
     it("keeps back-to-flashcards and next-session buttons on the success screen", async () => {
@@ -757,6 +919,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 10, totalDueCount: 56 }}
           gradeAction={gradeAction}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -779,6 +942,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -800,6 +964,7 @@ describe("FlashcardsReviewSession", () => {
           batchMode={{ batchSize: 2, totalDueCount: 2 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={localDeleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -828,6 +993,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={localDeleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -847,6 +1013,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={failingDeleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -871,6 +1038,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 
@@ -897,6 +1065,7 @@ describe("FlashcardsReviewSession", () => {
           stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
           gradeAction={jest.fn()}
           updateAction={updateAction} deleteAction={deleteAction}
+        inboxCount={0}
         />,
       );
 

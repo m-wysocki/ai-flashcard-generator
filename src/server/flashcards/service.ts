@@ -140,6 +140,24 @@ export type FlashcardsRepository = {
     backNotes: string | null;
     dueAt: Date;
   }): Promise<FlashcardRecord>;
+  /**
+   * Atomic check-and-create (direct-to-review): counts the user's active
+   * cards and inserts the new card in a single transaction, so concurrent
+   * creations can never push the pool above `limit` (TOCTOU fix, same
+   * pattern as activateInboxCardByUserIfRoom). When there is room the card
+   * is created active (isActive=true, dueAt as given) and `placed` is
+   * "active"; at >=`limit` active cards it lands in the Inbox
+   * (isActive=false) and `placed` is "inbox".
+   */
+  createWithRoomCheck(input: {
+    userId: string;
+    front: string;
+    back: string;
+    frontNotes: string | null;
+    backNotes: string | null;
+    dueAt: Date;
+    limit: number;
+  }): Promise<{ card: FlashcardRecord; placed: "active" | "inbox" }>;
   findByUser(input: { userId: string; flashcardId: string }): Promise<FlashcardRecord | null>;
   listByUser(userId: string): Promise<FlashcardRecord[]>;
   listDueByUser(input: { userId: string; now: Date }): Promise<FlashcardRecord[]>;
@@ -231,12 +249,13 @@ export async function createManualFlashcard(
   }
 
   const dueAt = dependencies.now?.() ?? new Date();
-  const flashcard = await dependencies.flashcards.create({
+  const { card, placed } = await dependencies.flashcards.createWithRoomCheck({
     ...parsedInput.data,
     dueAt,
+    limit: ACTIVE_FLASHCARDS_LIMIT,
   });
 
-  return { ok: true as const, flashcard };
+  return { ok: true as const, flashcard: card, placed };
 }
 
 export async function listUserFlashcards(

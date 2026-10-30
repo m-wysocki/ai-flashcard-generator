@@ -14,10 +14,10 @@ import {
   Trophy,
   Inbox,
   Timer,
+  History,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { appCopy } from "@/content/app-copy";
-import { isMasteredSchedule } from "@/lib/mastered-threshold";
 import { useUiLanguage } from "@/hooks/use-ui-language";
 import { useNavigation } from "@/components/app-shell/NavigationContext";
 import { Button } from "@/components/ui/Button/Button";
@@ -28,6 +28,8 @@ import { EditFlashcardDialog } from "@/components/flashcards/FlashcardsView/Edit
 import type { ReviewGrade } from "@/server/review/service";
 import type { MutateFlashcardAction } from "@/components/flashcards/FlashcardsView/types";
 import { buildGradeIntervals, speakEnglish } from "./helpers";
+import { cardNoun, flashcardNoun } from "@/lib/pluralize";
+import type { UiLanguage } from "@/content/app-copy";
 import {
   formatSessionDuration,
   recordCompletedSession,
@@ -55,6 +57,16 @@ type FlashcardsReviewSessionProps = {
   deleteAction: MutateFlashcardAction;
   /** Ticket 05 top-up count at session start; consumed by the ticket 07 success screen. */
   sessionStartRefilled?: number;
+  /** Prawdziwy stan Inboxa w chwili startu sesji (listInboxByUser.length). */
+  inboxCount: number;
+  /**
+   * Fresh Inbox size fetcher (getInboxCountAction). Called once when the
+   * session ends — its result is ground truth ("tyle jest TERAZ w Inboxie")
+   * and takes precedence over the snapshot-minus-refilled arithmetic, which
+   * goes stale when another tab adds cards mid-session. Optional so existing
+   * callers/tests without server actions keep the snapshot fallback.
+   */
+  getInboxCountAction?: () => Promise<{ ok: boolean; count?: number }>;
 };
 
 const GRADE_CONFIG = [
@@ -126,17 +138,20 @@ function SessionTimeStats({
 
 /**
  * Hero Celebration Card success screen (mockup A) for both batch and
- * non-batch session endings. The mastered / refill / time-stats blocks
+ * non-batch session endings. The reviewed-today / inbox / time-stats blocks
  * render identically; only the title, the hero count, the batch banner,
  * and the continuation buttons vary.
  */
 function SessionSuccessScreen({
   title,
   completedCount,
-  masteredCount,
+  reviewedTodayTotal,
+  inboxCount,
   sessionRefilled,
+  liveInboxCount,
   timeStats,
   copy,
+  language,
   remaining,
   nextBatchSize,
   onContinue,
@@ -144,18 +159,30 @@ function SessionSuccessScreen({
 }: {
   title: string;
   completedCount: number;
-  masteredCount: number;
+  reviewedTodayTotal: number;
+  inboxCount: number;
   sessionRefilled: number;
+  /**
+   * Fresh Inbox size fetched when the session ended. Takes precedence over
+   * the snapshot arithmetic below; null/undefined keeps the fallback.
+   */
+  liveInboxCount?: number | null;
   timeStats: { lastSec: number; todaySec: number; averageSec: number } | null;
   copy: ReviewCopy;
+  language: UiLanguage;
   remaining?: number;
   nextBatchSize?: number;
   onContinue?: () => void;
   onBack: () => void;
 }) {
   const hasMore = remaining != null && remaining > 0 && nextBatchSize != null;
-  const masteredPositive = masteredCount > 0;
-  const inboxEmpty = sessionRefilled === 0;
+  // inboxCount is a snapshot from session start (before top-up). When the
+  // client managed to fetch a fresh size on finish, that is ground truth;
+  // otherwise subtract what got activated during the session to show what's
+  // actually left. Snapshot can drift if another tab adds cards mid-session
+  // — the live fetch covers exactly that gap.
+  const remainingInbox = liveInboxCount ?? Math.max(0, inboxCount - sessionRefilled);
+  const inboxEmpty = remainingInbox === 0;
   return (
     <main
       data-ui="FlashcardsReviewSession"
@@ -191,7 +218,7 @@ function SessionSuccessScreen({
         </h1>
         <p className="relative z-[1] m-0 text-lg leading-[26px] font-semibold text-[var(--color-text)]">
           <strong className="rounded-full border-2 border-black bg-[var(--color-secondary)] px-2.5 py-px font-bold">
-            {completedCount} {copy.batchCompletedCards}
+            {completedCount} {flashcardNoun(completedCount, language)}
           </strong>{" "}
           {copy.successHeroSuffix}
         </p>
@@ -211,26 +238,16 @@ function SessionSuccessScreen({
 
       <div className="grid gap-2.5">
         <div className="flex items-center gap-3 rounded-xl border-2 border-black bg-[var(--color-surface)] p-3">
-          <span
-            className={cn(
-              "flex size-[38px] shrink-0 items-center justify-center rounded-full border-2 border-black bg-[var(--color-surface-raised)]",
-              masteredPositive && "bg-[var(--color-secondary)]",
-            )}
-          >
-            <Star size={18} aria-hidden className="text-[var(--color-text)]" />
+          <span className="flex size-[38px] shrink-0 items-center justify-center rounded-full border-2 border-black bg-[var(--color-secondary)]">
+            <History size={18} aria-hidden className="text-[var(--color-text)]" />
           </span>
-          {masteredPositive ? (
-            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
-              {copy.sessionMasteredPrefix} {masteredCount} {copy.sessionMasteredCards}
-            </p>
-          ) : (
-            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
-              {copy.successMasteredZeroTitle}
-              <small className="block text-[13px] font-medium text-[var(--color-muted)]">
-                {copy.successMasteredZeroSubtitle}
-              </small>
-            </p>
-          )}
+          <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
+            {copy.successReviewedTodayPrefix} {reviewedTodayTotal}{" "}
+            {flashcardNoun(reviewedTodayTotal, language)}
+            <small className="block text-[13px] font-medium text-[var(--color-muted)]">
+              {copy.successReviewedTodaySubtitle}
+            </small>
+          </p>
         </div>
         <div className="flex items-center gap-3 rounded-xl border-2 border-black bg-[var(--color-surface)] p-3">
           <span
@@ -241,16 +258,26 @@ function SessionSuccessScreen({
           >
             <Inbox size={18} aria-hidden className="text-[var(--color-text)]" />
           </span>
-          {sessionRefilled > 0 ? (
-            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
-              {copy.sessionRefilledPrefix} {sessionRefilled} {copy.sessionRefilledCards}
-            </p>
-          ) : (
+          {inboxEmpty ? (
             <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
               {copy.successInboxEmptyTitle}
               <small className="block text-[13px] font-medium text-[var(--color-muted)]">
                 {copy.successInboxEmptySubtitle}
               </small>
+              {sessionRefilled > 0 ? (
+                <small className="block text-[13px] font-medium text-[var(--color-muted)]">
+                  {copy.successInboxRefilledNote}: {sessionRefilled}
+                </small>
+              ) : null}
+            </p>
+          ) : (
+            <p className="m-0 text-[15px] font-semibold text-[var(--color-text)]">
+              {copy.successInboxRemainingPrefix} {remainingInbox} {flashcardNoun(remainingInbox, language)}
+              {sessionRefilled > 0 ? (
+                <small className="block text-[13px] font-medium text-[var(--color-muted)]">
+                  {copy.successInboxRefilledNote}: {sessionRefilled}
+                </small>
+              ) : null}
             </p>
           )}
         </div>
@@ -258,7 +285,7 @@ function SessionSuccessScreen({
 
       {hasMore ? (
         <ShadowFrame className="bg-[var(--color-secondary)] p-3 text-center text-[15px] font-semibold text-[var(--color-text)]">
-          {copy.batchRemainingPrefix} {remaining} {copy.successBatchRemainingCardsShort}{" "}
+          {copy.batchRemainingPrefix} {remaining} {cardNoun(remaining, language)}{" "}
           {copy.successBatchRemainingSuffix}
         </ShadowFrame>
       ) : null}
@@ -308,9 +335,13 @@ export function FlashcardsReviewSession({
   updateAction,
   deleteAction,
   sessionStartRefilled,
+  inboxCount,
+  getInboxCountAction,
 }: FlashcardsReviewSessionProps) {
   // Ticket 05 contract: session-start refill count + per-grade `refilled`
-  // from gradeAction feed the ticket 07 success screen.
+  // from gradeAction feed the ticket 07 success screen. inboxCount is the
+  // true Inbox state (listInboxByUser.length), sessionRefilled is only
+  // "how many got activated" and must NOT drive the empty-state.
   const { language } = useUiLanguage();
   const copy = appCopy[language].review;
   const { navigate } = useNavigation();
@@ -319,8 +350,11 @@ export function FlashcardsReviewSession({
   const [dueToday, setDueToday] = useState(stats.dueToday);
   const [reviewedToday, setReviewedToday] = useState(stats.reviewedToday);
   const [batchCompleted, setBatchCompleted] = useState(0);
-  const [masteredCount, setMasteredCount] = useState(0);
   const [sessionRefilled, setSessionRefilled] = useState(sessionStartRefilled ?? 0);
+  // Fresh Inbox size fetched once the session ends (ground truth for the
+  // success screen). Null until the fetch resolves — the screen falls back
+  // to snapshot-minus-refilled meanwhile. Failures keep the fallback.
+  const [liveInboxCount, setLiveInboxCount] = useState<number | null>(null);
   const [grading, setGrading] = useState<ReviewGrade | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
@@ -349,6 +383,25 @@ export function FlashcardsReviewSession({
     });
   }, [finished, sessionStart]);
 
+  // Refresh the Inbox size once the session ends: the snapshot prop predates
+  // the session-start top-up and any mid-session additions from other tabs.
+  useEffect(() => {
+    if (!finished || !getInboxCountAction) return;
+    let cancelled = false;
+    getInboxCountAction()
+      .then((result) => {
+        if (!cancelled && result.ok && typeof result.count === "number") {
+          setLiveInboxCount(result.count);
+        }
+      })
+      .catch(() => {
+        // Keep the snapshot fallback — the success screen must render anyway.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [finished, getInboxCountAction]);
+
   if (!current) {
     if (batchMode) {
       const remaining = Math.max(0, batchMode.totalDueCount - batchMode.batchSize);
@@ -363,10 +416,13 @@ export function FlashcardsReviewSession({
         <SessionSuccessScreen
           title={remaining > 0 ? copy.successBatchTitle : copy.successBatchAllDoneTitle}
           completedCount={batchMode.batchSize}
-          masteredCount={masteredCount}
+          reviewedTodayTotal={reviewedToday}
+          inboxCount={inboxCount}
           sessionRefilled={sessionRefilled}
+          liveInboxCount={liveInboxCount}
           timeStats={timeStats}
           copy={copy}
+          language={language}
           remaining={remaining}
           nextBatchSize={nextBatchSize}
           onContinue={() => navigate(`/app/review?limit=${nextBatchSize}`)}
@@ -379,10 +435,13 @@ export function FlashcardsReviewSession({
       <SessionSuccessScreen
         title={copy.successSessionTitle}
         completedCount={initialCards.length}
-        masteredCount={masteredCount}
+        reviewedTodayTotal={reviewedToday}
+        inboxCount={inboxCount}
         sessionRefilled={sessionRefilled}
+        liveInboxCount={liveInboxCount}
         timeStats={timeStats}
         copy={copy}
+        language={language}
         onBack={() => navigate("/app/flashcards")}
       />
     );
@@ -524,15 +583,6 @@ export function FlashcardsReviewSession({
                     setDueToday((prev) => Math.max(0, prev - 1));
                     setReviewedToday((prev) => prev + 1);
                     setBatchCompleted((prev) => prev + 1);
-                    // Count cards that crossed the mastery threshold in this
-                    // session: before-state not mastered, after-state mastered.
-                    if (
-                      result.updatedCard &&
-                      isMasteredSchedule(result.updatedCard) &&
-                      !isMasteredSchedule(current)
-                    ) {
-                      setMasteredCount((prev) => prev + 1);
-                    }
                   }
                   if (typeof result.refilled === "number" && result.refilled > 0) {
                     const refilled = result.refilled;

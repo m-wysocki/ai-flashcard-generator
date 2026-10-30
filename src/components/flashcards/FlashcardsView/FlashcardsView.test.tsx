@@ -17,14 +17,16 @@ describe("FlashcardsView", () => {
         title="Fiszki"
         activeTab="due"
         flashcards={[]}
-        dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
     );
 
     const tabsNav = screen.getByRole("navigation", { name: "Karty fiszek" });
+    expect(within(tabsNav).getAllByRole("button")).toHaveLength(5);
     expect(within(tabsNav).getByRole("button", { name: /Do powtórki/ })).toBeInTheDocument();
+    expect(within(tabsNav).getByRole("button", { name: /W trakcie nauki/ })).toBeInTheDocument();
+    expect(within(tabsNav).getByRole("button", { name: /^Nowa/ })).toBeInTheDocument();
     expect(within(tabsNav).getByRole("button", { name: /Inbox/ })).toBeInTheDocument();
     expect(within(tabsNav).getByRole("button", { name: /Opanowane/ })).toBeInTheDocument();
     expect(
@@ -39,7 +41,6 @@ describe("FlashcardsView", () => {
         title="Fiszki"
         activeTab="due"
         flashcards={[]}
-        dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -60,7 +61,6 @@ describe("FlashcardsView", () => {
         title="Fiszki"
         activeTab="due"
         flashcards={[]}
-        dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -91,7 +91,6 @@ describe("FlashcardsView", () => {
         title="Fiszki"
         activeTab="due"
         flashcards={[]}
-        dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -110,13 +109,66 @@ describe("FlashcardsView", () => {
     expect(screen.getByRole("textbox", { name: "Front (PL)" })).toBeInTheDocument();
   });
 
+  it("shows the inbox toast when the new card lands in the inbox", async () => {
+    const { createFlashcardFromGeneratorAction } = jest.requireMock("@/server/flashcards/actions");
+    createFlashcardFromGeneratorAction.mockResolvedValueOnce({ ok: true, placed: "inbox" });
+
+    const user = userEvent.setup();
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Dodaj/ }));
+    await screen.findByRole("textbox", { name: "Front (PL)" });
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Front (PL)" }), { target: { value: "A" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Back (EN)" }), { target: { value: "B" } });
+    fireEvent.click(screen.getByRole("button", { name: "Zapisz fiszkę" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("Zapisano do Inboxa."),
+    );
+  });
+
+  it("shows the study toast when the new card lands directly in review", async () => {
+    const { createFlashcardFromGeneratorAction } = jest.requireMock("@/server/flashcards/actions");
+    createFlashcardFromGeneratorAction.mockResolvedValueOnce({ ok: true, placed: "active" });
+
+    const user = userEvent.setup();
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Dodaj/ }));
+    await screen.findByRole("textbox", { name: "Front (PL)" });
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Front (PL)" }), { target: { value: "A" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Back (EN)" }), { target: { value: "B" } });
+    fireEvent.click(screen.getByRole("button", { name: "Zapisz fiszkę" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("Zapisano fiszkę."),
+    );
+  });
+
   it("shows due empty state when no cards to review", () => {
     render(
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
         flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "mastered" as const, dueAt: new Date().toISOString() }]}
-        dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -127,24 +179,113 @@ describe("FlashcardsView", () => {
     expect(screen.queryByRole("button", { name: /Rozpocznij sesję/i })).not.toBeInTheDocument();
   });
 
-  it("lists all non-mastered cards on the due tab (not only due ids)", () => {
+  it("shows only due cards on the due tab (not learning/new/mastered)", () => {
     render(
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
         flashcards={[
-          { id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
-          { id: "f-2", front: "Kot-mastered", back: "Cat", frontNotes: null, backNotes: null, status: "mastered" as const, dueAt: new Date().toISOString() },
+          { id: "f-1", front: "Due-karta", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "Learning-karta", back: "Cat", frontNotes: null, backNotes: null, status: "learning" as const, dueAt: new Date().toISOString() },
+          { id: "f-3", front: "New-karta", back: "Dog", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+          { id: "f-4", front: "Kot-mastered", back: "Cat", frontNotes: null, backNotes: null, status: "mastered" as const, dueAt: new Date().toISOString() },
         ]}
-        dueFlashcardIds={[]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
     );
 
-    expect(screen.getByText("Cześć")).toBeInTheDocument();
+    expect(screen.getByText("Due-karta")).toBeInTheDocument();
+    expect(screen.queryByText("Learning-karta")).not.toBeInTheDocument();
+    expect(screen.queryByText("New-karta")).not.toBeInTheDocument();
     expect(screen.queryByText("Kot-mastered")).not.toBeInTheDocument();
     expect(screen.queryByText(/Brak fiszek do powtórki/)).not.toBeInTheDocument();
+  });
+
+  it("shows only learning cards on the learning tab", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="learning"
+        flashcards={[
+          { id: "f-1", front: "Due-karta", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "Learning-karta", back: "Cat", frontNotes: null, backNotes: null, status: "learning" as const, dueAt: new Date().toISOString() },
+          { id: "f-3", front: "New-karta", back: "Dog", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("Learning-karta")).toBeInTheDocument();
+    expect(screen.queryByText("Due-karta")).not.toBeInTheDocument();
+    expect(screen.queryByText("New-karta")).not.toBeInTheDocument();
+  });
+
+  it("shows only new cards on the new tab", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="new"
+        flashcards={[
+          { id: "f-1", front: "Due-karta", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "Learning-karta", back: "Cat", frontNotes: null, backNotes: null, status: "learning" as const, dueAt: new Date().toISOString() },
+          { id: "f-3", front: "New-karta", back: "Dog", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("New-karta")).toBeInTheDocument();
+    expect(screen.queryByText("Due-karta")).not.toBeInTheDocument();
+    expect(screen.queryByText("Learning-karta")).not.toBeInTheDocument();
+  });
+
+  it("header due count matches the Due tab (ignores fresh new cards)", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[
+          { id: "f-1", front: "New-karta-1", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "New-karta-2", back: "Cat", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+        ]}
+        reviewStats={{ dueToday: 2, totalCards: 2, reviewedToday: 0 }}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    // StatList renders values with data-testid stat-value-{index}: 0=due, 1=new, 2=all, 3=reviewed.
+    expect(screen.getByTestId("stat-value-0")).toHaveTextContent("0");
+    expect(screen.getByTestId("stat-value-1")).toHaveTextContent("2");
+    expect(screen.getByTestId("stat-value-2")).toHaveTextContent("2");
+    expect(screen.getByText(/Brak fiszek do powtórki/)).toBeInTheDocument();
+  });
+
+  it("shows learning/new empty states when those lists are empty", () => {
+    const { rerender } = render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="learning"
+        flashcards={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+    expect(screen.getByText(/Brak fiszek w trakcie nauki/)).toBeInTheDocument();
+
+    rerender(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="new"
+        flashcards={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+    expect(screen.getByText(/Brak nowych fiszek/)).toBeInTheDocument();
   });
 
   it("shows context menu trigger on each card instead of direct action buttons", () => {
@@ -152,8 +293,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
-        dueFlashcardIds={[]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -170,8 +310,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
-        dueFlashcardIds={[]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -189,8 +328,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
-        dueFlashcardIds={[]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: false, error: "Nie udało się usunąć fiszki." })}
       />,
@@ -212,8 +350,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
-        dueFlashcardIds={[]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={async () => ({ ok: false, error: "Nie udało się zaktualizować fiszki." })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -233,8 +370,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
-        dueFlashcardIds={["f-1"]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -244,6 +380,142 @@ describe("FlashcardsView", () => {
     expect(screen.getByText("1 fiszka · ok. 1 minutę")).toBeInTheDocument();
   });
 
+  it("shows the start banner on the new tab when new cards exist", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="new"
+        flashcards={[
+          { id: "f-1", front: "New-karta-1", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "New-karta-2", back: "Cat", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("Rozpocznij sesję")).toBeInTheDocument();
+    expect(screen.getByText("Nowa: 2")).toBeInTheDocument();
+  });
+
+  it.each(["learning", "inbox", "mastered"] as const)(
+    "shows the session banner on the %s tab when due+new > 0",
+    (activeTab) => {
+      render(
+        <FlashcardsView
+          title="Fiszki"
+          activeTab={activeTab}
+          flashcards={[
+            { id: "f-1", front: "Due-karta", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+            { id: "f-2", front: "New-karta", back: "Cat", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+          ]}
+          updateFlashcardAction={async () => ({ ok: true })}
+          deleteFlashcardAction={async () => ({ ok: true })}
+        />,
+      );
+
+      expect(screen.getByText("Rozpocznij sesję")).toBeInTheDocument();
+      expect(screen.getByText("Do powtórki: 1 · Nowa: 1")).toBeInTheDocument();
+    },
+  );
+
+  it("shows combined badge and total subtitle when both due and new exist", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[
+          { id: "f-1", front: "Due-1", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "Due-2", back: "Cat", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-3", front: "Due-3", back: "Dog", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-4", front: "New-1", back: "Bird", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+          { id: "f-5", front: "New-2", back: "Fish", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("Do powtórki: 3 · Nowa: 2")).toBeInTheDocument();
+    expect(screen.getByText("5 fiszek · ok. 3 minuty")).toBeInTheDocument();
+  });
+
+  it("shows only the due part of the badge when no new cards exist", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="learning"
+        flashcards={[
+          { id: "f-1", front: "Due-1", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "Due-2", back: "Cat", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+          { id: "f-3", front: "Due-3", back: "Dog", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("Do powtórki: 3")).toBeInTheDocument();
+    expect(screen.queryByText(/Nowa: /)).not.toBeInTheDocument();
+  });
+
+  it("shows only the new part of the badge when no due cards exist", () => {
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="mastered"
+        flashcards={[
+          { id: "f-1", front: "New-1", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+          { id: "f-2", front: "New-2", back: "Cat", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    expect(screen.getByText("Nowa: 2")).toBeInTheDocument();
+    expect(screen.queryByText(/Do powtórki: /)).not.toBeInTheDocument();
+  });
+
+  it("hides the session banner when due and new are both empty", () => {
+    const { rerender } = render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="learning"
+        flashcards={[
+          { id: "f-1", front: "Learning-karta", back: "Hi", frontNotes: null, backNotes: null, status: "learning" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+    expect(screen.queryByText("Rozpocznij sesję")).not.toBeInTheDocument();
+
+    rerender(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="mastered"
+        flashcards={[
+          { id: "f-1", front: "Kot-mastered", back: "Cat", frontNotes: null, backNotes: null, status: "mastered" as const, dueAt: new Date().toISOString() },
+        ]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+    expect(screen.queryByText("Rozpocznij sesję")).not.toBeInTheDocument();
+
+    rerender(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="inbox"
+        flashcards={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+    expect(screen.queryByText("Rozpocznij sesję")).not.toBeInTheDocument();
+  });
+
   it("stays on the inbox tab and shows a confirmation toast after delete", async () => {
     const user = userEvent.setup();
     render(
@@ -251,8 +523,7 @@ describe("FlashcardsView", () => {
         title="Fiszki"
         activeTab="inbox"
         flashcards={[]}
-        dueFlashcardIds={[]}
-        inboxFlashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
+        inboxFlashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={async () => ({ ok: true })}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,
@@ -280,8 +551,7 @@ describe("FlashcardsView", () => {
       <FlashcardsView
         title="Fiszki"
         activeTab="due"
-        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "new" as const, dueAt: new Date().toISOString() }]}
-        dueFlashcardIds={[]}
+        flashcards={[{ id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, status: "due" as const, dueAt: new Date().toISOString() }]}
         updateFlashcardAction={updateAction}
         deleteFlashcardAction={async () => ({ ok: true })}
       />,

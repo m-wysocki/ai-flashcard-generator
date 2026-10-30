@@ -17,6 +17,7 @@ jest.mock("@/server/auth/prisma-users", () => ({
 
 jest.mock("@/server/flashcards/service", () => ({
   listUserDueFlashcards: jest.fn(),
+  listUserInboxFlashcards: jest.fn().mockResolvedValue([]),
   topUpActiveFromInbox: jest.fn().mockResolvedValue({ refilled: 0, activatedIds: [] }),
 }));
 
@@ -30,6 +31,8 @@ jest.mock("@/server/review/actions", () => ({
 
 jest.mock("@/server/flashcards/actions", () => ({
   updateManualFlashcardAction: jest.fn(),
+  deleteManualFlashcardAction: jest.fn(),
+  getInboxCountAction: jest.fn().mockResolvedValue({ ok: true, count: 0 }),
 }));
 
 jest.mock("@/server/flashcards/prisma-flashcards", () => ({

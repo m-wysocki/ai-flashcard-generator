@@ -19,7 +19,6 @@ type FlashcardsPageClientProps = {
     status: "new" | "due" | "learning" | "mastered";
     dueAt: string;
   }>;
-  dueFlashcardIds: string[];
   reviewStats?: { dueToday: number; totalCards: number; reviewedToday: number };
   inboxFlashcards?: Array<{
     id: string;
@@ -41,7 +40,6 @@ export function FlashcardsPageClient({
   email,
   activeTab,
   flashcards,
-  dueFlashcardIds,
   reviewStats,
   inboxFlashcards,
   isInboxFull,
@@ -59,7 +57,6 @@ export function FlashcardsPageClient({
         title={commonCopy.appTitleFlashcards}
         activeTab={activeTab}
         flashcards={flashcards}
-        dueFlashcardIds={dueFlashcardIds}
         reviewStats={reviewStats}
         inboxFlashcards={inboxFlashcards}
         isInboxFull={isInboxFull}

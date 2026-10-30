@@ -6,6 +6,7 @@ import { prismaFlashcardsRepository } from "./prisma-flashcards";
 import {
   activateInboxToLimitAction,
   activateManualFlashcardAction,
+  createFlashcardFromGeneratorAction,
   deleteManualFlashcardAction,
   updateManualFlashcardAction,
 } from "./actions";
@@ -30,6 +31,7 @@ jest.mock("@/server/auth/prisma-users", () => ({
 
 jest.mock("./prisma-flashcards", () => ({
   prismaFlashcardsRepository: {
+    createWithRoomCheck: jest.fn(),
     updateByUser: jest.fn(),
     deleteByUser: jest.fn(),
     activateInboxCardByUserIfRoom: jest.fn(),
@@ -107,5 +109,32 @@ describe("flashcard mutation actions keep the user on the current tab", () => {
     expect(result).toEqual({ ok: true });
     expect(mockedRevalidate).toHaveBeenCalledWith("/app/flashcards");
     expect(mockedRedirect).not.toHaveBeenCalled();
+  });
+
+  it("create from generator propagates the active/inbox placement", async () => {
+    const formData = new FormData();
+    formData.set("front", "Cześć");
+    formData.set("back", "Hi");
+    formData.set("frontNotes", "");
+    formData.set("backNotes", "");
+
+    (prismaFlashcardsRepository.createWithRoomCheck as jest.Mock).mockResolvedValue({
+      card: { id: "f-1" },
+      placed: "active",
+    });
+
+    const active = await createFlashcardFromGeneratorAction(formData);
+
+    expect(active).toEqual({ ok: true, placed: "active" });
+    expect(mockedRevalidate).toHaveBeenCalledWith("/app/flashcards");
+
+    (prismaFlashcardsRepository.createWithRoomCheck as jest.Mock).mockResolvedValue({
+      card: { id: "f-2" },
+      placed: "inbox",
+    });
+
+    const inbox = await createFlashcardFromGeneratorAction(formData);
+
+    expect(inbox).toEqual({ ok: true, placed: "inbox" });
   });
 });

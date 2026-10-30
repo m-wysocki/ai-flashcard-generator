@@ -26,6 +26,29 @@ function createRepository(initialCards: FlashcardRecord[]): FlashcardsRepository
       cards.set(card.id, card);
       return card;
     },
+    async createWithRoomCheck(input) {
+      // Atomic by construction: no await between the cap check and the
+      // insert, mirroring the transactional Prisma implementation.
+      const activeCount = [...cards.values()].filter(
+        (card) => card.userId === input.userId && card.isActive !== false,
+      ).length;
+      const placed = activeCount < input.limit ? ("active" as const) : ("inbox" as const);
+      const createdAt = new Date("2026-05-08T12:00:00.000Z");
+      const card: FlashcardRecord = {
+        id: `card-${cards.size + 1}`,
+        userId: input.userId,
+        front: input.front,
+        back: input.back,
+        frontNotes: input.frontNotes,
+        backNotes: input.backNotes,
+        dueAt: input.dueAt,
+        isActive: placed === "active",
+        createdAt,
+        updatedAt: createdAt,
+      };
+      cards.set(card.id, card);
+      return { card, placed };
+    },
     async listByUser(userId) {
       return [...cards.values()].filter((card) => card.userId === userId);
     },
@@ -187,6 +210,44 @@ describe("review service", () => {
 
     expect(result).toEqual({
       totalCards: 1,
+      dueToday: 1,
+      reviewedToday: 0,
+    });
+  });
+
+  it("excludes fresh NEW cards from dueToday (they live in the New tab)", async () => {
+    const now = new Date("2026-05-08T10:00:00.000Z");
+    const repository = createRepository([
+      {
+        id: "fresh-new",
+        userId: "user-1",
+        front: "front",
+        back: "back",
+        frontNotes: null, backNotes: null,
+        dueAt: new Date("2026-05-08T09:00:00.000Z"),
+        state: "NEW",
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "learning-due",
+        userId: "user-1",
+        front: "front",
+        back: "back",
+        frontNotes: null, backNotes: null,
+        dueAt: new Date("2026-05-08T09:00:00.000Z"),
+        state: "LEARNING",
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    const result = await getReviewStats("user-1", { flashcards: repository, now });
+
+    expect(result).toEqual({
+      totalCards: 2,
       dueToday: 1,
       reviewedToday: 0,
     });

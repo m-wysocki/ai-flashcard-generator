@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useRef, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { appCopy } from "@/content/app-copy";
 import { SESSION_MODES } from "@/lib/session-modes";
 import { useUiLanguage } from "@/hooks/use-ui-language";
@@ -24,10 +24,28 @@ import type {
   ReviewStats,
 } from "./types";
 
+type PendingBadgeCopy = { tabDue: string; tabNew: string };
+
+function getPendingBadge(
+  due: number,
+  fresh: number,
+  copy: PendingBadgeCopy,
+): string | null {
+  if (due <= 0 && fresh <= 0) {
+    return null;
+  }
+  if (due > 0 && fresh > 0) {
+    return `${copy.tabDue}: ${due} · ${copy.tabNew}: ${fresh}`;
+  }
+  if (due > 0) {
+    return `${copy.tabDue}: ${due}`;
+  }
+  return `${copy.tabNew}: ${fresh}`;
+}
+
 type FlashcardsViewProps = {
   title: string;
   flashcards: Flashcard[];
-  dueFlashcardIds: string[];
   activeTab: FlashcardsTab;
   reviewStats?: ReviewStats;
   inboxFlashcards?: Flashcard[];
@@ -42,12 +60,16 @@ export function FlashcardsView(props: FlashcardsViewProps) {
   const { language } = useUiLanguage();
   const copy = appCopy[language].flashcards;
   const { navigate } = useNavigation();
-  const dueSet = useMemo(() => new Set(props.dueFlashcardIds), [props.dueFlashcardIds]);
-  const dueCards = props.flashcards.filter((flashcard) => dueSet.has(flashcard.id));
+  // "due" comes from `status` computed in page.tsx via
+  // getFlashcardStatus(state, dueIds, scheduledDays); no separate due set needed here.
+  const dueCards = props.flashcards.filter((f) => f.status === "due");
+  const learningCards = props.flashcards.filter((f) => f.status === "learning");
+  const newCards = props.flashcards.filter((f) => f.status === "new");
   const inboxCards = props.inboxFlashcards ?? [];
   const masteredCards = props.flashcards.filter((f) => f.status === "mastered");
-  const toReviewCards = props.flashcards.filter((f) => f.status !== "mastered");
-  const isDueTab = props.activeTab === "due";
+
+  const pendingTotal = dueCards.length + newCards.length;
+  const pendingBadge = getPendingBadge(dueCards.length, newCards.length, copy);
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
@@ -72,7 +94,7 @@ export function FlashcardsView(props: FlashcardsViewProps) {
       const result = await createFlashcardFromGeneratorAction(formData);
       if (result.ok) {
         setAddDialogOpen(false);
-        notify(copy.toastCreated);
+        notify(result.placed === "inbox" ? copy.toastInboxCreated : copy.toastCreated);
       }
       return result;
     },
@@ -93,7 +115,16 @@ export function FlashcardsView(props: FlashcardsViewProps) {
         statItems={[
           {
             label: copy.statsDueToday,
-            value: props.reviewStats?.dueToday ?? dueCards.length,
+            // Header must match the Due tab badge: truly due (status === "due"),
+            // not fresh NEW cards (those live in the "Nowa" tab).
+            // NOTE: view-derived dueCards.length is the source of truth here on purpose
+            // (ignores reviewStats.dueToday); aligned with the backend fix counting
+            // dueToday as due excluding NEW (see src/server/review/service.ts).
+            value: dueCards.length,
+          },
+          {
+            label: copy.statsNew,
+            value: newCards.length,
           },
           {
             label: copy.statsAll,
@@ -120,16 +151,14 @@ export function FlashcardsView(props: FlashcardsViewProps) {
         />
       </ModalDialog>
 
-      {isDueTab && dueCards.length > 0 ? (
+      {pendingTotal > 0 ? (
         <StartSessionBanner
           title={copy.sessionTitle}
-          badge={
-            language === "pl" ? `Do powtórki: ${dueCards.length}` : `Due: ${dueCards.length}`
-          }
+          badge={pendingBadge ?? ""}
           subtitle={
             language === "pl"
-              ? `${formatFlashcardCount(dueCards.length, language)} · ok. ${formatSessionMinutes(Math.max(1, Math.round(dueCards.length * 0.5)), language)}`
-              : `${formatFlashcardCount(dueCards.length, language)} · approx. ${formatSessionMinutes(Math.max(1, Math.round(dueCards.length * 0.5)), language)}`
+              ? `${formatFlashcardCount(pendingTotal, language)} · ok. ${formatSessionMinutes(Math.max(1, Math.round(pendingTotal * 0.5)), language)}`
+              : `${formatFlashcardCount(pendingTotal, language)} · approx. ${formatSessionMinutes(Math.max(1, Math.round(pendingTotal * 0.5)), language)}`
           }
           options={SESSION_MODES.map((mode, index) => ({
             label: [copy.sessionModeShort, copy.sessionModeStandard][index] ?? `${mode}`,
@@ -140,15 +169,37 @@ export function FlashcardsView(props: FlashcardsViewProps) {
       <FlashcardsTabs
         activeTab={props.activeTab}
         language={language}
-        dueCount={toReviewCards.length}
+        dueCount={dueCards.length}
+        learningCount={learningCards.length}
+        newCount={newCards.length}
         inboxCount={inboxCards.length}
         masteredCount={masteredCards.length}
       />
 
-      {isDueTab ? (
+      {props.activeTab === "due" ? (
         <FlashcardsList
-          flashcards={toReviewCards}
+          flashcards={dueCards}
           emptyMessage={copy.noDueCards}
+          updateFlashcardAction={props.updateFlashcardAction}
+          deleteFlashcardAction={props.deleteFlashcardAction}
+          language={language}
+          onNotify={notify}
+        />
+      ) : null}
+      {props.activeTab === "learning" ? (
+        <FlashcardsList
+          flashcards={learningCards}
+          emptyMessage={copy.noLearningCards}
+          updateFlashcardAction={props.updateFlashcardAction}
+          deleteFlashcardAction={props.deleteFlashcardAction}
+          language={language}
+          onNotify={notify}
+        />
+      ) : null}
+      {props.activeTab === "new" ? (
+        <FlashcardsList
+          flashcards={newCards}
+          emptyMessage={copy.noNewCards}
           updateFlashcardAction={props.updateFlashcardAction}
           deleteFlashcardAction={props.deleteFlashcardAction}
           language={language}

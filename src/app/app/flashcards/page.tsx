@@ -20,7 +20,13 @@ import { getReviewStats } from "@/server/review/service";
 import type { FlashcardsTab } from "@/components/flashcards/FlashcardsView/types";
 
 export function parseTab(value?: string): FlashcardsTab {
-  if (value === "inbox" || value === "mastered" || value === "due") {
+  if (
+    value === "due" ||
+    value === "learning" ||
+    value === "new" ||
+    value === "inbox" ||
+    value === "mastered"
+  ) {
     return value;
   }
   // Legacy "?tab=all" deep links map to "due" (Q7 TAK).
@@ -81,7 +87,6 @@ export default async function FlashcardsPage({
       email={session?.user?.email ?? undefined}
       activeTab={parseTab(params?.tab)}
       flashcards={activeFlashcards.map(toViewCard)}
-      dueFlashcardIds={dueFlashcards.map((flashcard) => flashcard.id)}
       reviewStats={reviewStats}
       inboxFlashcards={inboxFlashcards.map(toViewCard)}
       isInboxFull={activeFlashcards.length >= ACTIVE_FLASHCARDS_LIMIT}

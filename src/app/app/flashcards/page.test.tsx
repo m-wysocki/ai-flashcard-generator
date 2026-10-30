@@ -52,7 +52,7 @@ describe("FlashcardsPage smoke", () => {
       email: "learner@example.com",
     });
     (listUserFlashcards as jest.Mock).mockResolvedValue([
-      { id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, dueAt: new Date(), state: "NEW", scheduledDays: 0 },
+      { id: "f-1", front: "Cześć", back: "Hi", frontNotes: null, backNotes: null, dueAt: new Date(), state: "LEARNING", scheduledDays: 0 },
     ]);
     (listUserDueFlashcards as jest.Mock).mockResolvedValue([{ id: "f-1" }]);
     (listUserInboxFlashcards as jest.Mock).mockResolvedValue([]);
@@ -81,6 +81,8 @@ describe("parseTab", () => {
 
   it("keeps known tabs", () => {
     expect(parseTab("due")).toBe("due");
+    expect(parseTab("learning")).toBe("learning");
+    expect(parseTab("new")).toBe("new");
     expect(parseTab("inbox")).toBe("inbox");
     expect(parseTab("mastered")).toBe("mastered");
   });
