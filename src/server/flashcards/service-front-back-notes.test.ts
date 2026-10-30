@@ -31,6 +31,18 @@ function createCapturingRepository(): FlashcardsRepository & {
       base.created.push({ ...input });
       return { ...stored, ...input };
     },
+    async createWithRoomCheck(input) {
+      const cardInput = {
+        userId: input.userId,
+        front: input.front,
+        back: input.back,
+        frontNotes: input.frontNotes,
+        backNotes: input.backNotes,
+        dueAt: input.dueAt,
+      };
+      base.created.push({ ...cardInput });
+      return { card: { ...stored, ...cardInput }, placed: "active" as const };
+    },
     async findByUser() {
       return null;
     },

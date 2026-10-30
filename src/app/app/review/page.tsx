@@ -2,9 +2,9 @@ import { auth } from "@/auth";
 import { FlashcardsReviewSession } from "@/components/flashcards/FlashcardsReviewSession/FlashcardsReviewSession";
 import { prismaUserCredentialsRepository } from "@/server/auth/prisma-users";
 import { prismaFlashcardsRepository } from "@/server/flashcards/prisma-flashcards";
-import { listUserDueFlashcards, topUpActiveFromInbox } from "@/server/flashcards/service";
+import { listUserDueFlashcards, topUpActiveFromInbox, listUserInboxFlashcards } from "@/server/flashcards/service";
 import { gradeReviewFlashcardAction } from "@/server/review/actions";
-import { updateManualFlashcardAction, deleteManualFlashcardAction } from "@/server/flashcards/actions";
+import { getInboxCountAction, updateManualFlashcardAction, deleteManualFlashcardAction } from "@/server/flashcards/actions";
 import { getReviewStats } from "@/server/review/service";
 import { DEFAULT_SESSION_MODE, SESSION_MODES } from "@/lib/session-modes";
 
@@ -38,9 +38,10 @@ export default async function ReviewPage({
   const limit = resolveSessionLimit(params.limit);
   const totalFromParam = params.total ? parseInt(params.total, 10) : undefined;
 
-  const [allDueFlashcards, stats] = await Promise.all([
+  const [allDueFlashcards, stats, inboxFlashcards] = await Promise.all([
     listUserDueFlashcards({ userId: user.id }, { flashcards: prismaFlashcardsRepository }),
     getReviewStats(user.id, { flashcards: prismaFlashcardsRepository }),
+    listUserInboxFlashcards(user.id, { flashcards: prismaFlashcardsRepository }),
   ]);
 
   // listDueByUser returns oldest-due first; slice freezes min(mode, due) at start.
@@ -49,8 +50,11 @@ export default async function ReviewPage({
 
   // Ticket 05: drift-correction top-up to the 100-active limit. Runs AFTER the
   // queue freeze with dueAt=now, so refilled cards are due from the NEXT
-  // session and never join the ongoing one. Count is passed down for the
-  // ticket 07 success screen ("ile nowych doszło z Inboxa").
+  // session and never join the ongoing one. The pre-top-up count below is
+  // only a snapshot: the client refetches the true size via
+  // getInboxCountAction when the session ends (covers the top-up consumed
+  // cards AND cards added from another tab mid-session).
+  const inboxCountBeforeTopUp = inboxFlashcards.length;
   const { refilled: sessionStartRefilled } = await topUpActiveFromInbox(user.id, {
     flashcards: prismaFlashcardsRepository,
   });
@@ -84,6 +88,8 @@ export default async function ReviewPage({
       updateAction={updateManualFlashcardAction}
       deleteAction={deleteManualFlashcardAction}
       sessionStartRefilled={sessionStartRefilled}
+      inboxCount={inboxCountBeforeTopUp}
+      getInboxCountAction={getInboxCountAction}
     />
   );
 }

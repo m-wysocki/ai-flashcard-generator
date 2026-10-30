@@ -110,6 +110,62 @@ describe("FlashcardsView", () => {
     expect(screen.getByRole("textbox", { name: "Front (PL)" })).toBeInTheDocument();
   });
 
+  it("shows the inbox toast when the new card lands in the inbox", async () => {
+    const { createFlashcardFromGeneratorAction } = jest.requireMock("@/server/flashcards/actions");
+    createFlashcardFromGeneratorAction.mockResolvedValueOnce({ ok: true, placed: "inbox" });
+
+    const user = userEvent.setup();
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[]}
+        dueFlashcardIds={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Dodaj/ }));
+    await screen.findByRole("textbox", { name: "Front (PL)" });
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Front (PL)" }), { target: { value: "A" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Back (EN)" }), { target: { value: "B" } });
+    fireEvent.click(screen.getByRole("button", { name: "Zapisz fiszkę" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("Zapisano do Inboxa."),
+    );
+  });
+
+  it("shows the study toast when the new card lands directly in review", async () => {
+    const { createFlashcardFromGeneratorAction } = jest.requireMock("@/server/flashcards/actions");
+    createFlashcardFromGeneratorAction.mockResolvedValueOnce({ ok: true, placed: "active" });
+
+    const user = userEvent.setup();
+    render(
+      <FlashcardsView
+        title="Fiszki"
+        activeTab="due"
+        flashcards={[]}
+        dueFlashcardIds={[]}
+        updateFlashcardAction={async () => ({ ok: true })}
+        deleteFlashcardAction={async () => ({ ok: true })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Dodaj/ }));
+    await screen.findByRole("textbox", { name: "Front (PL)" });
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Front (PL)" }), { target: { value: "A" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Back (EN)" }), { target: { value: "B" } });
+    fireEvent.click(screen.getByRole("button", { name: "Zapisz fiszkę" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("Zapisano fiszkę."),
+    );
+  });
+
   it("shows due empty state when no cards to review", () => {
     render(
       <FlashcardsView

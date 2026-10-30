@@ -26,6 +26,29 @@ function createRepository(initialCards: FlashcardRecord[]): FlashcardsRepository
       cards.set(card.id, card);
       return card;
     },
+    async createWithRoomCheck(input) {
+      // Atomic by construction: no await between the cap check and the
+      // insert, mirroring the transactional Prisma implementation.
+      const activeCount = [...cards.values()].filter(
+        (card) => card.userId === input.userId && card.isActive !== false,
+      ).length;
+      const placed = activeCount < input.limit ? ("active" as const) : ("inbox" as const);
+      const createdAt = new Date("2026-05-08T12:00:00.000Z");
+      const card: FlashcardRecord = {
+        id: `card-${cards.size + 1}`,
+        userId: input.userId,
+        front: input.front,
+        back: input.back,
+        frontNotes: input.frontNotes,
+        backNotes: input.backNotes,
+        dueAt: input.dueAt,
+        isActive: placed === "active",
+        createdAt,
+        updatedAt: createdAt,
+      };
+      cards.set(card.id, card);
+      return { card, placed };
+    },
     async listByUser(userId) {
       return [...cards.values()].filter((card) => card.userId === userId);
     },

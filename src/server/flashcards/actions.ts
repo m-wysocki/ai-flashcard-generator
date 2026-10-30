@@ -10,11 +10,14 @@ import {
   activateManualInboxCard,
   createManualFlashcard,
   deleteManualFlashcard,
+  listUserInboxFlashcards,
   updateManualFlashcard,
 } from "./service";
 import type { UiLanguage } from "@/content/app-copy";
 
-export type FlashcardActionState = { ok: true } | { ok: false; error: string };
+export type FlashcardActionState =
+  | { ok: true; placed?: "active" | "inbox" }
+  | { ok: false; error: string };
 
 const defaultFlashcardActionError = "Nie udało się zapisać fiszki.";
 
@@ -74,7 +77,7 @@ export async function createFlashcardFromGeneratorAction(
   }
 
   revalidatePath("/app/flashcards");
-  return { ok: true };
+  return { ok: true, placed: result.placed };
 }
 
 export async function updateManualFlashcardAction(formData: FormData): Promise<FlashcardActionState> {
@@ -178,4 +181,27 @@ async function getAuthenticatedUserId() {
   }
 
   return user.id;
+}
+
+/**
+ * Fresh Inbox size for the review success screen. The page passes a snapshot
+ * taken BEFORE the session-start top-up, so by the time the user finishes the
+ * session the snapshot is stale (top-up + per-grade refills consumed cards,
+ * another tab may have added some). The client calls this when the session
+ * ends and prefers its result over the snapshot arithmetic.
+ */
+export async function getInboxCountAction(): Promise<
+  { ok: true; count: number } | { ok: false; error: string }
+> {
+  const userId = await getAuthenticatedUserId().catch(() => null);
+
+  if (!userId) {
+    return { ok: false as const, error: defaultFlashcardActionError };
+  }
+
+  const inbox = await listUserInboxFlashcards(userId, {
+    flashcards: prismaFlashcardsRepository,
+  });
+
+  return { ok: true as const, count: inbox.length };
 }

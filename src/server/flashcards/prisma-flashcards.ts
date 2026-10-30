@@ -16,6 +16,38 @@ export const prismaFlashcardsRepository: FlashcardsRepository = {
     });
   },
 
+  async createWithRoomCheck(input) {
+    return prisma.$transaction(async (tx) => {
+      // Serialize concurrent creations of one user: the FOR UPDATE lock on
+      // the parent User row makes the count-then-insert below atomic per
+      // user, so the pool can never exceed `limit` (same TOCTOU fix as
+      // activateInboxCardByUserIfRoom).
+      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${input.userId} FOR UPDATE`;
+
+      // "isActive" is NOT NULL in the DB, so `isActive: true` matches the
+      // service-side `isActive !== false` active predicate.
+      const activeCount = await tx.flashcard.count({
+        where: { userId: input.userId, isActive: true },
+      });
+
+      const placed = activeCount < input.limit ? ("active" as const) : ("inbox" as const);
+
+      const card = await tx.flashcard.create({
+        data: {
+          userId: input.userId,
+          front: input.front,
+          back: input.back,
+          frontNotes: input.frontNotes,
+          backNotes: input.backNotes,
+          dueAt: input.dueAt,
+          isActive: placed === "active",
+        },
+      });
+
+      return { card, placed };
+    });
+  },
+
   async findByUser(input) {
     return prisma.flashcard.findFirst({
       where: { id: input.flashcardId, userId: input.userId },

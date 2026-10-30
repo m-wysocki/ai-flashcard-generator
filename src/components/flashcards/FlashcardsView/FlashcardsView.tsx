@@ -72,7 +72,7 @@ export function FlashcardsView(props: FlashcardsViewProps) {
       const result = await createFlashcardFromGeneratorAction(formData);
       if (result.ok) {
         setAddDialogOpen(false);
-        notify(copy.toastCreated);
+        notify(result.placed === "inbox" ? copy.toastInboxCreated : copy.toastCreated);
       }
       return result;
     },

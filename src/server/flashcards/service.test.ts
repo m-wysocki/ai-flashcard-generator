@@ -43,6 +43,30 @@ function createFlashcardsRepository(initialCards: FlashcardRecord[] = []): Flash
       return flashcard;
     },
 
+    async createWithRoomCheck(input) {
+      // Atomic by construction: no await between the cap check and the
+      // insert, mirroring the transactional Prisma implementation.
+      const activeCount = [...cards.values()].filter(
+        (card) => card.userId === input.userId && card.isActive !== false,
+      ).length;
+      const placed = activeCount < input.limit ? ("active" as const) : ("inbox" as const);
+      const createdAt = new Date("2026-05-08T12:00:00.000Z");
+      const flashcard: FlashcardRecord = {
+        id: `card-${cards.size + 1}`,
+        userId: input.userId,
+        front: input.front,
+        back: input.back,
+        frontNotes: input.frontNotes,
+        backNotes: input.backNotes,
+        dueAt: input.dueAt,
+        isActive: placed === "active",
+        createdAt,
+        updatedAt: createdAt,
+      };
+      cards.set(flashcard.id, flashcard);
+      return { card: flashcard, placed };
+    },
+
     async listByUser(userId) {
       return [...cards.values()]
         .filter((card) => card.userId === userId)
@@ -200,7 +224,8 @@ describe("flashcard service", () => {
     expect(result.flashcard.back).toBe("I don't know");
     expect(result.flashcard.backNotes).toBe("Optional note");
     expect(result.flashcard.dueAt).toEqual(now);
-    expect(result.flashcard.isActive).toBe(false);
+    expect(result.flashcard.isActive).toBe(true);
+    expect(result.placed).toBe("active");
   });
 
   it("lists only cards that belong to authenticated user", async () => {
@@ -427,7 +452,7 @@ describe("flashcard service", () => {
     expect(cards.map((card) => card.id)).toEqual(["active-due"]);
   });
 
-  it("newly created flashcard lands in inbox and is not due nor in session", async () => {
+  it("creates directly into review when there is room and is due immediately", async () => {
     const now = new Date("2026-05-08T14:00:00.000Z");
     const repository = createFlashcardsRepository();
 
@@ -437,17 +462,94 @@ describe("flashcard service", () => {
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;
+    expect(result.placed).toBe("active");
+    expect(result.flashcard.isActive).toBe(true);
+    expect(result.flashcard.dueAt).toEqual(now);
+
+    const inbox = await listUserInboxFlashcards("user-1", { flashcards: repository });
+    expect(inbox).toEqual([]);
+
+    const due = await listUserDueFlashcards({ userId: "user-1", now }, { flashcards: repository });
+    expect(due.map((card) => card.id)).toEqual([result.flashcard.id]);
+  });
+
+  it("lands a new card in the inbox when the pool is full (never exceeds 100)", async () => {
+    const now = new Date("2026-05-08T14:00:00.000Z");
+    const initial: FlashcardRecord[] = [];
+    for (let i = 0; i < ACTIVE_FLASHCARDS_LIMIT; i += 1) {
+      initial.push({
+        id: `active-${i}`,
+        userId: "user-1",
+        front: `Front ${i}`,
+        back: `Back ${i}`,
+        frontNotes: null,
+        backNotes: null,
+        dueAt: new Date("2026-05-08T10:00:00.000Z"),
+        isActive: true,
+        createdAt: new Date("2026-05-07T10:00:00.000Z"),
+        updatedAt: new Date("2026-05-07T10:00:00.000Z"),
+      });
+    }
+    const repository = createFlashcardsRepository(initial);
+
+    const result = await createManualFlashcard(
+      { userId: "user-1", front: "A", back: "B", frontNotes: "", backNotes: "" },
+      { flashcards: repository, now: () => now },
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.placed).toBe("inbox");
     expect(result.flashcard.isActive).toBe(false);
 
     const inbox = await listUserInboxFlashcards("user-1", { flashcards: repository });
     expect(inbox.map((card) => card.id)).toEqual([result.flashcard.id]);
 
     const due = await listUserDueFlashcards({ userId: "user-1", now }, { flashcards: repository });
-    expect(due).toEqual([]);
+    expect(due.map((card) => card.id)).not.toContain(result.flashcard.id);
 
-    // Session queue is a slice of the due queue, so a fresh inbox card never enters it.
-    const sessionQueue = due.slice(0, 10);
-    expect(sessionQueue).toEqual([]);
+    const all = await repository.listByUser("user-1");
+    expect(all.filter((card) => card.isActive !== false)).toHaveLength(ACTIVE_FLASHCARDS_LIMIT);
+  });
+
+  it("fills the last free slot at 99 active cards, then overflows to the inbox", async () => {
+    const now = new Date("2026-05-08T14:00:00.000Z");
+    const initial: FlashcardRecord[] = [];
+    for (let i = 0; i < ACTIVE_FLASHCARDS_LIMIT - 1; i += 1) {
+      initial.push({
+        id: `active-${i}`,
+        userId: "user-1",
+        front: `Front ${i}`,
+        back: `Back ${i}`,
+        frontNotes: null,
+        backNotes: null,
+        dueAt: new Date("2026-05-08T10:00:00.000Z"),
+        isActive: true,
+        createdAt: new Date("2026-05-07T10:00:00.000Z"),
+        updatedAt: new Date("2026-05-07T10:00:00.000Z"),
+      });
+    }
+    const repository = createFlashcardsRepository(initial);
+
+    const filling = await createManualFlashcard(
+      { userId: "user-1", front: "A", back: "B", frontNotes: "", backNotes: "" },
+      { flashcards: repository, now: () => now },
+    );
+    expect(filling.ok).toBe(true);
+    if (!filling.ok) return;
+    expect(filling.placed).toBe("active");
+    expect(filling.flashcard.isActive).toBe(true);
+
+    const overflowing = await createManualFlashcard(
+      { userId: "user-1", front: "C", back: "D", frontNotes: "", backNotes: "" },
+      { flashcards: repository, now: () => now },
+    );
+    expect(overflowing.ok).toBe(true);
+    if (!overflowing.ok) return;
+    expect(overflowing.placed).toBe("inbox");
+    expect(overflowing.flashcard.isActive).toBe(false);
+
+    const all = await repository.listByUser("user-1");
+    expect(all.filter((card) => card.isActive !== false)).toHaveLength(ACTIVE_FLASHCARDS_LIMIT);
   });
 
   it("activates the oldest inbox card first (FIFO)", async () => {

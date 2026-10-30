@@ -38,7 +38,8 @@ async function completeOneCard({
       batchMode={batchMode}
       gradeAction={gradeAction}
       updateAction={updateAction} deleteAction={deleteAction}
-    />,
+    inboxCount={0}
+        />,
   );
   fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
   fireEvent.click(screen.getByRole("button", { name: "Dobrze" }));
@@ -93,7 +94,8 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     // 277 s later the session completes → 4:37.
@@ -121,7 +123,8 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={firstGrade}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
     nowSpy.mockReturnValue(start + 60_000);
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -139,7 +142,8 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
     nowSpy.mockReturnValue(start + 180_000);
     fireEvent.click(screen.getByRole("button", { name: "Pokaż odpowiedź" }));
@@ -164,7 +168,8 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         batchMode={{ batchSize: 5, totalDueCount: 50 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     // 400 ms later the session completes → rounds to 0 s → skipped.
@@ -187,7 +192,8 @@ describe("FlashcardsReviewSession session time (ticket 08)", () => {
         stats={{ dueToday: 1, totalCards: 1, reviewedToday: 0 }}
         gradeAction={gradeAction}
         updateAction={updateAction} deleteAction={deleteAction}
-      />,
+      inboxCount={0}
+        />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Zakończ sesję" }));
