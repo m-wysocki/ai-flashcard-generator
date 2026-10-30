@@ -215,6 +215,44 @@ describe("review service", () => {
     });
   });
 
+  it("excludes fresh NEW cards from dueToday (they live in the New tab)", async () => {
+    const now = new Date("2026-05-08T10:00:00.000Z");
+    const repository = createRepository([
+      {
+        id: "fresh-new",
+        userId: "user-1",
+        front: "front",
+        back: "back",
+        frontNotes: null, backNotes: null,
+        dueAt: new Date("2026-05-08T09:00:00.000Z"),
+        state: "NEW",
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "learning-due",
+        userId: "user-1",
+        front: "front",
+        back: "back",
+        frontNotes: null, backNotes: null,
+        dueAt: new Date("2026-05-08T09:00:00.000Z"),
+        state: "LEARNING",
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    const result = await getReviewStats("user-1", { flashcards: repository, now });
+
+    expect(result).toEqual({
+      totalCards: 2,
+      dueToday: 1,
+      reviewedToday: 0,
+    });
+  });
+
   it("counts cards with undefined isActive as active in totalCards", async () => {
     const now = new Date("2026-05-08T10:00:00.000Z");
     const repository = createRepository([

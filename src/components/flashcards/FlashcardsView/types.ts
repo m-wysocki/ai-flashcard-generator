@@ -14,7 +14,7 @@ export type Flashcard = {
   dueAt: string;
 };
 
-export type FlashcardsTab = "due" | "inbox" | "mastered";
+export type FlashcardsTab = "due" | "learning" | "new" | "inbox" | "mastered";
 
 export type ReviewStats = {
   dueToday: number;

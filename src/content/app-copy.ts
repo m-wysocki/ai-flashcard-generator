@@ -41,10 +41,13 @@ type AppCopy = {
   };
   flashcards: {
     statsDueToday: string;
+    statsNew: string;
     statsAll: string;
     statsReviewedToday: string;
     tabsLabel: string;
     tabDue: string;
+    tabLearning: string;
+    tabNew: string;
     tabInbox: string;
     tabMastered: string;
     tabAdd: string;
@@ -55,6 +58,8 @@ type AppCopy = {
     sessionModeShort: string;
     sessionModeStandard: string;
     noDueCards: string;
+    noLearningCards: string;
+    noNewCards: string;
     noCards: string;
     noInboxCards: string;
     noMasteredCards: string;
@@ -179,10 +184,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     flashcards: {
       statsDueToday: "do powtórki",
+      statsNew: "nowe",
       statsAll: "wszystkich",
       statsReviewedToday: "powtórzonych",
       tabsLabel: "Karty fiszek",
       tabDue: "Do powtórki",
+      tabLearning: "W trakcie nauki",
+      tabNew: "Nowa",
       tabInbox: "Inbox",
       tabMastered: "Opanowane",
       tabAdd: "Dodaj",
@@ -193,7 +201,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionModeShort: "5 fiszek (~2–3 min)",
       sessionModeStandard: "10 fiszek (~5 min)",
       noDueCards:
-        "Brak fiszek do powtórki. Trafiają tu wszystkie aktywne karty poza opanowanymi — powtarzaj dalej, a lista sama urośnie.",
+        "Brak fiszek do powtórki. Trafiają tu tylko karty z terminem powtórki — powtarzaj dalej, a lista sama urośnie.",
+      noLearningCards:
+        "Brak fiszek w trakcie nauki. Trafiają tu karty, które już zacząłeś powtarzać, ale jeszcze nie opanowałeś — powtarzaj dalej, a lista sama urośnie.",
+      noNewCards:
+        "Brak nowych fiszek. Trafiają tu karty, których jeszcze nie zacząłeś powtarzać — dodaj coś do nauki, a zobaczysz je tutaj.",
       noCards: "Brak fiszek.",
       noInboxCards: "Brak fiszek w Inboxie. Nowe fiszki pojawią się tutaj.",
       noMasteredCards: "Brak opanowanych fiszek. Trafiają tu karty, które znasz już na tyle dobrze, że wypadły z powtórek — powtarzaj dalej, a lista sama urośnie.",
@@ -317,10 +329,13 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
     },
     flashcards: {
       statsDueToday: "due",
+      statsNew: "new",
       statsAll: "total",
       statsReviewedToday: "reviewed",
       tabsLabel: "Flashcards tabs",
       tabDue: "Due",
+      tabLearning: "Learning",
+      tabNew: "New",
       tabInbox: "Inbox",
       tabMastered: "Mastered",
       tabAdd: "Add",
@@ -331,7 +346,11 @@ export const appCopy: Record<UiLanguage, AppCopy> = {
       sessionModeShort: "5 flashcards (~2–3 min)",
       sessionModeStandard: "10 flashcards (~5 min)",
       noDueCards:
-        "No cards due. All active cards except mastered ones land here — keep reviewing and this list will grow.",
+        "No cards due. Only cards with a review due land here — keep reviewing and this list will grow.",
+      noLearningCards:
+        "No cards in learning. Cards you have started reviewing but haven't mastered yet land here — keep reviewing and this list will grow.",
+      noNewCards:
+        "No new cards. Cards you haven't started reviewing yet land here — add something to study and you'll see it here.",
       noCards: "No flashcards yet.",
       noInboxCards: "No cards in Inbox. New flashcards will appear here.",
       noMasteredCards: "No mastered cards yet. Cards you know well enough to leave the review queue land here — keep reviewing and this list will grow.",

@@ -137,9 +137,15 @@ export async function getReviewStats(userId: string, dependencies: { flashcards:
   // Note isActive is optional — undefined means an active card.
   const totalCards = allCards.filter((card) => card.isActive !== false).length;
 
+  // "Do powtórki" means truly due for repetition: dueAt reached AND already
+  // seen (state !== NEW). Fresh NEW cards live in the "Nowa" tab — counting
+  // them here inflated the header ("2 do powtórki" for 2 new cards) while the
+  // Due tab (status === "due") correctly showed 0.
+  const dueToday = dueCards.filter((card) => card.state !== "NEW").length;
+
   return {
     totalCards,
-    dueToday: dueCards.length,
+    dueToday,
     reviewedToday,
   };
 }
